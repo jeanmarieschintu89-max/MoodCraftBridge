@@ -11,12 +11,12 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 
+import java.util.UUID;
+
 public class TransferConfirmHandler implements GUIHandler {
 
     @Override
     public void onClick(Player p, int slot) {
-
-        TransferBuilder data = TransferBuilder.get(p);
 
         switch (slot) {
 
@@ -37,21 +37,28 @@ public class TransferConfirmHandler implements GUIHandler {
                 try {
 
                     // =========================
+                    // 🔒 RÉCUP DATA (SAFE)
+                    // =========================
+
+                    UUID targetUUID = TransferBuilder.getTarget(p);
+                    double amount = TransferBuilder.getAmount(p);
+
+                    // =========================
                     // 🔒 VALIDATIONS
                     // =========================
 
-                    if (data.target == null) {
+                    if (targetUUID == null) {
                         p.sendMessage("§cErreur: aucun joueur sélectionné.");
                         TransferBuilder.clear(p);
                         return;
                     }
 
-                    if (data.amount <= 0) {
+                    if (amount <= 0) {
                         p.sendMessage("§cMontant invalide.");
                         return;
                     }
 
-                    Player target = Bukkit.getPlayer(data.target);
+                    Player target = Bukkit.getPlayer(targetUUID);
 
                     if (target == null) {
                         p.sendMessage("§cJoueur hors ligne");
@@ -68,7 +75,7 @@ public class TransferConfirmHandler implements GUIHandler {
 
                     double senderBank = BankStorage.get(senderId);
 
-                    if (senderBank < data.amount) {
+                    if (senderBank < amount) {
                         p.sendMessage("§cFonds insuffisants");
                         return;
                     }
@@ -77,7 +84,7 @@ public class TransferConfirmHandler implements GUIHandler {
                     // 💸 TRANSFERT
                     // =========================
 
-                    boolean success = BankStorage.transfer(senderId, targetId, data.amount);
+                    boolean success = BankStorage.transfer(senderId, targetId, amount);
 
                     if (!success) {
                         p.sendMessage("§cErreur lors du virement.");
@@ -96,7 +103,7 @@ public class TransferConfirmHandler implements GUIHandler {
                     p.sendMessage("§8║   §a✔ Virement effectué");
                     p.sendMessage("§8╠════════════════════════════╣");
                     p.sendMessage("§8║ §7Vers: §e" + target.getName());
-                    p.sendMessage("§8║ §7Montant: §c-" + (int) data.amount + "€");
+                    p.sendMessage("§8║ §7Montant: §c-" + (int) amount + "€");
                     p.sendMessage("§8║");
                     p.sendMessage("§8║ §7Solde: §6" + (int) newBalanceSender + "€");
                     p.sendMessage("§8╚════════════════════════════╝");
@@ -113,7 +120,7 @@ public class TransferConfirmHandler implements GUIHandler {
                     target.sendMessage("§8║   §a💸 Virement reçu");
                     target.sendMessage("§8╠════════════════════════════╣");
                     target.sendMessage("§8║ §7Expéditeur: §e" + p.getName());
-                    target.sendMessage("§8║ §7Montant: §a+" + (int) data.amount + "€");
+                    target.sendMessage("§8║ §7Montant: §a+" + (int) amount + "€");
                     target.sendMessage("§8║");
                     target.sendMessage("§8║ §7Solde: §6" + (int) newBalanceTarget + "€");
                     target.sendMessage("§8╚════════════════════════════╝");
