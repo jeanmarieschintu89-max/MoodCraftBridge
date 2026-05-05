@@ -3,7 +3,7 @@ package fr.moodcraft.bridge.listener;
 import fr.moodcraft.bridge.Main;
 import fr.moodcraft.bridge.bank.BankStorage;
 import fr.moodcraft.bridge.bank.IbanManager;
-import fr.moodcraft.bridge.bank.TransactionManager; // 🔥 AJOUT
+import fr.moodcraft.bridge.bank.TransactionManager;
 import fr.moodcraft.bridge.gui.BankGUI;
 import fr.moodcraft.bridge.util.SafeGUI;
 import fr.moodcraft.bridge.manager.AmountInputManager;
@@ -29,7 +29,6 @@ public class ChatInputListener implements Listener {
         if (AmountInputManager.has(p)) {
 
             e.setCancelled(true);
-
             String msg = e.getMessage();
 
             Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
@@ -67,13 +66,9 @@ public class ChatInputListener implements Listener {
 
                         VaultHook.remove(p, amount);
                         BankStorage.add(p.getUniqueId().toString(), amount);
-
-                        // 📜 HISTORIQUE
                         TransactionManager.deposit(p.getUniqueId(), amount);
 
-                        // ✔ message cohérent (+)
-                        p.sendMessage("§a✔ Dépôt: §e+" + SafeGUI.money(amount) + "€");
-                        p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
+                        success(p, "Dépôt", "+" + SafeGUI.money(amount));
                     }
 
                     // =========================
@@ -91,13 +86,9 @@ public class ChatInputListener implements Listener {
 
                         BankStorage.remove(uuid, amount);
                         VaultHook.add(p, amount);
-
-                        // 📜 HISTORIQUE
                         TransactionManager.withdraw(p.getUniqueId(), amount);
 
-                        // ✔ message cohérent (−)
-                        p.sendMessage("§a✔ Retrait: §e-" + SafeGUI.money(amount) + "€");
-                        p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
+                        success(p, "Retrait", "-" + SafeGUI.money(amount));
                     }
                 }
 
@@ -118,32 +109,42 @@ public class ChatInputListener implements Listener {
 
             Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
 
+                // ❌ format
                 if (!input.startsWith("FR") || input.length() < 10) {
                     error(p, "IBAN invalide");
-                    InputManager.remove(p);
+                    InputManager.clear(p);
                     return;
                 }
 
+                // 🔒 unicité
                 boolean ok = IbanManager.set(p.getUniqueId(), input);
 
                 if (!ok) {
                     error(p, "Cet IBAN est déjà utilisé !");
-                    InputManager.remove(p);
+                    InputManager.clear(p);
                     return;
                 }
 
-                p.sendMessage("§a✔ IBAN enregistré: §e" + input);
-                p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
+                success(p, "IBAN enregistré", input);
 
-                InputManager.remove(p);
+                InputManager.clear(p);
             });
 
             return;
         }
     }
 
+    // =========================
+    // 🔧 UTILS
+    // =========================
+
     private void error(Player p, String msg) {
         p.sendMessage("§c❌ " + msg);
         p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+    }
+
+    private void success(Player p, String type, String value) {
+        p.sendMessage("§a✔ " + type + ": §e" + value);
+        p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
     }
 }
