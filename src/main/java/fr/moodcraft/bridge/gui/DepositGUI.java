@@ -1,6 +1,10 @@
 package fr.moodcraft.bridge.gui;
 
-fr.moodcraft.bridge.bank.BankStorage
+import fr.moodcraft.bridge.bank.BankStorage;
+import fr.moodcraft.bridge.manager.GUIManager;
+import fr.moodcraft.bridge.util.SafeGUI;
+import fr.moodcraft.bridge.util.VaultHook;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -14,12 +18,12 @@ public class DepositGUI {
 
         Inventory inv = Bukkit.createInventory(null, 27, "§aDépôt");
 
-        // 💰 Argent liquide (Vault)
+        // 💰 Argent liquide
         Economy eco = VaultHook.getEconomy();
         double cash = eco != null ? eco.getBalance(p) : 0;
 
-        // 🏦 Banque (API propre)
-        double bank = BankAPI.get(p.getUniqueId().toString());
+        // 🏦 Banque
+        double bank = BankStorage.get(p.getUniqueId().toString());
 
         // 🔲 Background
         for (int i = 0; i < 27; i++) {
