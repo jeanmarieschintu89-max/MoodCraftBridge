@@ -1,6 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://www.w3.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -11,27 +12,30 @@
 
     <name>MoodCraftBridge</name>
 
+    <!-- ========================= -->
+    <!-- ⚙️ JAVA 21 -->
+    <!-- ========================= -->
     <properties>
-        <java.version>17</java.version>
+        <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <!-- ========================= -->
+    <!-- 📦 REPOSITORIES -->
+    <!-- ========================= -->
     <repositories>
-        <!-- Paper -->
         <repository>
             <id>papermc</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
-
-        <!-- QuickShop -->
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
     </repositories>
 
+    <!-- ========================= -->
+    <!-- 📚 DEPENDENCIES -->
+    <!-- ========================= -->
     <dependencies>
-        <!-- Paper API -->
+
+        <!-- 🟢 PAPER -->
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
@@ -39,7 +43,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Vault API -->
+        <!-- 🟡 VAULT -->
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
@@ -47,30 +51,33 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- QuickShop API -->
+        <!-- 🔥 QUICKSHOP (LOCAL) -->
         <dependency>
-            <groupId>com.github.Ghost-chu</groupId>
-            <artifactId>QuickShop-Hikari</artifactId>
-            <version>6.2.0.0</version>
+            <groupId>quickshop</groupId>
+            <artifactId>quickshop</artifactId>
+            <version>1.0</version>
             <scope>provided</scope>
         </dependency>
+
     </dependencies>
 
+    <!-- ========================= -->
+    <!-- 🔨 BUILD -->
+    <!-- ========================= -->
     <build>
         <plugins>
 
-            <!-- Compiler -->
+            <!-- COMPILER JAVA 21 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <source>17</source>
-                    <target>17</target>
+                    <release>21</release>
                 </configuration>
             </plugin>
 
-            <!-- Jar propre -->
+            <!-- JAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
