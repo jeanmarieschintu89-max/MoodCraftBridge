@@ -23,7 +23,7 @@ public class MineListener implements Listener {
         String item = ItemNormalizer.normalizeBlock(block);
 
         // ❌ item inconnu
-        if (item == null || !MarketState.prices.containsKey(item)) return;
+        if (item == null || !MarketState.price.containsKey(item)) return;
 
         ItemStack tool = player.getInventory().getItemInMainHand();
 
