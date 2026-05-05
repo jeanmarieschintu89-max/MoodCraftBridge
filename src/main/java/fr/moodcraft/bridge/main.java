@@ -3,7 +3,7 @@ package fr.moodcraft.bridge;
 import fr.moodcraft.bridge.command.*;
 import fr.moodcraft.bridge.handler.*;
 import fr.moodcraft.bridge.listener.*;
-import fr.moodcraft.bridge.manager.GUIManager;
+import fr.moodcraft.bridge.manager.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
@@ -24,8 +24,23 @@ public class Main extends JavaPlugin {
 
         saveDefaultConfig();
 
-        // 🔥 IMPORTANT (sinon GUI bug)
+        // 🔥 GUI SYSTEM
         GUIManager.init(this);
+
+        // =========================
+        // 📦 MARKET INIT
+        // =========================
+        MarketStorage.init();
+        ShopIndex.rebuild();
+
+        // =========================
+        // 🔁 TASKS (marché dynamique)
+        // =========================
+        Bukkit.getScheduler().runTaskTimer(this,
+                MarketEngine::tick,
+                20L,
+                20L * 45 // toutes les 45s
+        );
 
         // =========================
         // 🎧 LISTENERS
@@ -60,12 +75,17 @@ public class Main extends JavaPlugin {
         // =========================
         getLogger().info("=================================");
         getLogger().info("✅ MoodCraftBridge chargé");
+        getLogger().info("📊 Market: OK");
+        getLogger().info("🏪 Shops indexés: OK");
         getLogger().info("🎮 GUI + Input + Commands OK");
         getLogger().info("=================================");
     }
 
     @Override
     public void onDisable() {
+
+        MarketStorage.save();
+
         getLogger().info("❌ MoodCraftBridge désactivé");
     }
 
