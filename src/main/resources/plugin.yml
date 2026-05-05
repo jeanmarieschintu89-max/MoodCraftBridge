@@ -58,6 +58,11 @@ commands:
   reputation:
     description: Voir sa réputation
 
+  resetrep:
+    description: Reset la réputation d'un joueur
+    usage: /resetrep <joueur>
+    permission: moodcraft.admin
+
 permissions:
 
   moodcraft.admin:
