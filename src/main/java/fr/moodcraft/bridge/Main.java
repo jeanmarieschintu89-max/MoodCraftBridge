@@ -87,6 +87,7 @@ public class Main extends JavaPlugin {
         registerCommand("menu", new MenuCommand());
         registerCommand("iban", new IbanCommand());
         registerCommand("ibanpay", new IbanPayCommand());
+        registerCommand("banque", new BanqueCommand());
 
         registerCommand("prix", new PrixCommand());
         registerCommand("sync", new SyncCommand());
