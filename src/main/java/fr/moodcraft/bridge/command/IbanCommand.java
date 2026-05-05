@@ -1,10 +1,10 @@
 package fr.moodcraft.bridge.command;
 
-fr.moodcraft.bridge.bank.BankStorage
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
-import fr.moodcraft.bridge.util.VaultHook;
 import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 public class IbanCommand implements CommandExecutor {
 
@@ -21,8 +21,7 @@ public class IbanCommand implements CommandExecutor {
         // =========================
         if (args.length == 0) {
 
-            String id = p.getUniqueId().toString();
-            String iban = BankAPI.getIban(id);
+            String iban = generateIban(p.getUniqueId());
 
             p.sendMessage("§8━━━━━━━━━━━━━━━━━━");
             p.sendMessage("§e🏦 Banque MoodCraft");
@@ -50,8 +49,7 @@ public class IbanCommand implements CommandExecutor {
                 return true;
             }
 
-            String id = target.getUniqueId().toString();
-            String iban = BankAPI.getIban(id);
+            String iban = generateIban(target.getUniqueId());
 
             p.sendMessage("§8━━━━━━━━━━━━━━━━━━");
             p.sendMessage("§e🏦 Banque MoodCraft");
@@ -63,5 +61,15 @@ public class IbanCommand implements CommandExecutor {
         }
 
         return true;
+    }
+
+    // =========================
+    // 🏦 GÉNÉRATION IBAN
+    // =========================
+    private String generateIban(UUID uuid) {
+
+        String base = uuid.toString().replace("-", "").substring(0, 16);
+
+        return "MC" + base.toUpperCase();
     }
 }
