@@ -2,7 +2,7 @@ package fr.moodcraft.bridge.manager;
 
 import com.ghostchu.quickshop.api.shop.Shop;
 import fr.moodcraft.bridge.market.MarketState;
-import fr.moodcraft.bridge.market.ShopIndex;
+import fr.moodcraft.bridge.manager.ShopIndex;
 
 import java.util.Set;
 
