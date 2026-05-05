@@ -42,6 +42,7 @@ public class Main extends JavaPlugin {
         registerCommand("ecoreload", new EcoReloadCommand());
         registerCommand("ecoreset", new EcoResetCommand());
         registerCommand("ibanpay", new IbanPayCommand());
+        registerCommand("iban", new IbanCommand());
 
         // =========================
         // 🚀 LOG
