@@ -1,4 +1,4 @@
-package fr.moodcraft.bridge.manager;
+package fr.moodcraft.bridge.bank;
 
 import fr.moodcraft.bridge.Main;
 import org.bukkit.Bukkit;
@@ -38,8 +38,12 @@ public class IbanManager {
         config = YamlConfiguration.loadConfiguration(file);
 
         for (String key : config.getKeys(false)) {
-            UUID uuid = UUID.fromString(key);
+
             String iban = config.getString(key);
+            if (iban == null) continue;
+
+            UUID uuid = UUID.fromString(key);
+            iban = normalize(iban);
 
             playerIban.put(uuid, iban);
             ibanToPlayer.put(iban, uuid);
@@ -71,7 +75,7 @@ public class IbanManager {
     }
 
     // =========================
-    // ✅ UNIQUE CHECK
+    // 🔒 UNIQUE CHECK
     // =========================
     public static boolean isUnique(String iban, UUID requester) {
 
@@ -89,20 +93,26 @@ public class IbanManager {
 
         iban = normalize(iban);
 
-        // 🔒 vérif unicité
-        if (!isUnique(iban, uuid)) {
-            log("§c❌ Tentative doublon IBAN: " + iban);
+        // 🔒 validation format
+        if (!iban.matches("FR[0-9A-Z]{8,32}")) {
+            log("§c❌ IBAN invalide: " + iban);
             return false;
         }
 
-        // 🔥 supprimer ancien
+        // 🔒 unicité
+        if (!isUnique(iban, uuid)) {
+            log("§c❌ Doublon IBAN: " + iban);
+            return false;
+        }
+
+        // 🔥 supprimer ancien IBAN
         String old = playerIban.get(uuid);
         if (old != null) {
             ibanToPlayer.remove(old);
             log("§7Ancien IBAN supprimé: " + old);
         }
 
-        // 🔥 save
+        // 🔥 save nouveau
         playerIban.put(uuid, iban);
         ibanToPlayer.put(iban, uuid);
 
@@ -124,6 +134,7 @@ public class IbanManager {
         if (iban != null) {
             ibanToPlayer.remove(iban);
             playerIban.remove(uuid);
+
             config.set(uuid.toString(), null);
             save();
 
