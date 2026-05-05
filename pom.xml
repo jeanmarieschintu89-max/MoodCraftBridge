@@ -12,47 +12,37 @@
 
     <name>MoodCraftBridge</name>
 
-    <!-- ========================= -->
     <!-- ⚙️ JAVA -->
-    <!-- ========================= -->
     <properties>
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <!-- ========================= -->
     <!-- 📦 REPOSITORIES -->
-    <!-- ========================= -->
     <repositories>
-
-        <!-- Paper -->
         <repository>
             <id>papermc</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
 
-        <!-- Vault via GitHub (JitPack) -->
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
-
     </repositories>
 
-    <!-- ========================= -->
     <!-- 📚 DEPENDENCIES -->
-    <!-- ========================= -->
     <dependencies>
 
-        <!-- 🟢 PAPER -->
+        <!-- Paper -->
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.20.4-R0.1-SNAPSHOT</version>
+            <version>1.21.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
-        <!-- 🟡 VAULT (FIX FINAL) -->
+        <!-- Vault -->
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
@@ -60,7 +50,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- 🔥 QUICKSHOP (LOCAL INSTALL PAR WORKFLOW) -->
+        <!-- QuickShop -->
         <dependency>
             <groupId>quickshop</groupId>
             <artifactId>quickshop</artifactId>
@@ -70,14 +60,13 @@
 
     </dependencies>
 
-    <!-- ========================= -->
     <!-- 🔨 BUILD -->
-    <!-- ========================= -->
     <build>
+        <finalName>MoodCraftBridge</finalName>
 
         <plugins>
 
-            <!-- ⚙️ COMPILER -->
+            <!-- Compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -87,23 +76,44 @@
                 </configuration>
             </plugin>
 
-            <!-- 📦 SHADE (optionnel) -->
+            <!-- SHADE (FIX CLEAN) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.5.0</version>
+
                 <executions>
                     <execution>
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
+
+                        <configuration>
+                            <!-- 🔥 remplace le jar normal -->
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
+
+                            <!-- évite conflits -->
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+
+                            <!-- nettoie META-INF -->
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
 
         </plugins>
-
     </build>
 
 </project>
