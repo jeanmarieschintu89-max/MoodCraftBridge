@@ -72,6 +72,7 @@ public class Main extends JavaPlugin {
 
         // 🧭 AUTRES
         GUIManager.register("teleport", new TeleportHandler());
+        GUIManager.register("transfer_confirm", new TransferConfirmHandler());
 
         // =========================
         // 📜 COMMANDES
