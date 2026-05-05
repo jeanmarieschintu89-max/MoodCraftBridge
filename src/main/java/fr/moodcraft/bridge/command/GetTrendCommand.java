@@ -1,6 +1,7 @@
 package fr.moodcraft.bridge.command;
 
 import fr.moodcraft.bridge.market.TrendManager;
+import fr.moodcraft.bridge.market.MarketState; // ✅ FIX
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
