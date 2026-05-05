@@ -1,8 +1,9 @@
 package fr.moodcraft.bridge.listener;
 
+import fr.moodcraft.bridge.market.MarketEngine;
+import fr.moodcraft.bridge.market.MarketState;
 import fr.moodcraft.bridge.util.ItemNormalizer;
 
-import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,7 +22,8 @@ public class MineListener implements Listener {
 
         String item = ItemNormalizer.normalizeBlock(block);
 
-        if (item == null || !MarketAPI.hasItem(item)) return;
+        // ❌ item inconnu
+        if (item == null || !MarketState.prices.containsKey(item)) return;
 
         ItemStack tool = player.getInventory().getItemInMainHand();
 
@@ -39,7 +41,7 @@ public class MineListener implements Listener {
             amount = 1 + (int)(Math.random() * level);
         }
 
-        // 📊 Envoie au Market
-        MarketAPI.testSell(item, amount);
+        // 📊 IMPACT MARCHÉ (VENTE)
+        MarketEngine.recordSell(item, amount);
     }
 }
