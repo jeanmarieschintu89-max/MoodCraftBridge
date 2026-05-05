@@ -18,7 +18,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <!-- 📦 REPOSITORIES -->
+    <!-- 📦 REPOS -->
     <repositories>
         <repository>
             <id>papermc</id>
@@ -34,7 +34,7 @@
     <!-- 📚 DEPENDENCIES -->
     <dependencies>
 
-        <!-- Paper -->
+        <!-- 🟢 Paper API -->
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
@@ -42,7 +42,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Vault -->
+        <!-- 🟡 Vault -->
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
@@ -50,7 +50,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- QuickShop -->
+        <!-- 🔥 QuickShop (local via workflow) -->
         <dependency>
             <groupId>quickshop</groupId>
             <artifactId>quickshop</artifactId>
@@ -62,11 +62,13 @@
 
     <!-- 🔨 BUILD -->
     <build>
+
+        <!-- 🎯 NOM FINAL DU JAR -->
         <finalName>MoodCraftBridge</finalName>
 
         <plugins>
 
-            <!-- Compiler -->
+            <!-- ⚙️ COMPILER -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -76,7 +78,7 @@
                 </configuration>
             </plugin>
 
-            <!-- SHADE (FIX CLEAN) -->
+            <!-- 🔥 SHADE (1 seul JAR propre) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -90,13 +92,14 @@
                         </goals>
 
                         <configuration>
-                            <!-- 🔥 remplace le jar normal -->
+
+                            <!-- remplace le jar classique -->
                             <shadedArtifactAttached>false</shadedArtifactAttached>
 
-                            <!-- évite conflits -->
+                            <!-- évite pom cassé -->
                             <createDependencyReducedPom>false</createDependencyReducedPom>
 
-                            <!-- nettoie META-INF -->
+                            <!-- nettoie signatures cassées -->
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
