@@ -37,17 +37,26 @@ public class ReputationManager {
         }
     }
 
+    // =========================
+    // 🔍 GET
+    // =========================
     public static int get(String uuid) {
         return cache.getOrDefault(uuid, 0);
     }
 
+    // =========================
+    // ⚙️ SET
+    // =========================
     public static void set(String uuid, int value) {
         value = Math.max(0, value);
         cache.put(uuid, value);
         config.set(uuid, value);
-        save(); // ✅ sauvegarde directe (simple et stable)
+        save();
     }
 
+    // =========================
+    // ➕ ADD
+    // =========================
     public static void add(String uuid, int value) {
         set(uuid, get(uuid) + value);
     }
@@ -56,6 +65,9 @@ public class ReputationManager {
         set(uuid, 0);
     }
 
+    // =========================
+    // ✨ AJOUT STYLÉ + HISTO
+    // =========================
     public static void addRepStyled(Player p, int value, String reason) {
 
         String id = p.getUniqueId().toString();
@@ -65,14 +77,32 @@ public class ReputationManager {
 
         set(id, now);
 
-        if (value > 0) {
-            p.sendMessage("§a+" + value + " réputation §8» §7" + reason);
-        } else {
-            p.sendMessage("§c" + value + " réputation §8» §7" + reason);
-        }
+        // 📜 HISTORIQUE
+        ReputationHistoryManager.add(p.getUniqueId(), value, reason);
+
+        // 🎨 MESSAGE STYLÉ
+        String color = value >= 0 ? "§a+" : "§c";
+        String arrow = value >= 0 ? "⬆" : "⬇";
+
+        p.sendMessage("§8§m-----------------------------");
+        p.sendMessage("§6✦ §fRéputation mise à jour");
+        p.sendMessage("§7Variation: " + color + value + " §7" + arrow);
+        p.sendMessage("§7Raison: §e" + reason);
+        p.sendMessage("§7Total: §e" + now);
+        p.sendMessage("§8§m-----------------------------");
+
+        p.playSound(
+                p.getLocation(),
+                value >= 0
+                        ? org.bukkit.Sound.ENTITY_PLAYER_LEVELUP
+                        : org.bukkit.Sound.ENTITY_VILLAGER_NO,
+                1, 1
+        );
     }
 
+    // =========================
     // 🏆 CLASSEMENT
+    // =========================
     public static LinkedHashMap<String, Integer> getTop(int limit) {
 
         return cache.entrySet().stream()
@@ -85,7 +115,9 @@ public class ReputationManager {
                 );
     }
 
+    // =========================
     // 🧠 RANG
+    // =========================
     public static String getRank(int rep) {
         if (rep >= 500) return "§6Elite";
         if (rep >= 200) return "§aConfirmé";
@@ -93,6 +125,9 @@ public class ReputationManager {
         return "§7Débutant";
     }
 
+    // =========================
+    // 💾 SAVE
+    // =========================
     public static void save() {
         try {
             config.save(file);
