@@ -15,8 +15,6 @@ public class TransferAmountHandler implements GUIHandler {
     @Override
     public void onClick(Player p, int slot) {
 
-        TransferBuilder data = TransferBuilder.get(p);
-
         // 🔙 RETOUR
         if (slot == 22) {
             p.closeInventory();
@@ -46,14 +44,17 @@ public class TransferAmountHandler implements GUIHandler {
 
         if (amount <= 0) return;
 
-        data.amount = amount;
+        // ✅ SET amount (FIX PRIVATE)
+        TransferBuilder.setAmount(p, amount);
 
-        if (data.action == null) {
+        TransferBuilder.Action action = TransferBuilder.getAction(p);
+
+        if (action == null) {
             p.sendMessage("§cErreur: action inconnue");
             return;
         }
 
-        switch (data.action) {
+        switch (action) {
 
             case DEPOSIT -> {
                 BankStorage.add(p.getUniqueId().toString(), amount);
