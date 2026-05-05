@@ -1,6 +1,6 @@
 package fr.moodcraft.bridge.command;
 
-import fr.moodcraft.bridge.bank.BankStorage;
+import fr.moodcraft.bridge.bank.IbanManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
@@ -22,14 +22,15 @@ public class IbanCommand implements CommandExecutor {
         // =========================
         if (args.length == 0) {
 
-            String iban = generateIban(p.getUniqueId());
+            String iban = IbanManager.get(p.getUniqueId());
 
-            p.sendMessage("§8━━━━━━━━━━━━━━━━━━");
-            p.sendMessage("§e🏦 Banque MoodCraft");
-            p.sendMessage("§7Titulaire: §e" + p.getName());
-            p.sendMessage("§7IBAN: §b" + iban);
-            p.sendMessage("§8━━━━━━━━━━━━━━━━━━");
+            if (iban == null) {
+                p.sendMessage("§cAucun IBAN défini.");
+                p.sendMessage("§7Utilise le menu banque pour en créer un.");
+                return true;
+            }
 
+            send(p, p.getName(), iban);
             return true;
         }
 
@@ -50,27 +51,25 @@ public class IbanCommand implements CommandExecutor {
                 return true;
             }
 
-            String iban = generateIban(target.getUniqueId());
+            String iban = IbanManager.get(target.getUniqueId());
 
-            p.sendMessage("§8━━━━━━━━━━━━━━━━━━");
-            p.sendMessage("§e🏦 Banque MoodCraft");
-            p.sendMessage("§7Titulaire: §e" + target.getName());
-            p.sendMessage("§7IBAN: §b" + iban);
-            p.sendMessage("§8━━━━━━━━━━━━━━━━━━");
+            if (iban == null) {
+                p.sendMessage("§cCe joueur n'a pas d'IBAN.");
+                return true;
+            }
 
+            send(p, target.getName(), iban);
             return true;
         }
 
         return true;
     }
 
-    // =========================
-    // 🏦 GÉNÉRATION IBAN
-    // =========================
-    private String generateIban(UUID uuid) {
-
-        String base = uuid.toString().replace("-", "").substring(0, 16);
-
-        return "MC" + base.toUpperCase();
+    private void send(Player p, String name, String iban) {
+        p.sendMessage("§8━━━━━━━━━━━━━━━━━━");
+        p.sendMessage("§e🏦 Banque MoodCraft");
+        p.sendMessage("§7Titulaire: §e" + name);
+        p.sendMessage("§7IBAN: §b" + iban);
+        p.sendMessage("§8━━━━━━━━━━━━━━━━━━");
     }
 }
