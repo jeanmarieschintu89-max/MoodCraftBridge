@@ -1,4 +1,4 @@
-package fr.moodcraft.bridge;
+package fr.moodcraft.bridge.manager;
 
 import com.ghostchu.quickshop.api.shop.Shop;
 import fr.moodcraft.market.MarketAPI;
