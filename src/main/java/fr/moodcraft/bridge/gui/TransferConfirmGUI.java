@@ -10,24 +10,28 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.Sound;
 
+import java.util.UUID;
+
 public class TransferConfirmGUI {
 
     public static void open(Player p) {
 
-        TransferBuilder data = TransferBuilder.get(p);
-
         Inventory inv = Bukkit.createInventory(null, 9, "§6Confirmer le virement");
+
+        // ✅ FIX: récupérer via getters
+        UUID targetUUID = TransferBuilder.getTarget(p);
+        double amountValue = TransferBuilder.getAmount(p);
 
         String targetName = "Inconnu";
 
-        if (data.target != null) {
-            var offline = Bukkit.getOfflinePlayer(data.target);
+        if (targetUUID != null) {
+            var offline = Bukkit.getOfflinePlayer(targetUUID);
             if (offline.getName() != null) {
                 targetName = offline.getName();
             }
         }
 
-        int amount = (int) data.amount;
+        int amount = (int) amountValue;
 
         // ❌ ANNULER
         SafeGUI.safeSet(inv, 3,
