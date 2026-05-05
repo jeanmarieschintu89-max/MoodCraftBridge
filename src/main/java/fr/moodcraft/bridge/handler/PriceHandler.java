@@ -2,8 +2,11 @@ package fr.moodcraft.bridge.handler;
 
 import fr.moodcraft.market.MarketAPI;
 import fr.moodcraft.bank.BankAPI;
-import org.bukkit.Material;
+import fr.moodcraft.bridge.manager.PriceUpdater;
 import fr.moodcraft.bridge.util.VaultHook;
+import fr.moodcraft.bridge.util.ActionLock;
+
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 public class PriceHandler implements GUIHandler {
@@ -37,7 +40,7 @@ public class PriceHandler implements GUIHandler {
 
     private void sell(Player p, String id, Material mat) {
 
-        // 🔒 anti spam
+        // 🔒 Anti spam
         if (ActionLock.isLocked(p.getUniqueId(), 500)) return;
 
         int amount = count(p, mat);
@@ -54,14 +57,41 @@ public class PriceHandler implements GUIHandler {
         double tax = gross * taxRate;
         double total = gross - tax;
 
-        // 💰 BANK API (propre)
-        BankAPI.add(p.getUniqueId().toString(), total);
+        // =========================
+        // 💰 PAIEMENT
+        // =========================
+        boolean paid = false;
 
-        // 📊 update marché
+        // priorité banque
+        BankAPI.add(p.getUniqueId().toString(), total);
+        paid = true;
+
+        // fallback Vault si besoin
+        if (!paid && VaultHook.getEconomy() != null) {
+            paid = VaultHook.add(p, total);
+        }
+
+        if (!paid) {
+            p.sendMessage("§c❌ Erreur paiement");
+            return;
+        }
+
+        // =========================
+        // 📊 UPDATE MARKET
+        // =========================
         MarketAPI.sell(id, amount);
 
+        // 🔥 SYNC QUICKSHOP DIRECT
+        PriceUpdater.updateItem(id);
+
+        // =========================
+        // 📦 REMOVE ITEMS
+        // =========================
         remove(p, mat, amount);
 
+        // =========================
+        // 💬 FEEDBACK
+        // =========================
         p.sendMessage("§a✔ Vente: §f" + amount + "x " + id +
                 "\n§7Brut: §f" + String.format("%.2f", gross) + "€" +
                 "\n§cTaxe (20%): §f-" + String.format("%.2f", tax) + "€" +
