@@ -2,6 +2,7 @@ package fr.moodcraft.bridge.listener;
 
 import fr.moodcraft.bank.BankAPI;
 import fr.moodcraft.bridge.*;
+import fr.moodcraft.bridge.util.VaultHook;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
