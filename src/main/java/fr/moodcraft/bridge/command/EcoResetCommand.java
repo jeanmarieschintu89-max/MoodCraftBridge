@@ -19,7 +19,7 @@ public class EcoResetCommand implements CommandExecutor {
         ShopIndex.rebuild();
 
         // 📊 Update tous les items
-        for (String item : MarketState.prices.keySet()) {
+        for (String item : MarketState.price.keySet()) {
             PriceUpdater.updateItem(item);
         }
 
