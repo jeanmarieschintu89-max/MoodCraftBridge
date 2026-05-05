@@ -101,7 +101,6 @@ public class Main extends JavaPlugin {
         // 🧠 RÉPUTATION (propre)
         registerCommand("reputation", new ReputationCommand());
         registerCommand("rep", new ReputationCommand());
-        registerCommand("toprep", new TopRepCommand()); // 🔥 à créer
 
         // =========================
         // 🔁 TASKS
