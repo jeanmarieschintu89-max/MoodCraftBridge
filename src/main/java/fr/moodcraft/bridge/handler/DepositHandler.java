@@ -1,6 +1,6 @@
 package fr.moodcraft.bridge.handler;
 
-import fr.moodcraft.bank.BankAPI;
+fr.moodcraft.bridge.bank.BankStorage
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Sound;
 import fr.moodcraft.bridge.util.VaultHook;
