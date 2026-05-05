@@ -1,6 +1,7 @@
 package fr.moodcraft.bridge.market;
 
 import fr.moodcraft.bridge.Main;
+import fr.moodcraft.bridge.manager.PriceUpdater;
 
 public final class MarketEngine {
 
@@ -8,7 +9,6 @@ public final class MarketEngine {
         return Math.max(1, MarketState.getPrice(item));
     }
 
-    // 🔁 alias propre (compatibilité avec ton code)
     public static void recordSell(String item, int amount) {
         applySell(item, amount);
     }
@@ -25,16 +25,10 @@ public final class MarketEngine {
         MarketState.sell.merge(item, (double) amount, Double::sum);
     }
 
-    // =========================
-    // 🔄 RELOAD CONFIG
-    // =========================
     public static void reload() {
         Main.getInstance().reloadConfig();
     }
 
-    // =========================
-    // ♻ RESET MARKET
-    // =========================
     public static void reset() {
 
         for (String item : MarketState.base.keySet()) {
@@ -45,12 +39,12 @@ public final class MarketEngine {
             MarketState.stock.put(item, 0.0);
             MarketState.buy.put(item, 0.0);
             MarketState.sell.put(item, 0.0);
+
+            // 🔥 synchro reset
+            PriceUpdater.updateItem(item, base);
         }
     }
 
-    // =========================
-    // ⏱ TICK
-    // =========================
     public static void tick() {
 
         var cfg = Main.getInstance().getConfig();
@@ -150,8 +144,10 @@ public final class MarketEngine {
 
             // 💹 FINAL
             price = round(price);
-
             MarketState.setPrice(item, price);
+
+            // 🔥 SYNCHRO QUICKSHOP
+            PriceUpdater.updateItem(item, price);
 
             // 🔁 RESET
             MarketState.buy.put(item, 0.0);
