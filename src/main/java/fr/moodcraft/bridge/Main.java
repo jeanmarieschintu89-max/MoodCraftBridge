@@ -1,10 +1,12 @@
 package fr.moodcraft.bridge;
 
+import fr.moodcraft.bridge.bank.BankStorage;
 import fr.moodcraft.bridge.command.*;
 import fr.moodcraft.bridge.gui.*;
 import fr.moodcraft.bridge.handler.*;
 import fr.moodcraft.bridge.listener.*;
 import fr.moodcraft.bridge.manager.*;
+import fr.moodcraft.bridge.market.*;
 import fr.moodcraft.bridge.util.*;
 
 import org.bukkit.Bukkit;
@@ -34,6 +36,9 @@ public class Main extends JavaPlugin {
         MarketStorage.init();
         TransactionLogger.init();
 
+        // 🔥 IMPORTANT (fix InputManager / GUIManager)
+        GUIManager.init(this);
+
         // =========================
         // 📊 CONFIG MARCHÉ
         // =========================
@@ -59,25 +64,20 @@ public class Main extends JavaPlugin {
         // 🧠 GUI HANDLERS
         // =========================
 
-        // MENU
         GUIManager.register("main_menu", new MainMenuHandler());
 
-        // BANQUE
         GUIManager.register("bank_main", new BankHandler());
         GUIManager.register("bank_deposit", new DepositHandler());
         GUIManager.register("bank_withdraw", new WithdrawHandler());
         GUIManager.register("iban_gui", new IbanHandler());
 
-        // VIREMENTS
         GUIManager.register("transfer_type", new TransferTypeHandler());
         GUIManager.register("transfer_target", new TargetPlayerHandler());
         GUIManager.register("transfer_amount", new TransferAmountHandler());
         GUIManager.register("transfer_confirm", new TransferConfirmHandler());
 
-        // MARKET
         GUIManager.register("minerais", new PriceHandler());
 
-        // AUTRES
         GUIManager.register("teleport", new TeleportHandler());
         GUIManager.register("profile_gui", new ProfileHandler());
 
