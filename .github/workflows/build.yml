@@ -1,4 +1,4 @@
-name: Build Plugin
+name: Build MoodCraftBridge
 
 on:
   push:
@@ -10,20 +10,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 📥 Récupération du repo
       - name: Checkout
         uses: actions/checkout@v4
 
+      # ☕ Java 21
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
+          distribution: temurin
           java-version: '21'
-          distribution: 'temurin'
 
+      # 📦 Télécharger QuickShop (version stable)
+      - name: Download QuickShop
+        run: |
+          curl -L -o QuickShop.jar https://github.com/QuickShop-Community/QuickShop-Reremake/releases/latest/download/QuickShop.jar
+
+      # 🔧 Installer QuickShop dans Maven local
+      - name: Install QuickShop to Maven
+        run: |
+          mvn install:install-file \
+            -Dfile=QuickShop.jar \
+            -DgroupId=quickshop \
+            -DartifactId=quickshop \
+            -Dversion=1.0 \
+            -Dpackaging=jar
+
+      # 🔨 Build plugin
       - name: Build with Maven
         run: mvn clean package
 
-      - name: Upload JAR
+      # 📤 Upload du JAR FINAL
+      - name: Upload plugin
         uses: actions/upload-artifact@v4
         with:
-          name: plugin
-          path: target/*-shaded.jar
+          name: MoodCraftBridge
+          path: target/MoodCraftBridge.jar
