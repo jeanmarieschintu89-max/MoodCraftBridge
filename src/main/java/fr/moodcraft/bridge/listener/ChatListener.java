@@ -17,10 +17,13 @@ public class ChatListener implements Listener {
         String player = p.getName();
         String message = e.getMessage();
 
-        // ✅ PAS de scheduler
-        String rep = ReputationManager.format(player);
-        if (rep == null) rep = "§7?";
+        // ✅ récup réputation
+        int rep = ReputationManager.get(p.getUniqueId().toString());
 
-        e.setFormat("§7[" + rep + "] §f" + player + " §8» §f" + message);
+        // ✅ récup rang
+        String rank = ReputationManager.getRank(rep);
+
+        // 🧠 affichage stylé
+        e.setFormat("§7[" + rank + "§7] §f" + player + " §8» §f" + message);
     }
 }
