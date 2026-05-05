@@ -7,7 +7,7 @@ import fr.moodcraft.bridge.manager.*;
 import fr.moodcraft.bridge.util.TransactionLogger;
 import fr.moodcraft.bridge.hook.JobsHook;
 
-// 🔥 si ton market est dans bridge.market
+// 📊 Market
 import fr.moodcraft.bridge.market.*;
 
 import org.bukkit.Bukkit;
@@ -33,11 +33,6 @@ public class Main extends JavaPlugin {
         // 🔥 CORE INIT
         // =========================
         GUIManager.init(this);
-
-        // =========================
-        // 🔌 HOOKS
-        // =========================
-        JobsHook.init(); // 💼 Jobs plugin
 
         // =========================
         // 💾 DATA INIT
@@ -68,7 +63,7 @@ public class Main extends JavaPlugin {
                 new InventoryGuardListener(),
                 new MineListener(),
                 new ChatInputListener(),
-                new PayListener() // 💰 important
+                new PayListener()
         );
 
         // =========================
@@ -76,7 +71,7 @@ public class Main extends JavaPlugin {
         // =========================
         GUIManager.register("minerais", new PriceHandler());
         GUIManager.register("bank_deposit", new DepositHandler());
-        GUIManager.register("bank_withdraw", new WithdrawHandler()); // 🔥 AJOUT
+        GUIManager.register("bank_withdraw", new WithdrawHandler());
         GUIManager.register("iban_gui", new IbanHandler());
 
         // =========================
@@ -88,8 +83,8 @@ public class Main extends JavaPlugin {
         registerCommand("iban", new IbanCommand());
         registerCommand("ecotest", new EcoTestCommand());
         registerCommand("prix", new PrixCommand());
-        registerCommand("menu", new MenuCommand()); // 🔥 AJOUT
-        registerCommand("trend", new GetTrendCommand()); // 🔥 AJOUT
+        registerCommand("menu", new MenuCommand());
+        registerCommand("trend", new GetTrendCommand());
         registerCommand("sync", new SyncCommand());
 
         // =========================
@@ -100,7 +95,6 @@ public class Main extends JavaPlugin {
         getLogger().info("📊 Market: ACTIF");
         getLogger().info("🏪 Shops indexés: OK");
         getLogger().info("💾 Transactions: OK");
-        getLogger().info("🔌 Hooks: Jobs OK");
         getLogger().info("🎮 GUI + Input + Commands OK");
         getLogger().info("=================================");
     }
@@ -108,7 +102,6 @@ public class Main extends JavaPlugin {
     @Override
     public void onDisable() {
 
-        // 💾 SAVE PROPRE
         MarketStorage.save();
         TransactionLogger.save();
 
