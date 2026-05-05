@@ -1,6 +1,6 @@
 package fr.moodcraft.bridge.gui;
 
-import fr.moodcraft.bridge.manager.GUIManager;
+import fr.moodcraft.bridge.handler.GUIManager;
 import fr.moodcraft.bridge.util.SafeGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
