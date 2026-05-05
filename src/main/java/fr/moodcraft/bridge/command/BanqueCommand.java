@@ -22,9 +22,6 @@ public class BanqueCommand implements CommandExecutor {
 
         if (!(sender instanceof Player p)) return true;
 
-        // =========================
-        // 🏦 MENU
-        // =========================
         if (args.length == 0) {
             BankGUI.open(p);
             return true;
@@ -34,19 +31,14 @@ public class BanqueCommand implements CommandExecutor {
 
         switch (sub) {
 
-            // =========================
-            // 💰 DEPOT
-            // =========================
             case "depot" -> {
-
                 if (args.length < 2) return usage(p, "/banque depot <montant>");
 
                 double amount = parseAmount(p, args[1]);
                 if (amount <= 0) return true;
 
-                if (VaultHook.getBalance(p) < amount) {
+                if (VaultHook.getBalance(p) < amount)
                     return error(p, "Pas assez d'argent");
-                }
 
                 VaultHook.remove(p, amount);
                 BankStorage.add(p.getUniqueId().toString(), amount);
@@ -55,11 +47,7 @@ public class BanqueCommand implements CommandExecutor {
                 success(p, "Dépôt", "+" + SafeGUI.money(amount));
             }
 
-            // =========================
-            // 💸 RETRAIT
-            // =========================
             case "retrait" -> {
-
                 if (args.length < 2) return usage(p, "/banque retrait <montant>");
 
                 double amount = parseAmount(p, args[1]);
@@ -67,9 +55,8 @@ public class BanqueCommand implements CommandExecutor {
 
                 String uuid = p.getUniqueId().toString();
 
-                if (BankStorage.get(uuid) < amount) {
+                if (BankStorage.get(uuid) < amount)
                     return error(p, "Fonds insuffisants");
-                }
 
                 BankStorage.remove(uuid, amount);
                 VaultHook.add(p, amount);
@@ -78,12 +65,10 @@ public class BanqueCommand implements CommandExecutor {
                 success(p, "Retrait", "-" + SafeGUI.money(amount));
             }
 
-            // =========================
-            // 💸 VIREMENT
-            // =========================
             case "virement" -> {
 
-                if (args.length < 3) return usage(p, "/banque virement <iban> <montant>");
+                if (args.length < 3)
+                    return usage(p, "/banque virement <iban> <montant>");
 
                 String iban = args[1].replace(" ", "").toUpperCase();
                 double amount = parseAmount(p, args[2]);
@@ -91,12 +76,14 @@ public class BanqueCommand implements CommandExecutor {
 
                 UUID targetUUID = IbanManager.getOwner(iban);
 
-                if (targetUUID == null) return error(p, "IBAN introuvable");
-                if (targetUUID.equals(p.getUniqueId())) return error(p, "Auto-virement interdit");
+                if (targetUUID == null)
+                    return error(p, "IBAN introuvable");
 
-                if (VaultHook.getBalance(p) < amount) {
+                if (targetUUID.equals(p.getUniqueId()))
+                    return error(p, "Auto-virement interdit");
+
+                if (VaultHook.getBalance(p) < amount)
                     return error(p, "Fonds insuffisants");
-                }
 
                 Player target = Bukkit.getPlayer(targetUUID);
 
@@ -105,9 +92,7 @@ public class BanqueCommand implements CommandExecutor {
                 if (target != null && target.isOnline()) {
                     VaultHook.add(target, amount);
                 } else {
-                    try {
-                        VaultHook.add(targetUUID, amount);
-                    } catch (Exception ignored) {}
+                    p.sendMessage("§7Le joueur est hors ligne (crédit différé).");
                 }
 
                 TransactionManager.transfer(p.getUniqueId(), targetUUID, amount);
@@ -129,16 +114,14 @@ public class BanqueCommand implements CommandExecutor {
                 }
             }
 
-            // =========================
-            // 📜 HISTORIQUE
-            // =========================
             case "historique" -> {
 
                 int page = 1;
                 String filter = null;
 
                 if (args.length >= 2) filter = translate(args[1]);
-                if (args.length >= 3 && isNumber(args[2])) page = Integer.parseInt(args[2]);
+                if (args.length >= 3 && isNumber(args[2]))
+                    page = Integer.parseInt(args[2]);
 
                 List<String> list = TransactionManager.getFiltered(p.getUniqueId(), filter, null);
                 List<String> pageData = TransactionManager.getPage(list, page, PAGE_SIZE);
@@ -155,45 +138,40 @@ public class BanqueCommand implements CommandExecutor {
                 p.sendMessage("§8§m-----------------------------");
             }
 
-            // =========================
-            // 💳 IBAN
-            // =========================
             case "iban" -> {
                 String iban = IbanManager.get(p.getUniqueId());
                 p.sendMessage("§6Ton IBAN: §e" + (iban == null ? "Non défini" : iban));
             }
 
-            // =========================
-            // 🛠 ADMIN
-            // =========================
             case "admin" -> {
 
-                if (!p.hasPermission("moodcraft.admin")) return error(p, "Permission refusée");
+                if (!p.hasPermission("moodcraft.admin"))
+                    return error(p, "Permission refusée");
 
-                if (args.length < 3) {
-                    p.sendMessage("§c/banque admin <action> <joueur>");
-                    return true;
-                }
+                if (args.length < 3)
+                    return usage(p, "/banque admin <action> <joueur>");
 
                 Player target = Bukkit.getPlayer(args[2]);
-                if (target == null) return error(p, "Joueur introuvable");
+                if (target == null)
+                    return error(p, "Joueur introuvable");
 
                 String uuid = target.getUniqueId().toString();
                 String action = args[1].toLowerCase();
 
                 switch (action) {
 
-                    case "solde" -> {
-                        p.sendMessage("§6Solde: §e" + BankStorage.get(uuid) + "€");
-                    }
+                    case "solde" ->
+                            p.sendMessage("§6Solde: §e" + BankStorage.get(uuid) + "€");
 
                     case "ajouter" -> {
+                        if (args.length < 4) return usage(p, "/banque admin ajouter <joueur> <montant>");
                         double amount = parseAmount(p, args[3]);
                         BankStorage.add(uuid, amount);
                         p.sendMessage("§aAjouté");
                     }
 
                     case "retirer" -> {
+                        if (args.length < 4) return usage(p, "/banque admin retirer <joueur> <montant>");
                         double amount = parseAmount(p, args[3]);
                         BankStorage.remove(uuid, amount);
                         p.sendMessage("§cRetiré");
@@ -204,17 +182,14 @@ public class BanqueCommand implements CommandExecutor {
                         p.sendMessage("§cReset effectué");
                     }
 
-                    case "iban" -> {
-                        p.sendMessage("§6IBAN: §e" + IbanManager.get(target.getUniqueId()));
-                    }
+                    case "iban" ->
+                            p.sendMessage("§6IBAN: §e" + IbanManager.get(target.getUniqueId()));
                 }
             }
 
-            // =========================
-            // 📜 LOGS
-            // =========================
             case "logs" -> {
-                if (!p.hasPermission("moodcraft.admin")) return error(p, "Permission refusée");
+                if (!p.hasPermission("moodcraft.admin"))
+                    return error(p, "Permission refusée");
 
                 TransactionManager.getGlobal()
                         .stream()
@@ -227,10 +202,6 @@ public class BanqueCommand implements CommandExecutor {
 
         return true;
     }
-
-    // =========================
-    // 🔧 UTILS
-    // =========================
 
     private double parseAmount(Player p, String s) {
         try {
