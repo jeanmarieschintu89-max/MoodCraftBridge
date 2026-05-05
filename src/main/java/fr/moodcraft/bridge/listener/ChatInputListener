@@ -1,8 +1,13 @@
 package fr.moodcraft.bridge.listener;
 
-import fr.moodcraft.bank.BankAPI;
-import fr.moodcraft.bridge.*;
+import fr.moodcraft.bridge.Main;
+import fr.moodcraft.bridge.bank.BankStorage;
+import fr.moodcraft.bridge.gui.BankGUI;
+import fr.moodcraft.bridge.gui.SafeGUI;
+import fr.moodcraft.bridge.manager.AmountInputManager;
+import fr.moodcraft.bridge.manager.InputManager;
 import fr.moodcraft.bridge.util.VaultHook;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -65,48 +70,28 @@ public class ChatInputListener implements Listener {
                         }
 
                         VaultHook.remove(p, amount);
-                        BankAPI.add(p.getUniqueId().toString(), amount);
+                        BankStorage.add(p.getUniqueId().toString(), amount);
 
                         success(p, "Dépôt", amount);
                     }
 
                     // =========================
-                    // 💸 RETRAIT / VIREMENT
+                    // 💸 RETRAIT
                     // =========================
                     case WITHDRAW -> {
 
                         String uuid = p.getUniqueId().toString();
-                        double bank = BankAPI.get(uuid);
+                        double bank = BankStorage.get(uuid);
 
                         if (bank < amount) {
                             error(p, "Fonds insuffisants");
                             return;
                         }
 
-                        // 💳 VIREMENT IBAN
-                        if (ibanCache.containsKey(p.getUniqueId())) {
+                        BankStorage.remove(uuid, amount);
+                        VaultHook.add(p, amount);
 
-                            String iban = ibanCache.remove(p.getUniqueId());
-                            String target = BankAPI.getUUIDByIban(iban);
-
-                            if (target == null) {
-                                error(p, "IBAN introuvable");
-                                return;
-                            }
-
-                            BankAPI.transfer(uuid, target, amount);
-
-                            p.sendMessage("§a✔ Virement envoyé");
-                            p.sendMessage("§7Montant: §e" + SafeGUI.money(amount));
-                            p.sendMessage("§7IBAN: §e" + iban);
-
-                        } else {
-
-                            BankAPI.remove(uuid, amount);
-                            VaultHook.add(p, amount);
-
-                            success(p, "Retrait", amount);
-                        }
+                        success(p, "Retrait", amount);
                     }
                 }
 
@@ -117,27 +102,16 @@ public class ChatInputListener implements Listener {
         }
 
         // =========================
-        // 💳 IBAN INPUT
+        // 💳 IBAN INPUT (TEMPORAIREMENT OFF)
         // =========================
         if (InputManager.has(p)) {
 
             e.setCancelled(true);
 
-            String msg = e.getMessage();
-
             Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
 
-                if (msg.length() < 6) {
-                    error(p, "IBAN invalide");
-                    return;
-                }
-
-                ibanCache.put(p.getUniqueId(), msg);
-
-                p.sendMessage("§a✔ IBAN enregistré: §e" + msg);
-                p.sendMessage("§eEntre le montant à envoyer");
-
-                AmountInputManager.wait(p, AmountInputManager.Type.WITHDRAW);
+                p.sendMessage("§c❌ Système IBAN en cours de reconstruction");
+                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             });
         }
     }
