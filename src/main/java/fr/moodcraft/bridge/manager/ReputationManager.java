@@ -18,7 +18,7 @@ public class ReputationManager {
 
     public static void init() {
 
-        file = new File(Main.get().getDataFolder(), "reputation.yml");
+        file = new File(Main.getInstance().getDataFolder(), "reputation.yml");
 
         if (!file.exists()) {
             try {
@@ -44,7 +44,9 @@ public class ReputationManager {
         value = Math.max(0, value);
         cache.put(uuid, value);
         config.set(uuid, value);
-        save();
+
+        // 🔥 optimisation: évite spam disque
+        BukkitRunnableSave.schedule();
     }
 
     public static void add(String uuid, int value) {
