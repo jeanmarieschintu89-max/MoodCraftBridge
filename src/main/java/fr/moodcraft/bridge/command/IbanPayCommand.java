@@ -1,6 +1,6 @@
 package fr.moodcraft.bridge.command;
 
-import fr.moodcraft.bank.BankAPI;
+fr.moodcraft.bridge.bank.BankStorage
 import fr.moodcraft.bridge.util.VaultHook;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
