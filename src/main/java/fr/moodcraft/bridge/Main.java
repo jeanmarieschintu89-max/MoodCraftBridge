@@ -5,8 +5,6 @@ import fr.moodcraft.bridge.gui.*;
 import fr.moodcraft.bridge.handler.*;
 import fr.moodcraft.bridge.listener.*;
 import fr.moodcraft.bridge.manager.*;
-import fr.moodcraft.bridge.market.*;
-import fr.moodcraft.bridge.bank.*;
 import fr.moodcraft.bridge.util.*;
 
 import org.bukkit.Bukkit;
@@ -27,7 +25,6 @@ public class Main extends JavaPlugin {
     public void onEnable() {
 
         instance = this;
-
         saveDefaultConfig();
 
         // =========================
@@ -62,22 +59,35 @@ public class Main extends JavaPlugin {
         // 🧠 GUI HANDLERS
         // =========================
 
-        // 📊 MARKET
-        GUIManager.register("minerais", new PriceHandler());
+        // MENU
+        GUIManager.register("main_menu", new MainMenuHandler());
 
-        // 💰 BANK
+        // BANQUE
+        GUIManager.register("bank_main", new BankHandler());
         GUIManager.register("bank_deposit", new DepositHandler());
         GUIManager.register("bank_withdraw", new WithdrawHandler());
         GUIManager.register("iban_gui", new IbanHandler());
 
-        // 🧭 AUTRES
-        GUIManager.register("teleport", new TeleportHandler());
-        GUIManager.register("transfer_confirm", new TransferConfirmHandler());
+        // VIREMENTS
         GUIManager.register("transfer_type", new TransferTypeHandler());
+        GUIManager.register("transfer_target", new TargetPlayerHandler());
+        GUIManager.register("transfer_amount", new TransferAmountHandler());
+        GUIManager.register("transfer_confirm", new TransferConfirmHandler());
+
+        // MARKET
+        GUIManager.register("minerais", new PriceHandler());
+
+        // AUTRES
+        GUIManager.register("teleport", new TeleportHandler());
+        GUIManager.register("profile_gui", new ProfileHandler());
 
         // =========================
         // 📜 COMMANDES
         // =========================
+        registerCommand("menu", new MenuCommand());
+        registerCommand("iban", new IbanCommand());
+        registerCommand("ibanpay", new IbanPayCommand());
+
         registerCommand("prix", new PrixCommand());
         registerCommand("sync", new SyncCommand());
         registerCommand("trend", new GetTrendCommand());
@@ -86,15 +96,16 @@ public class Main extends JavaPlugin {
         registerCommand("ecoreset", new EcoResetCommand());
         registerCommand("ecotest", new EcoTestCommand());
 
-        registerCommand("menu", new MenuCommand());
-
-        registerCommand("iban", new IbanCommand());
-        registerCommand("ibanpay", new IbanPayCommand());
-
         // =========================
         // 🔁 TASKS
         // =========================
         ShopIndex.rebuild();
+
+        Bukkit.getScheduler().runTaskTimer(this,
+                ShopIndex::rebuild,
+                20L * 60,
+                20L * 60
+        );
 
         Bukkit.getScheduler().runTaskTimer(this,
                 MarketEngine::tick,
@@ -109,7 +120,6 @@ public class Main extends JavaPlugin {
         getLogger().info("✅ MoodCraftBridge chargé");
         getLogger().info("🏦 Banque: OK");
         getLogger().info("📊 Marché: OK");
-        getLogger().info("💾 Données: OK");
         getLogger().info("🎮 GUI: OK");
         getLogger().info("=================================");
     }
@@ -119,8 +129,6 @@ public class Main extends JavaPlugin {
         BankStorage.save();
         MarketStorage.save();
         TransactionLogger.save();
-
-        getLogger().info("❌ Plugin désactivé");
     }
 
     // =========================
@@ -135,14 +143,9 @@ public class Main extends JavaPlugin {
     private void registerCommand(String name, org.bukkit.command.CommandExecutor executor) {
         if (getCommand(name) != null) {
             getCommand(name).setExecutor(executor);
-        } else {
-            getLogger().warning("❌ Commande non trouvée: " + name);
         }
     }
 
-    // =========================
-    // 📊 CONFIG LOAD
-    // =========================
     private void loadBase() {
         if (getConfig().getConfigurationSection("base") == null) return;
 
