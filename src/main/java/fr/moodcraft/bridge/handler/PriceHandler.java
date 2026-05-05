@@ -3,6 +3,7 @@ package fr.moodcraft.bridge.handler;
 import fr.moodcraft.market.MarketAPI;
 import fr.moodcraft.bank.BankAPI;
 import org.bukkit.Material;
+import fr.moodcraft.bridge.util.VaultHook;
 import org.bukkit.entity.Player;
 
 public class PriceHandler implements GUIHandler {
