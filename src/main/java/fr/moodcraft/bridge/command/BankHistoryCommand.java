@@ -19,10 +19,16 @@ public class BankHistoryCommand implements CommandExecutor {
         String search = null;
         int page = 1;
 
+        // =========================
+        // 🎛 FILTRE FR → EN
+        // =========================
         if (args.length >= 1) {
-            filter = args[0].toUpperCase();
+            filter = translateFilter(args[0]);
         }
 
+        // =========================
+        // 🔎 RECHERCHE / PAGE
+        // =========================
         if (args.length >= 2) {
             if (isNumber(args[1])) {
                 page = Integer.parseInt(args[1]);
@@ -57,6 +63,19 @@ public class BankHistoryCommand implements CommandExecutor {
         p.sendMessage("§8§m-----------------------------");
 
         return true;
+    }
+
+    // =========================
+    // 🔄 TRADUCTION FILTRES
+    // =========================
+    private String translateFilter(String input) {
+
+        return switch (input.toLowerCase()) {
+            case "depot" -> "DEPOSIT";
+            case "retrait" -> "WITHDRAW";
+            case "virement" -> "TRANSFER";
+            default -> input.toUpperCase();
+        };
     }
 
     private boolean isNumber(String s) {
