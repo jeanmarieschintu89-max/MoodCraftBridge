@@ -24,10 +24,19 @@
     <!-- 📦 REPOSITORIES -->
     <!-- ========================= -->
     <repositories>
+
+        <!-- Paper -->
         <repository>
             <id>papermc</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
+
+        <!-- 🔥 Vault -->
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+
     </repositories>
 
     <!-- ========================= -->
@@ -51,7 +60,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- 🔥 QUICKSHOP (LOCAL) -->
+        <!-- 🔥 QUICKSHOP (LOCAL INSTALL) -->
         <dependency>
             <groupId>quickshop</groupId>
             <artifactId>quickshop</artifactId>
@@ -65,9 +74,10 @@
     <!-- 🔨 BUILD -->
     <!-- ========================= -->
     <build>
+
         <plugins>
 
-            <!-- COMPILER JAVA 21 -->
+            <!-- ⚙️ COMPILER JAVA 21 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -77,7 +87,7 @@
                 </configuration>
             </plugin>
 
-            <!-- JAR -->
+            <!-- 📦 JAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -85,6 +95,7 @@
             </plugin>
 
         </plugins>
+
     </build>
 
 </project>
