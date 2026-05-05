@@ -1,5 +1,8 @@
 package fr.moodcraft.bridge.command;
 
+import fr.moodcraft.bridge.market.MarketEngine;
+import fr.moodcraft.bridge.market.MarketState;
+
 import org.bukkit.command.*;
 
 public class EcoTestCommand implements CommandExecutor {
@@ -23,21 +26,24 @@ public class EcoTestCommand implements CommandExecutor {
             return true;
         }
 
-        if (!MarketAPI.hasItem(item)) {
+        // ✔ vérifie si item existe
+        if (!MarketState.prices.containsKey(item)) {
             sender.sendMessage("§cItem inconnu");
             return true;
         }
 
+        double price = MarketEngine.getPrice(item);
+
         switch (type) {
 
             case "sell" -> {
-                MarketAPI.testSell(item, amount);
                 sender.sendMessage("§cTest SELL: " + item + " x" + amount);
+                sender.sendMessage("§7Prix actuel: §e" + String.format("%.2f", price) + "€");
             }
 
             case "buy" -> {
-                MarketAPI.testBuy(item, amount);
                 sender.sendMessage("§aTest BUY: " + item + " x" + amount);
+                sender.sendMessage("§7Prix actuel: §e" + String.format("%.2f", price) + "€");
             }
 
             default -> sender.sendMessage("§cType invalide (buy/sell)");
