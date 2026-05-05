@@ -1,7 +1,7 @@
 package fr.moodcraft.bridge.manager;
 
 import com.ghostchu.quickshop.api.shop.Shop;
-import fr.moodcraft.bridge.market.MarketAPI; ✅
+import fr.moodcraft.bridge.market.MarketAPI;
 
 import java.util.Set;
 
