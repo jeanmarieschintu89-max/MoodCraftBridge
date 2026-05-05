@@ -37,8 +37,10 @@ public class MineListener implements Listener {
         // 💎 Fortune
         if (tool != null && tool.containsEnchantment(Enchantment.FORTUNE)) {
 
-            int level = tool.getEnchantmentLevel(Enchantment.Enchantment.FORTUNE);
-            amount = 1 + (int)(Math.random() * level);
+            int level = tool.getEnchantmentLevel(Enchantment.FORTUNE);
+
+            // 🔥 petite amélioration RNG
+            amount = 1 + (int) (Math.random() * (level + 1));
         }
 
         // 📊 IMPACT MARCHÉ (VENTE)
