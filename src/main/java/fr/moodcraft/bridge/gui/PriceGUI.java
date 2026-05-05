@@ -14,7 +14,7 @@ public class PriceGUI {
 
     public static void open(Player p) {
 
-        Inventory inv = Bukkit.createInventory(null, 27, "§3Bourse Minerais");
+        Inventory inv = Bukkit.createInventory(null, 27, "§3📊 Bourse Minerais");
 
         try {
 
@@ -57,19 +57,25 @@ public class PriceGUI {
     private static void set(Inventory inv, int slot, String id, Material mat, String name) {
 
         double price = MarketEngine.getPrice(id);
-        String trend = MarketState.trend.getOrDefault(id, "§7➡ stable");
+
+        // 🔥 tendance (safe)
+        String trend = MarketState.trend.getOrDefault(id, "§7▬ Stable");
+
+        // 💰 format propre
+        String formattedPrice = String.format("%,.2f", price);
 
         SafeGUI.safeSet(inv, slot,
                 SafeGUI.item(mat, name,
 
                         "§8────────────",
-                        "§7Prix:",
-                        "§f" + String.format("%.2f", price) + "€",
+                        "§7Prix actuel:",
+                        "§6" + formattedPrice + "€",
                         "",
-                        "§7Tendance:",
+                        "§7Variation:",
                         trend,
                         "§8────────────",
                         "",
-                        "§aClique pour vendre"));
+                        "§aClique pour vendre"
+                ));
     }
 }
