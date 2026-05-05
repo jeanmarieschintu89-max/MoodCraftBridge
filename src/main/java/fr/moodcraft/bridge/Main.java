@@ -35,6 +35,7 @@ public class Main extends JavaPlugin {
         BankStorage.init();
         MarketStorage.init();
         TransactionLogger.init();
+        ReputationManager.init();
 
         // 🔥 IMPORTANT (fix InputManager / GUIManager)
         GUIManager.init(this);
