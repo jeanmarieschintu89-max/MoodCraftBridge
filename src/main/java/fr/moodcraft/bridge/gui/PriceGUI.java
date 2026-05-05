@@ -1,7 +1,9 @@
 package fr.moodcraft.bridge.gui;
 
-import fr.moodcraft.bridge.manager.GUIManager;     // ✅ FIX
-import fr.moodcraft.bridge.util.SafeGUI;          // ✅ FIX
+import fr.moodcraft.bridge.manager.GUIManager;
+import fr.moodcraft.bridge.util.SafeGUI;
+import fr.moodcraft.bridge.market.MarketEngine;
+import fr.moodcraft.bridge.market.MarketState;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -54,8 +56,8 @@ public class PriceGUI {
 
     private static void set(Inventory inv, int slot, String id, Material mat, String name) {
 
-        double price = MarketAPI.getPrice(id);
-        String trend = MarketAPI.getTrend(id);
+        double price = MarketEngine.getPrice(id);
+        String trend = MarketState.trend.getOrDefault(id, "§7➡ stable");
 
         SafeGUI.safeSet(inv, slot,
                 SafeGUI.item(mat, name,
