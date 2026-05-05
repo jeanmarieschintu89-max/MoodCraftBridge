@@ -10,12 +10,14 @@ public final class MarketState {
     public static final Map<String, Double> stock = new HashMap<>();
     public static final Map<String, Double> buy = new HashMap<>();
     public static final Map<String, Double> sell = new HashMap<>();
+
+    // 📊 tendance affichée
     public static final Map<String, String> trend = new HashMap<>();
 
-    // 🔥 mémoire des anciens prix
+    // 🧠 mémoire ancien prix
     public static final Map<String, Double> lastPrice = new HashMap<>();
 
-    // 🔥 CONFIG
+    // ⚙️ CONFIG
     public static final Map<String, Double> activity = new HashMap<>();
     public static final Map<String, Double> impact = new HashMap<>();
     public static final Map<String, Double> rarity = new HashMap<>();
@@ -23,10 +25,16 @@ public final class MarketState {
 
     private MarketState() {}
 
+    // =========================
+    // 💰 GET PRICE
+    // =========================
     public static double getPrice(String item) {
         return price.getOrDefault(item, base.getOrDefault(item, 0.0));
     }
 
+    // =========================
+    // 📊 SET PRICE + TREND
+    // =========================
     public static void setPrice(String item, double newPrice) {
 
         double oldPrice = price.getOrDefault(item, base.getOrDefault(item, newPrice));
@@ -38,21 +46,30 @@ public final class MarketState {
 
         String arrow;
 
-        if (change > 0.005) {
+        // 🔥 variation forte
+        if (change > 0.01) {
+            arrow = "§2⬆ Forte hausse";
+        } 
+        else if (change > 0.002) {
             arrow = "§a▲ Hausse";
-        } else if (change < -0.005) {
+        } 
+        else if (change < -0.01) {
+            arrow = "§4⬇ Forte baisse";
+        } 
+        else if (change < -0.002) {
             arrow = "§c▼ Baisse";
-        } else {
+        } 
+        else {
             arrow = "§7▬ Stable";
         }
 
-        // 🔥 update tendance
+        // 📊 update tendance
         trend.put(item, arrow);
 
-        // 🔥 sauvegarde ancien prix
+        // 🧠 sauvegarde ancien prix
         lastPrice.put(item, oldPrice);
 
-        // 🔥 nouveau prix
+        // 💰 nouveau prix
         price.put(item, newPrice);
     }
 }
