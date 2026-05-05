@@ -44,6 +44,7 @@ public class Main extends JavaPlugin {
         registerCommand("ibanpay", new IbanPayCommand());
         registerCommand("iban", new IbanCommand());
         registerCommand("ecotest", new EcoTestCommand());
+        registerCommand("prix", new PrixCommand());
 
         // =========================
         // 🚀 LOG
