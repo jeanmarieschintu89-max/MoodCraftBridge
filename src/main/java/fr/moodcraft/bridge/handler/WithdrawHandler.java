@@ -1,7 +1,6 @@
 package fr.moodcraft.bridge.handler;
 
 import fr.moodcraft.bridge.gui.BankGUI;
-import fr.moodcraft.bridge.handler.GUIHandler;
 import fr.moodcraft.bridge.gui.WithdrawGUI;
 import fr.moodcraft.bridge.manager.AmountInputManager;
 import fr.moodcraft.bridge.manager.InputManager;
@@ -37,7 +36,7 @@ public class WithdrawHandler implements GUIHandler {
                 p.playSound(p.getLocation(), Sound.UI_BUTTON_CLICK, 1f, 1f);
             }
 
-            case 22 -> new BankGUI().open(p);
+            case 22 -> BankGUI.open(p); // ✅ FIX
         }
     }
 
@@ -63,7 +62,7 @@ public class WithdrawHandler implements GUIHandler {
         p.sendMessage("§aRetrait de §f" + SafeGUI.money(amount) + " §aeffectué !");
         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
 
-        WithdrawGUI.open(p); // 👈 important (voir plus bas)
+        WithdrawGUI.open(p); // ✅ OK
     }
 
     // =========================
@@ -88,6 +87,6 @@ public class WithdrawHandler implements GUIHandler {
         p.sendMessage("§aTu as tout retiré : §f" + SafeGUI.money(bank));
         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
 
-        WithdrawGUI.openStatic(p);
+        WithdrawGUI.open(p); // ✅ FIX (plus de openStatic)
     }
 }
