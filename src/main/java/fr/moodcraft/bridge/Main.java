@@ -1,7 +1,6 @@
 package fr.moodcraft.bridge;
 
 import fr.moodcraft.bridge.bank.BankStorage;
-import fr.moodcraft.bridge.command.BanqueCommand;
 import fr.moodcraft.bridge.command.*;
 import fr.moodcraft.bridge.gui.*;
 import fr.moodcraft.bridge.handler.*;
