@@ -63,7 +63,7 @@ public class WithdrawHandler implements GUIHandler {
         p.sendMessage("§aRetrait de §f" + SafeGUI.money(amount) + " §aeffectué !");
         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
 
-        WithdrawGUI.openStatic(p); // 👈 important (voir plus bas)
+        WithdrawGUI.open(p); // 👈 important (voir plus bas)
     }
 
     // =========================
