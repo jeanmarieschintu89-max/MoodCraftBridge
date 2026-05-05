@@ -1,4 +1,4 @@
-package fr.moodcraft.bank;
+package fr.moodcraft.bridge.bank;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
