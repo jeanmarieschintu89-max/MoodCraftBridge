@@ -88,7 +88,7 @@ public class ReputationManager {
         p.sendMessage("§6✦ §fRéputation mise à jour");
         p.sendMessage("§7Variation: " + color + value + " §7" + arrow);
         p.sendMessage("§7Raison: §e" + reason);
-        p.sendMessage("§7Total: §e" + now);
+        p.sendMessage("§7Total: §e" + now + " §8(" + getRank(now) + "§8)");
         p.sendMessage("§8§m-----------------------------");
 
         p.playSound(
@@ -116,13 +116,25 @@ public class ReputationManager {
     }
 
     // =========================
-    // 🧠 RANG
+    // 🧠 RANG (MOODCRAFT STYLE)
     // =========================
     public static String getRank(int rep) {
-        if (rep >= 500) return "§6Elite";
-        if (rep >= 200) return "§aConfirmé";
-        if (rep >= 50) return "§eApprenti";
-        return "§7Débutant";
+
+        if (rep >= 200) return "§6Maître du Marché";
+        if (rep >= 120) return "§dÉlite Commerciale";
+        if (rep >= 80) return "§bInfluenceur Éco";
+        if (rep >= 50) return "§2Pilier du Marché";
+        if (rep >= 25) return "§aMarchand Actif";
+        if (rep >= 10) return "§fCommerçant";
+
+        return "§7Visiteur";
+    }
+
+    // =========================
+    // 🏷️ PREFIX (OPTION BONUS)
+    // =========================
+    public static String getPrefix(int rep) {
+        return "§8[" + getRank(rep) + "§8]";
     }
 
     // =========================
