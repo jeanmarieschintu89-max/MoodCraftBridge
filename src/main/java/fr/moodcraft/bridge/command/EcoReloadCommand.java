@@ -2,7 +2,7 @@ package fr.moodcraft.bridge.command;
 
 import fr.moodcraft.bridge.market.MarketEngine;
 import fr.moodcraft.bridge.market.MarketState;
-import fr.moodcraft.bridge.market.ShopIndex;
+import fr.moodcraft.bridge.manager.ShopIndex;
 import fr.moodcraft.bridge.manager.PriceUpdater;
 
 import org.bukkit.Bukkit;
