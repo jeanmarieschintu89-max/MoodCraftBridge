@@ -27,7 +27,7 @@ public class EcoTestCommand implements CommandExecutor {
         }
 
         // ✔ vérifie si item existe
-        if (!MarketState.prices.containsKey(item)) {
+        if (!MarketState.price.containsKey(item)) {
             sender.sendMessage("§cItem inconnu");
             return true;
         }
