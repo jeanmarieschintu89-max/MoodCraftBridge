@@ -2,6 +2,7 @@ package fr.moodcraft.bridge.listener;
 
 import fr.moodcraft.bridge.Main;
 import fr.moodcraft.bridge.bank.BankStorage;
+import fr.moodcraft.bridge.bank.IbanManager; // 🔥 IMPORT IMPORTANT
 import fr.moodcraft.bridge.gui.BankGUI;
 import fr.moodcraft.bridge.util.SafeGUI;
 import fr.moodcraft.bridge.manager.AmountInputManager;
@@ -14,13 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 public class ChatInputListener implements Listener {
-
-    private static final Map<UUID, String> ibanCache = new HashMap<>();
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(AsyncPlayerChatEvent e) {
@@ -57,9 +52,6 @@ public class ChatInputListener implements Listener {
 
                 switch (type) {
 
-                    // =========================
-                    // 💰 DEPOT
-                    // =========================
                     case DEPOSIT -> {
 
                         double cash = VaultHook.getBalance(p);
@@ -75,9 +67,6 @@ public class ChatInputListener implements Listener {
                         success(p, "Dépôt", amount);
                     }
 
-                    // =========================
-                    // 💸 RETRAIT
-                    // =========================
                     case WITHDRAW -> {
 
                         String uuid = p.getUniqueId().toString();
@@ -98,26 +87,44 @@ public class ChatInputListener implements Listener {
                 BankGUI.open(p);
             });
 
-            return; // 🔥 important
+            return;
         }
 
         // =========================
-        // 💳 IBAN INPUT (OFF PROPRE)
+        // 💳 IBAN INPUT (ACTIF 🔥)
         // =========================
         if (InputManager.has(p)) {
 
             e.setCancelled(true);
 
+            String input = e.getMessage().replace(" ", "").toUpperCase();
+
             Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
 
-                p.sendMessage("§c❌ Système IBAN en cours de reconstruction");
-                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+                // ❌ validation simple
+                if (!input.startsWith("FR") || input.length() < 10) {
+                    error(p, "IBAN invalide");
+                    InputManager.remove(p);
+                    return;
+                }
 
-                // 🔥 FIX CRITIQUE : on sort du mode input
+                // 🔒 vérification unicité + save
+                boolean ok = IbanManager.set(p.getUniqueId(), input);
+
+                if (!ok) {
+                    error(p, "Cet IBAN est déjà utilisé !");
+                    InputManager.remove(p);
+                    return;
+                }
+
+                p.sendMessage("§a✔ IBAN enregistré: §e" + input);
+                p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
+
+                // 🔥 sortie mode input
                 InputManager.remove(p);
             });
 
-            return; // 🔥 empêche toute boucle
+            return;
         }
     }
 
