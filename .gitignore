@@ -8,18 +8,8 @@ target/
 # =========================
 *.jar
 
-# ✅ EXCEPTION (IMPORTANT)
-!libs/QuickShop-Hikari.jar
+# 🔥 AUTORISER LE DOSSIER LIBS
+!libs/
+!libs/*.jar
 
-# =========================
-# 💻 IDE
-# =========================
-.idea/
-.vscode/
-*.iml
-
-# =========================
-# 🖥️ OS
-# =========================
-.DS_Store
-Thumbs.db
+# 🔥 EXCEPTION QUICKSHOP
