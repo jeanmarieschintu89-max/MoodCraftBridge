@@ -2,7 +2,7 @@ package fr.moodcraft.bridge.handler;
 
 import fr.moodcraft.bridge.gui.*;
 import fr.moodcraft.bridge.GUIHandler; ✅
-import fr.moodcraft.bridge.TransferBuilder;
+import fr.moodcraft.bridge.manager.TransferBuilder;
 
 import org.bukkit.entity.Player;
 
