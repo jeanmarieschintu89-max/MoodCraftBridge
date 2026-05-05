@@ -87,8 +87,6 @@ public class Main extends JavaPlugin {
 
         // 🏦 BANQUE (CENTRAL)
         registerCommand("banque", new BanqueCommand());
-        registerCommand("historique", new BankHistoryCommand());
-        registerCommand("logsbanque", new CommandeLogsAdmin());
 
         // 📊 MARCHÉ
         registerCommand("prix", new PrixCommand());
