@@ -2,17 +2,19 @@ name: 🔨 Build Plugin
 
 on:
   push:
-  pull_request:
+    branches: [ "main" ]
 
-  # 🔥 BOUTON MANUEL
+  # 🔥 bouton manuel
   workflow_dispatch:
 
 jobs:
   build:
+    # 🚫 évite les boucles GitHub
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
 
     steps:
-      # 📥 Récupère le code
+      # 📥 Clone du repo
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -23,7 +25,7 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      # ⚡ Cache Maven (build + rapide)
+      # ⚡ Cache Maven
       - name: Cache Maven
         uses: actions/cache@v4
         with:
@@ -31,7 +33,7 @@ jobs:
           key: maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: maven-
 
-      # 🔥 INSTALL QUICKSHOP (OBLIGATOIRE)
+      # 🔧 Install QuickShop (local dependency)
       - name: Install QuickShop locally
         run: |
           mvn install:install-file \
@@ -41,11 +43,11 @@ jobs:
           -Dversion=1.0 \
           -Dpackaging=jar
 
-      # 🔨 BUILD
+      # 🔨 Build plugin
       - name: Build with Maven
         run: mvn clean package
 
-      # 📦 Upload du plugin
+      # 📦 Upload .jar
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
