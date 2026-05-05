@@ -4,9 +4,10 @@ main: fr.moodcraft.bridge.Main
 api-version: 1.20
 
 depend: [Vault]
-softdepend: [QuickShop]
+softdepend: [QuickShop, Jobs]
 
 commands:
+
   ecoreload:
     description: Reload économie
     permission: moodcraft.admin
@@ -17,6 +18,10 @@ commands:
 
   ecotest:
     description: Test du marché
+    permission: moodcraft.admin
+
+  sync:
+    description: Synchronise les prix des shops
     permission: moodcraft.admin
 
   iban:
@@ -30,3 +35,10 @@ commands:
   prix:
     description: Ouvre la bourse
     aliases: [bourse]
+
+  menu:
+    description: Ouvre le menu principal
+
+  trend:
+    description: Voir la tendance du marché
+    usage: /trend <item>
