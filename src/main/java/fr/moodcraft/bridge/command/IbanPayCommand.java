@@ -1,6 +1,7 @@
 package fr.moodcraft.bridge.command;
 
 import fr.moodcraft.bank.BankAPI;
+import fr.moodcraft.bridge.util.VaultHook;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
