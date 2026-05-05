@@ -1,6 +1,8 @@
 package fr.moodcraft.bridge;
 
 import fr.moodcraft.bridge.handler.GUIHandler;
+import fr.moodcraft.bridge.gui.MainMenuGUI; // ✅ fallback propre
+
 import org.bukkit.entity.Player;
 
 public class ProfileHandler implements GUIHandler {
@@ -10,7 +12,7 @@ public class ProfileHandler implements GUIHandler {
 
         // 🔙 retour classement
         if (slot == 26) {
-            TopRepGUI.open(p);
+            MainMenuGUI.open(p); // ✅ remplace TopRepGUI
         }
     }
 }
