@@ -16,27 +16,9 @@ commands:
     usage: /menu
 
   banque:
-    description: Ouvrir la banque
+    description: Systeme bancaire complet
     usage: /banque
-
-  iban:
-    description: Voir son IBAN
-    usage: /iban
-
-  virement:
-    description: Effectuer un virement bancaire
-    usage: /virement <iban> <montant>
-    aliases: [ibanpay, pay]
-
-  historique:
-    description: Voir son historique bancaire
-    usage: /historique [depot|retrait|virement] [joueur/page]
-    aliases: [bankhistory, history]
-
-  logsbanque:
-    description: Voir les logs bancaires (admin)
-    usage: /logsbanque
-    permission: moodcraft.admin
+    aliases: [bank, b]
 
   prix:
     description: Voir les prix du marché
