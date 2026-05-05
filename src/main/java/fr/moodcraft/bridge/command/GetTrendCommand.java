@@ -19,7 +19,7 @@ public class GetTrendCommand implements CommandExecutor {
         String item = args[0].toLowerCase();
 
         // 🔒 sécurité
-        if (!TrendManager.exists(item)) {
+        if (!MarketState.base.containsKey(item)) {
             sender.sendMessage("§cItem inconnu.");
             return true;
         }
