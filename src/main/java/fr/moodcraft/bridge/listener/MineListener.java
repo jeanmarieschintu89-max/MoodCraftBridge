@@ -35,9 +35,9 @@ public class MineListener implements Listener {
         int amount = 1;
 
         // 💎 Fortune
-        if (tool != null && tool.containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {
+        if (tool != null && tool.containsEnchantment(Enchantment.FORTUNE)) {
 
-            int level = tool.getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
+            int level = tool.getEnchantmentLevel(Enchantment.Enchantment.FORTUNE);
             amount = 1 + (int)(Math.random() * level);
         }
 
