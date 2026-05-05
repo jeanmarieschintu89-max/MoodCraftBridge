@@ -7,7 +7,7 @@ import fr.moodcraft.bridge.manager.AmountInputManager;
 import fr.moodcraft.bridge.manager.InputManager;
 import fr.moodcraft.bridge.util.ActionLock;
 import fr.moodcraft.bridge.util.SafeGUI;
-import fr.moodcraft.bridge.hook.VaultHook;
+import fr.moodcraft.bridge.util.VaultHook;
 
 import net.milkbowl.vault.economy.Economy;
 
