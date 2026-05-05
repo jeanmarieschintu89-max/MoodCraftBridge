@@ -1,5 +1,6 @@
 package fr.moodcraft.bridge;
 
+import fr.moodcraft.bridge.handler.GUIHandler;
 import org.bukkit.entity.Player;
 
 public class ProfileHandler implements GUIHandler {
