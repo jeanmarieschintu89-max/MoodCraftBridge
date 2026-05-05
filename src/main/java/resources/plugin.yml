@@ -3,15 +3,30 @@ version: 1.0
 main: fr.moodcraft.bridge.Main
 api-version: 1.20
 
+depend: [Vault]
+softdepend: [QuickShop]
+
 commands:
   ecoreload:
     description: Reload économie
+    permission: moodcraft.admin
+
   ecoreset:
     description: Reset économie
+    permission: moodcraft.admin
+
+  ecotest:
+    description: Test du marché
+    permission: moodcraft.admin
+
   iban:
     description: Voir son IBAN
     usage: /iban [joueur]
-  ecotest:
-    description: Test du marché
+
+  ibanpay:
+    description: Envoyer un virement IBAN
+    usage: /ibanpay <iban> <montant>
+
   prix:
     description: Ouvre la bourse
+    aliases: [bourse]
