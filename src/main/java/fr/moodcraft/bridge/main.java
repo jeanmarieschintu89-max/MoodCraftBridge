@@ -33,6 +33,7 @@ public class Main extends JavaPlugin {
         registerEvents(
                 new GlobalGUIListener(),
                 new InventoryCloseListener(),
+                new InventoryGuardListener(),
                 new ChatInputListener()
         );
 
