@@ -96,6 +96,7 @@ public class Main extends JavaPlugin {
         registerCommand("ecoreload", new EcoReloadCommand());
         registerCommand("ecoreset", new EcoResetCommand());
         registerCommand("ecotest", new EcoTestCommand());
+        registerCommand("reputation", new ReputationCommand());
 
         // =========================
         // 🔁 TASKS
