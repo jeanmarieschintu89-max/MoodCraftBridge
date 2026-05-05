@@ -34,6 +34,7 @@ public class Main extends JavaPlugin {
         // =========================
         GUIManager.register("minerais", new PriceHandler());
         GUIManager.register("bank_deposit", new DepositHandler());
+        GUIManager.register("iban_gui", new IbanHandler());
 
         // =========================
         // 📜 COMMANDES
