@@ -8,3 +8,6 @@ commands:
     description: Reload économie
   ecoreset:
     description: Reset économie
+  iban:
+    description: Voir son IBAN
+    usage: /iban [joueur]
