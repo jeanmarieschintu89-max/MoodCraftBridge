@@ -1,10 +1,13 @@
 package fr.moodcraft.bridge.handler;
 
-import fr.moodcraft.market.MarketAPI;
-import fr.moodcraft.bank.BankAPI;
+import fr.moodcraft.bridge.market.MarketAPI;
+import fr.moodcraft.bridge.bank.BankStorage;
 import fr.moodcraft.bridge.manager.PriceUpdater;
 import fr.moodcraft.bridge.util.VaultHook;
 import fr.moodcraft.bridge.util.ActionLock;
+
+import fr.moodcraft.bridge.handler.GUIHandler;
+import fr.moodcraft.bridge.gui.MainMenuGUI;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
