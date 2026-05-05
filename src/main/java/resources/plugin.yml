@@ -11,3 +11,5 @@ commands:
   iban:
     description: Voir son IBAN
     usage: /iban [joueur]
+  ecotest:
+    description: Test du marché
