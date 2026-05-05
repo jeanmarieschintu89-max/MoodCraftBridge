@@ -1,6 +1,6 @@
 package fr.moodcraft.bridge.gui;
 
-import fr.moodcraft.bridge.BankStorage;
+import fr.moodcraft.bridge.bank.BankStorage; // ✅ FIX
 import fr.moodcraft.bridge.util.SafeGUI;
 import fr.moodcraft.bridge.util.VaultHook;
 import fr.moodcraft.bridge.manager.GUIManager;
