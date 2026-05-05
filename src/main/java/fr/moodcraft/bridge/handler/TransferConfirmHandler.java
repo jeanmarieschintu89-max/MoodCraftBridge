@@ -129,7 +129,7 @@ public class TransferConfirmHandler implements GUIHandler {
                     target.playSound(target.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1.2f);
 
                     target.getWorld().spawnParticle(
-                            Particle.VILLAGER_HAPPY,
+                            Particle.HAPPY_VILLAGER,
                             target.getLocation().add(0, 1, 0),
                             25
                     );
