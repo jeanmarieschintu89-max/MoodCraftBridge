@@ -10,19 +10,39 @@
     <version>1.0</version>
     <packaging>jar</packaging>
 
+    <name>MoodCraftBridge</name>
+
+    <!-- ========================= -->
+    <!-- ⚙️ JAVA -->
+    <!-- ========================= -->
     <properties>
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <!-- ========================= -->
-    <!-- 📦 REPOS -->
+    <!-- 📦 REPOSITORIES -->
     <!-- ========================= -->
     <repositories>
+
+        <!-- Paper -->
         <repository>
             <id>papermc</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
+
+        <!-- Spigot (Vault ici) -->
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+
+        <!-- JitPack (fallback si besoin) -->
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+
     </repositories>
 
     <!-- ========================= -->
@@ -30,7 +50,7 @@
     <!-- ========================= -->
     <dependencies>
 
-        <!-- PAPER -->
+        <!-- 🟢 PAPER -->
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
@@ -38,19 +58,20 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- VAULT -->
+        <!-- 🟡 VAULT (CORRIGÉ) -->
         <dependency>
-            <groupId>com.github.MilkBowl</groupId>
+            <groupId>net.milkbowl.vault</groupId>
             <artifactId>VaultAPI</artifactId>
             <version>1.7</version>
             <scope>provided</scope>
         </dependency>
 
-        <!-- QUICKSHOP (INCLUS) -->
+        <!-- 🔥 QUICKSHOP (LOCAL) -->
         <dependency>
             <groupId>quickshop</groupId>
             <artifactId>quickshop</artifactId>
             <version>1.0</version>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>
@@ -62,7 +83,7 @@
 
         <plugins>
 
-            <!-- COMPILER -->
+            <!-- ⚙️ COMPILER -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -72,7 +93,7 @@
                 </configuration>
             </plugin>
 
-            <!-- 🔥 SHADE -->
+            <!-- 📦 SHADE (OPTIONNEL mais propre) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -84,30 +105,6 @@
                         <goals>
                             <goal>shade</goal>
                         </goals>
-
-                        <configuration>
-
-                            <!-- ⚡ évite conflits -->
-                            <relocations>
-                                <relocation>
-                                    <pattern>org.maxgamer.quickshop</pattern>
-                                    <shadedPattern>fr.moodcraft.shaded.quickshop</shadedPattern>
-                                </relocation>
-                            </relocations>
-
-                            <!-- ⚡ nettoie META-INF -->
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-
-                        </configuration>
                     </execution>
                 </executions>
 
