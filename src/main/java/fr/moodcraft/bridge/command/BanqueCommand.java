@@ -2,6 +2,7 @@ package fr.moodcraft.bridge.command;
 
 import fr.moodcraft.bridge.bank.*;
 import fr.moodcraft.bridge.gui.BankGUI;
+import fr.moodcraft.bridge.manager.ReputationManager;
 import fr.moodcraft.bridge.util.SafeGUI;
 import fr.moodcraft.bridge.util.VaultHook;
 
@@ -87,6 +88,17 @@ public class BanqueCommand implements CommandExecutor {
 
                 Player target = Bukkit.getPlayer(targetUUID);
 
+                // 🔥 infos réputation
+                String targetName = Bukkit.getOfflinePlayer(targetUUID).getName();
+                if (targetName == null) targetName = "Inconnu";
+
+                int targetRep = ReputationManager.get(targetUUID.toString());
+                String targetRank = ReputationManager.getRank(targetRep);
+
+                int senderRep = ReputationManager.get(p.getUniqueId().toString());
+                String senderRank = ReputationManager.getRank(senderRep);
+
+                // 💸 transaction
                 VaultHook.remove(p, amount);
 
                 if (target != null && target.isOnline()) {
@@ -97,18 +109,20 @@ public class BanqueCommand implements CommandExecutor {
 
                 TransactionManager.transfer(p.getUniqueId(), targetUUID, amount);
 
+                // ✨ ENVOYEUR
                 p.sendMessage("§8§m-----------------------------");
                 p.sendMessage("§6✦ §fVirement effectué");
-                p.sendMessage("§7Vers IBAN: §e" + iban);
+                p.sendMessage("§7Vers: §e" + targetName + " §8(" + targetRank + "§8)");
                 p.sendMessage("§7Montant: §c-" + SafeGUI.money(amount) + "€");
                 p.sendMessage("§8§m-----------------------------");
 
                 p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1.2f);
 
+                // ✨ RECEVEUR
                 if (target != null && target.isOnline()) {
                     target.sendMessage("§8§m-----------------------------");
                     target.sendMessage("§a✦ §fVirement reçu");
-                    target.sendMessage("§7De: §e" + p.getName());
+                    target.sendMessage("§7De: §e" + p.getName() + " §8(" + senderRank + "§8)");
                     target.sendMessage("§7Montant: §a+" + SafeGUI.money(amount) + "€");
                     target.sendMessage("§8§m-----------------------------");
                 }
