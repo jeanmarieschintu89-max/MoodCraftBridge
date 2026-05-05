@@ -2,6 +2,7 @@ package fr.moodcraft.bridge.hook;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -11,27 +12,30 @@ public class JobsHook {
 
     private static boolean enabled = false;
 
-    private static Method getPlayerManager;
     private static Method getJobsPlayer;
     private static Method getJobProgression;
     private static Method getJob;
     private static Method getName;
     private static Method getLevel;
 
+    private static Object playerManager; // 🔥 cache
+
     // =========================
-    // 🔧 INIT (appel au démarrage)
+    // 🔧 INIT
     // =========================
     public static void init() {
 
-        if (Bukkit.getPluginManager().getPlugin("Jobs") == null) return;
+        Plugin jobs = Bukkit.getPluginManager().getPlugin("Jobs");
+
+        if (jobs == null || !jobs.isEnabled()) return;
 
         try {
             Class<?> jobsClass = Class.forName("com.gamingmesh.jobs.Jobs");
 
-            getPlayerManager = jobsClass.getMethod("getPlayerManager");
-            Object manager = getPlayerManager.invoke(null);
+            Method getPlayerManager = jobsClass.getMethod("getPlayerManager");
+            playerManager = getPlayerManager.invoke(null);
 
-            getJobsPlayer = manager.getClass().getMethod("getJobsPlayer", Player.class);
+            getJobsPlayer = playerManager.getClass().getMethod("getJobsPlayer", Player.class);
 
             Class<?> jobsPlayerClass = Class.forName("com.gamingmesh.jobs.container.JobsPlayer");
             getJobProgression = jobsPlayerClass.getMethod("getJobProgression");
@@ -48,7 +52,7 @@ public class JobsHook {
             Bukkit.getLogger().info("[JobsHook] Hook activé");
 
         } catch (Exception e) {
-            Bukkit.getLogger().warning("[JobsHook] Impossible de hook Jobs");
+            Bukkit.getLogger().warning("[JobsHook] Hook échoué: " + e.getMessage());
         }
     }
 
@@ -59,25 +63,24 @@ public class JobsHook {
 
         List<String> lore = new ArrayList<>();
 
-        if (!enabled) {
-            lore.add("§7Aucun");
+        if (!enabled || playerManager == null) {
+            lore.add("§7Aucun métier");
             return lore;
         }
 
         try {
 
-            Object manager = getPlayerManager.invoke(null);
-            Object jobsPlayer = getJobsPlayer.invoke(manager, p);
+            Object jobsPlayer = getJobsPlayer.invoke(playerManager, p);
 
             if (jobsPlayer == null) {
-                lore.add("§7Aucun");
+                lore.add("§7Aucun métier");
                 return lore;
             }
 
             List<?> jobs = (List<?>) getJobProgression.invoke(jobsPlayer);
 
-            if (jobs.isEmpty()) {
-                lore.add("§7Aucun");
+            if (jobs == null || jobs.isEmpty()) {
+                lore.add("§7Aucun métier");
                 return lore;
             }
 
@@ -91,6 +94,9 @@ public class JobsHook {
                 }
 
                 Object job = getJob.invoke(prog);
+
+                if (job == null) continue;
+
                 String name = (String) getName.invoke(job);
                 int level = (int) getLevel.invoke(prog);
 
@@ -100,7 +106,7 @@ public class JobsHook {
 
         } catch (Exception e) {
             lore.clear();
-            lore.add("§7Erreur");
+            lore.add("§7Erreur Jobs");
         }
 
         return lore;
