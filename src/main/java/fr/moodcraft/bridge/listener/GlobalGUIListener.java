@@ -3,6 +3,7 @@ package fr.moodcraft.bridge.listener;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.inventory.*;
+import fr.moodcraft.bridge.manager.GUIManager;
 
 public class GlobalGUIListener implements Listener {
 
