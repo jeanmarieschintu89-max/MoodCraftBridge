@@ -1,5 +1,6 @@
 package fr.moodcraft.bridge.command;
 
+import fr.moodcraft.bridge.bank.BankStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
