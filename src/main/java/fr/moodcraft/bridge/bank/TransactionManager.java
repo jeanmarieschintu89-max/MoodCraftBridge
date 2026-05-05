@@ -20,7 +20,15 @@ public class TransactionManager {
     private static FileConfiguration config;
 
     private static final Map<UUID, List<String>> history = new HashMap<>();
+    private static final List<String> globalLogs = new ArrayList<>();
+
     private static final int MAX = 50;
+
+    // 🚨 FRAUDE
+    private static final Map<UUID, List<Long>> recentTransfers = new HashMap<>();
+    private static final double ALERT_AMOUNT = 10000;
+    private static final int SPAM_LIMIT = 5;
+    private static final long SPAM_WINDOW = 60000;
 
     public static void init() {
 
@@ -38,8 +46,15 @@ public class TransactionManager {
         config = YamlConfiguration.loadConfiguration(file);
 
         for (String key : config.getKeys(false)) {
+
+            if (key.equals("global")) continue;
+
             history.put(UUID.fromString(key),
                     new ArrayList<>(config.getStringList(key)));
+        }
+
+        if (config.contains("global")) {
+            globalLogs.addAll(config.getStringList("global"));
         }
 
         log("§aChargé (" + history.size() + " joueurs)");
@@ -70,6 +85,47 @@ public class TransactionManager {
         config.set(uuid.toString(), list);
     }
 
+    private static void pushGlobal(String line) {
+        globalLogs.add(0, line);
+
+        if (globalLogs.size() > 200) {
+            globalLogs.remove(globalLogs.size() - 1);
+        }
+
+        config.set("global", globalLogs);
+    }
+
+    // =========================
+    // 🚨 FRAUDE
+    // =========================
+    private static void checkFraude(UUID uuid, double amount) {
+
+        long now = System.currentTimeMillis();
+
+        recentTransfers.putIfAbsent(uuid, new ArrayList<>());
+        List<Long> list = recentTransfers.get(uuid);
+
+        list.add(now);
+        list.removeIf(t -> now - t > SPAM_WINDOW);
+
+        if (amount >= ALERT_AMOUNT) {
+            alert("Gros virement: " + amount + "€ (" + uuid + ")");
+        }
+
+        if (list.size() >= SPAM_LIMIT) {
+            alert("Spam virement: " + uuid + " (" + list.size() + "/min)");
+        }
+    }
+
+    private static void alert(String msg) {
+
+        Bukkit.getConsoleSender().sendMessage("§4[ALERTE] " + msg);
+
+        Bukkit.getOnlinePlayers().stream()
+                .filter(p -> p.hasPermission("moodcraft.admin"))
+                .forEach(p -> p.sendMessage("§4⚠ " + msg));
+    }
+
     // =========================
     // 💸 TRANSFER
     // =========================
@@ -86,20 +142,37 @@ public class TransactionManager {
         push(from, sender);
         push(to, receiver);
 
-        log("§fTRANSFER " + from + " -> " + to + " : " + amount + "€");
+        pushGlobal("§eVIREMENT §7" +
+                Bukkit.getOfflinePlayer(from).getName() + " → " +
+                Bukkit.getOfflinePlayer(to).getName() +
+                " §f" + amount + "€");
+
+        checkFraude(from, amount);
+
+        log("TRANSFER " + from + " -> " + to + " : " + amount + "€");
 
         save();
     }
 
     public static void deposit(UUID uuid, double amount) {
+
         push(uuid, "§a+" + amount + "€ §8• Dépôt §8(" + now() + ") §8[DEPOSIT]");
-        log("§aDEPOSIT " + uuid + " : +" + amount);
+
+        pushGlobal("§aDEPOT §7" +
+                Bukkit.getOfflinePlayer(uuid).getName() +
+                " +" + amount + "€");
+
         save();
     }
 
     public static void withdraw(UUID uuid, double amount) {
+
         push(uuid, "§c-" + amount + "€ §8• Retrait §8(" + now() + ") §8[WITHDRAW]");
-        log("§cWITHDRAW " + uuid + " : -" + amount);
+
+        pushGlobal("§cRETRAIT §7" +
+                Bukkit.getOfflinePlayer(uuid).getName() +
+                " -" + amount + "€");
+
         save();
     }
 
@@ -127,6 +200,13 @@ public class TransactionManager {
         if (from >= list.size()) return new ArrayList<>();
 
         return list.subList(from, to);
+    }
+
+    // =========================
+    // 📜 LOGS ADMIN
+    // =========================
+    public static List<String> getGlobal() {
+        return globalLogs;
     }
 
     private static void log(String msg) {
