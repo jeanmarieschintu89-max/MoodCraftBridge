@@ -1,6 +1,7 @@
 package fr.moodcraft.bridge.command;
 
 import fr.moodcraft.bridge.bank.IbanManager;
+import fr.moodcraft.bridge.bank.TransactionManager; // 🔥 ajout
 import fr.moodcraft.bridge.util.VaultHook;
 import fr.moodcraft.bridge.util.SafeGUI;
 
@@ -55,22 +56,32 @@ public class IbanPayCommand implements CommandExecutor {
 
         // 💰 vérif argent
         double balance = VaultHook.getBalance(p);
-
         if (balance < amount) {
             p.sendMessage("§cFonds insuffisants");
             return true;
         }
 
+        // =========================
         // 💸 TRANSACTION
+        // =========================
         VaultHook.remove(p, amount);
 
         if (target != null && target.isOnline()) {
             VaultHook.add(target, amount);
         } else {
-            // si offline → à toi de voir (bankStorage, pending, etc.)
-            // pour l'instant on crédite quand même via Vault (si offline supporté)
-            VaultHook.add(targetUUID, amount); // ⚠️ adapte si ton VaultHook supporte UUID
+            // ⚠️ adapte selon ton VaultHook
+            try {
+                VaultHook.add(targetUUID, amount);
+            } catch (Exception ex) {
+                // fallback simple si ton hook ne gère pas UUID
+                Bukkit.getConsoleSender().sendMessage("§c[IBAN] Crédit offline non supporté pour " + targetUUID);
+            }
         }
+
+        // =========================
+        // 📜 HISTORIQUE 🔥
+        // =========================
+        TransactionManager.add(p.getUniqueId(), targetUUID, amount);
 
         // =========================
         // ✨ MESSAGES STYLÉS
@@ -80,9 +91,8 @@ public class IbanPayCommand implements CommandExecutor {
         p.sendMessage("§8§m-----------------------------");
         p.sendMessage("§6✦ §fVirement effectué");
         p.sendMessage("§7Vers IBAN: §e" + iban);
-        p.sendMessage("§7Montant: §a+" + SafeGUI.money(amount) + "€");
+        p.sendMessage("§7Montant: §c-" + SafeGUI.money(amount) + "€"); // 🔥 sortie
         p.sendMessage("§8§m-----------------------------");
-
         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1.2f);
 
         // 🎯 receveur
@@ -92,13 +102,13 @@ public class IbanPayCommand implements CommandExecutor {
             target.sendMessage("§7De: §e" + p.getName());
             target.sendMessage("§7Montant: §a+" + SafeGUI.money(amount) + "€");
             target.sendMessage("§8§m-----------------------------");
-
             target.playSound(target.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
         }
 
         // 📜 LOG console
-        Bukkit.getConsoleSender().sendMessage("§b[IBAN] §f" + p.getName() +
-                " -> " + iban + " : " + amount + "€");
+        Bukkit.getConsoleSender().sendMessage(
+                "§b[IBAN] §f" + p.getName() + " -> " + iban + " : " + amount + "€"
+        );
 
         return true;
     }
