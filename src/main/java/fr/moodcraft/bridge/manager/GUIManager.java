@@ -1,5 +1,6 @@
 package fr.moodcraft.bridge.manager;
 
+import fr.moodcraft.bridge.handler.GUIHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
