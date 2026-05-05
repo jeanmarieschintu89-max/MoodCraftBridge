@@ -1,4 +1,4 @@
-package fr.moodcraft.reputation;
+package fr.moodcraft.bridge.reputation;
 
 import org.bukkit.configuration.file.*;
 import org.bukkit.entity.Player;
