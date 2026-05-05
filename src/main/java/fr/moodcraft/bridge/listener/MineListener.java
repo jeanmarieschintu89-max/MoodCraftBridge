@@ -1,7 +1,7 @@
 package fr.moodcraft.bridge.listener;
 
 import fr.moodcraft.bridge.util.ItemNormalizer;
-import fr.moodcraft.market.MarketAPI;
+import fr.moodcraft.bridge.market.MarketAPI;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
