@@ -1,4 +1,4 @@
-package fr.moodcraft.market;
+package fr.moodcraft.bridge.market;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
