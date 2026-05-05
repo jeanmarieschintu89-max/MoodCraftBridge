@@ -1,6 +1,7 @@
 package fr.moodcraft.bridge.manager;
 
-import org.bukkit.configuration.file.*;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -44,9 +45,7 @@ public class ReputationManager {
         value = Math.max(0, value);
         cache.put(uuid, value);
         config.set(uuid, value);
-
-        // 🔥 optimisation: évite spam disque
-        BukkitRunnableSave.schedule();
+        save(); // ✅ sauvegarde directe (simple et stable)
     }
 
     public static void add(String uuid, int value) {
