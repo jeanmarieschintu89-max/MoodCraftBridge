@@ -2,7 +2,7 @@ package fr.moodcraft.bridge.gui;
 
 import fr.moodcraft.bridge.bank.BankStorage;
 import fr.moodcraft.bridge.manager.GUIManager;
-import fr.moodcraft.bridge.gui.SafeGUI;
+import fr.moodcraft.bridge.util.SafeGUI;
 import fr.moodcraft.bridge.hook.JobsHook;
 
 import org.bukkit.Bukkit;
