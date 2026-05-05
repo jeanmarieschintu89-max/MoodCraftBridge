@@ -1,6 +1,5 @@
 package fr.moodcraft.bridge.gui;
 
-import fr.moodcraft.bridge.market.MarketAPI;
 import fr.moodcraft.bridge.manager.GUIManager;     // ✅ FIX
 import fr.moodcraft.bridge.util.SafeGUI;          // ✅ FIX
 
