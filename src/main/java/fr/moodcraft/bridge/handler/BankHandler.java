@@ -1,7 +1,6 @@
 package fr.moodcraft.bridge.handler;
 
 import fr.moodcraft.bridge.gui.*;
-import fr.moodcraft.bridge.handler.GUIHandler;
 import fr.moodcraft.bridge.manager.TransferBuilder;
 
 import org.bukkit.entity.Player;
@@ -16,17 +15,18 @@ public class BankHandler implements GUIHandler {
             // 📥 DEPOT
             case 10 -> {
                 TransferBuilder.setAction(p, TransferBuilder.Action.DEPOSIT);
-                TransferAmountGUI.open(p);
+                DepositGUI.open(p); // ✅ FIX
             }
 
             // 📤 RETRAIT
             case 12 -> {
                 TransferBuilder.setAction(p, TransferBuilder.Action.WITHDRAW);
-                TransferAmountGUI.open(p);
+                WithdrawGUI.open(p); // ✅ mieux aussi
             }
 
             // 💸 VIREMENT
             case 14 -> {
+                TransferBuilder.clear(p); // 🔥 important
                 TransferTypeGUI.open(p);
             }
 
