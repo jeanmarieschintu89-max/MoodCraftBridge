@@ -18,22 +18,11 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      # 🔥 Télécharger QuickShop PROPREMENT
-      - name: Download QuickShop (safe)
-        run: |
-          wget -O QuickShop.jar https://github.com/QuickShop-Community/QuickShop-Reremake/releases/download/5.1.2.4/QuickShop-5.1.2.4.jar
-
-      # 🔍 Vérifier que le fichier est valide
-      - name: Verify jar
-        run: |
-          file QuickShop.jar
-          ls -lh QuickShop.jar
-
-      # 📦 Installer dans Maven
-      - name: Install QuickShop
+      # 📦 Installer QuickShop depuis ton repo
+      - name: Install QuickShop (local file)
         run: |
           mvn install:install-file \
-            -Dfile=QuickShop.jar \
+            -Dfile=libs/QuickShop-Hikari.jar \
             -DgroupId=quickshop \
             -DartifactId=quickshop \
             -Dversion=1.0 \
@@ -44,7 +33,7 @@ jobs:
         run: mvn clean package
 
       # 📤 Upload
-      - name: Upload
+      - name: Upload plugin
         uses: actions/upload-artifact@v4
         with:
           name: MoodCraftBridge
