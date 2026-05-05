@@ -1,6 +1,6 @@
 package fr.moodcraft.bridge;
 
-import fr.moodcraft.bridge.bank.BankStorage;
+import fr.moodcraft.bridge.bank.*;
 import fr.moodcraft.bridge.command.*;
 import fr.moodcraft.bridge.gui.*;
 import fr.moodcraft.bridge.handler.*;
@@ -34,12 +34,10 @@ public class Main extends JavaPlugin {
         // =========================
         BankStorage.init();
         MarketStorage.init();
-        TransactionLogger.init();
         ReputationManager.init();
         IbanManager.init();
         TransactionManager.init();
 
-        // 🔥 IMPORTANT (fix InputManager / GUIManager)
         GUIManager.init(this);
 
         // =========================
@@ -66,7 +64,6 @@ public class Main extends JavaPlugin {
         // =========================
         // 🧠 GUI HANDLERS
         // =========================
-
         GUIManager.register("main_menu", new MainMenuHandler());
 
         GUIManager.register("bank_main", new BankHandler());
@@ -80,7 +77,6 @@ public class Main extends JavaPlugin {
         GUIManager.register("transfer_confirm", new TransferConfirmHandler());
 
         GUIManager.register("minerais", new PriceHandler());
-
         GUIManager.register("teleport", new TeleportHandler());
         GUIManager.register("profile_gui", new ProfileHandler());
 
@@ -88,22 +84,26 @@ public class Main extends JavaPlugin {
         // 📜 COMMANDES
         // =========================
         registerCommand("menu", new MenuCommand());
-        registerCommand("iban", new IbanCommand());
-        registerCommand("ibanpay", new IbanPayCommand());
+
+        // 🏦 BANQUE (CENTRAL)
         registerCommand("banque", new BanqueCommand());
+        registerCommand("historique", new BankHistoryCommand());
         registerCommand("logsbanque", new CommandeLogsAdmin());
 
+        // 📊 MARCHÉ
         registerCommand("prix", new PrixCommand());
         registerCommand("sync", new SyncCommand());
         registerCommand("trend", new GetTrendCommand());
 
+        // ⚙️ ADMIN ECO
         registerCommand("ecoreload", new EcoReloadCommand());
         registerCommand("ecoreset", new EcoResetCommand());
         registerCommand("ecotest", new EcoTestCommand());
+
+        // 🧠 RÉPUTATION (propre)
         registerCommand("reputation", new ReputationCommand());
         registerCommand("rep", new ReputationCommand());
-        registerCommand("toprep", new ReputationCommand());
-        registerCommand("historique", new BankHistoryCommand());
+        registerCommand("toprep", new TopRepCommand()); // 🔥 à créer
 
         // =========================
         // 🔁 TASKS
@@ -137,12 +137,8 @@ public class Main extends JavaPlugin {
     public void onDisable() {
         BankStorage.save();
         MarketStorage.save();
-        TransactionLogger.save();
     }
 
-    // =========================
-    // 🔧 UTILS
-    // =========================
     private void registerEvents(Listener... listeners) {
         for (Listener listener : listeners) {
             Bukkit.getPluginManager().registerEvents(listener, this);
