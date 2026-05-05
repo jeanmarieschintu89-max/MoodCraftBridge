@@ -1,6 +1,5 @@
 package fr.moodcraft.bridge.command;
 
-import fr.moodcraft.bridge.market.MarketAPI;
 import org.bukkit.command.*;
 
 public class EcoTestCommand implements CommandExecutor {
