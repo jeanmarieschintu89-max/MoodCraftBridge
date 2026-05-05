@@ -20,7 +20,7 @@ public class EcoReloadCommand implements CommandExecutor {
         ShopIndex.rebuild();
 
         // 📊 refresh des prix
-        for (String item : MarketState.prices.keySet()) {
+        for (String item : MarketState.price.keySet()) {
             PriceUpdater.updateItem(item);
         }
 
