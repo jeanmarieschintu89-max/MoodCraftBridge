@@ -10,6 +10,9 @@ import fr.moodcraft.bridge.hook.JobsHook;
 // 📊 Market
 import fr.moodcraft.bridge.market.*;
 
+// 🏦 Bank (🔥 AJOUT IMPORTANT)
+import fr.moodcraft.bridge.bank.*;
+
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -39,6 +42,9 @@ public class Main extends JavaPlugin {
         // =========================
         MarketStorage.init();
         TransactionLogger.init();
+
+        // 🏦 BANK INIT (si tu as init)
+        // BankStorage.init(); // (optionnel selon ton code)
 
         // =========================
         // 🏪 SHOP INDEX
@@ -87,6 +93,9 @@ public class Main extends JavaPlugin {
         registerCommand("trend", new GetTrendCommand());
         registerCommand("sync", new SyncCommand());
 
+        // 👉 SI TU AS UNE COMMANDE BANK
+        // registerCommand("bank", new BankCommand());
+
         // =========================
         // 🚀 LOG
         // =========================
@@ -95,6 +104,7 @@ public class Main extends JavaPlugin {
         getLogger().info("📊 Market: ACTIF");
         getLogger().info("🏪 Shops indexés: OK");
         getLogger().info("💾 Transactions: OK");
+        getLogger().info("🏦 Bank: OK");
         getLogger().info("🎮 GUI + Input + Commands OK");
         getLogger().info("=================================");
     }
@@ -104,6 +114,8 @@ public class Main extends JavaPlugin {
 
         MarketStorage.save();
         TransactionLogger.save();
+
+        // BankStorage.save(); // si tu en as un
 
         getLogger().info("❌ MoodCraftBridge désactivé");
     }
