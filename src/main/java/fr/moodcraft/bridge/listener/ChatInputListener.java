@@ -98,11 +98,11 @@ public class ChatInputListener implements Listener {
                 BankGUI.open(p);
             });
 
-            return;
+            return; // 🔥 important
         }
 
         // =========================
-        // 💳 IBAN INPUT (TEMPORAIREMENT OFF)
+        // 💳 IBAN INPUT (OFF PROPRE)
         // =========================
         if (InputManager.has(p)) {
 
@@ -112,7 +112,12 @@ public class ChatInputListener implements Listener {
 
                 p.sendMessage("§c❌ Système IBAN en cours de reconstruction");
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+
+                // 🔥 FIX CRITIQUE : on sort du mode input
+                InputManager.remove(p);
             });
+
+            return; // 🔥 empêche toute boucle
         }
     }
 
