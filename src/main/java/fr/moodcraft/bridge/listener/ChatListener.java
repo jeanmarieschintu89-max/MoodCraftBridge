@@ -1,6 +1,6 @@
 package fr.moodcraft.bridge.listener;
 
-import fr.moodcraft.bridge.util.ReputationManager;
+import fr.moodcraft.bridge.manager.ReputationManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
