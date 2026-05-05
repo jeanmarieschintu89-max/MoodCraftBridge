@@ -37,6 +37,7 @@ public class Main extends JavaPlugin {
         TransactionLogger.init();
         ReputationManager.init();
         IbanManager.init();
+        TransactionManager.init();
 
         // 🔥 IMPORTANT (fix InputManager / GUIManager)
         GUIManager.init(this);
