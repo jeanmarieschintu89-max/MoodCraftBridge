@@ -1,5 +1,7 @@
 package fr.moodcraft.bridge.market;
 
+import fr.moodcraft.bridge.Main; // ✅ FIX
+
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -17,7 +19,7 @@ public class MarketStorage {
 
         if (!file.exists()) {
             try {
-                file.getParentFile().mkdirs(); // 🔥 sécurité ajoutée
+                file.getParentFile().mkdirs(); // 🔥 sécurité
                 file.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
