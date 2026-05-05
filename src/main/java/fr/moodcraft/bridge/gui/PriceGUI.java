@@ -1,6 +1,9 @@
 package fr.moodcraft.bridge.gui;
 
 import fr.moodcraft.bridge.market.MarketAPI;
+import fr.moodcraft.bridge.manager.GUIManager;     // ✅ FIX
+import fr.moodcraft.bridge.util.SafeGUI;          // ✅ FIX
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
