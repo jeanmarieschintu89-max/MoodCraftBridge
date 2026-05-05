@@ -103,6 +103,7 @@ public class Main extends JavaPlugin {
         registerCommand("reputation", new ReputationCommand());
         registerCommand("rep", new ReputationCommand());
         registerCommand("toprep", new ReputationCommand());
+        registerCommand("historique", new BankHistoryCommand());
 
         // =========================
         // 🔁 TASKS
