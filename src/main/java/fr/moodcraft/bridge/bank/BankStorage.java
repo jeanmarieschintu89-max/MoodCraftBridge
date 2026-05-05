@@ -1,5 +1,6 @@
 package fr.moodcraft.bridge.bank;
 
+import fr.moodcraft.bridge.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
