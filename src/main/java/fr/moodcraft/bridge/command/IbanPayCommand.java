@@ -1,7 +1,7 @@
 package fr.moodcraft.bridge.command;
 
-fr.moodcraft.bridge.bank.BankStorage
-import fr.moodcraft.bridge.util.VaultHook;
+import fr.moodcraft.bridge.bank.BankStorage;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
@@ -19,11 +19,11 @@ public class IbanPayCommand implements CommandExecutor {
         if (!(sender instanceof Player p)) return true;
 
         if (args.length < 2) {
-            p.sendMessage("§cUsage: /ibanpay <iban> <montant>");
+            p.sendMessage("§cUsage: /ibanpay <uuid> <montant>");
             return true;
         }
 
-        String iban = args[0];
+        String targetUUIDStr = args[0];
 
         double amount;
         try {
@@ -40,15 +40,8 @@ public class IbanPayCommand implements CommandExecutor {
 
         String senderId = p.getUniqueId().toString();
 
-        if (BankAPI.get(senderId) < amount) {
+        if (BankStorage.get(senderId) < amount) {
             error(p, "Pas assez d'argent en banque");
-            return true;
-        }
-
-        String targetUUIDStr = BankAPI.getUUIDByIban(iban);
-
-        if (targetUUIDStr == null) {
-            error(p, "IBAN introuvable");
             return true;
         }
 
@@ -57,10 +50,16 @@ public class IbanPayCommand implements CommandExecutor {
             return true;
         }
 
-        UUID targetUUID = UUID.fromString(targetUUIDStr);
+        UUID targetUUID;
+        try {
+            targetUUID = UUID.fromString(targetUUIDStr);
+        } catch (Exception e) {
+            error(p, "UUID invalide");
+            return true;
+        }
 
-        // 💸 TRANSFERT VIA API
-        boolean success = BankAPI.transfer(senderId, targetUUIDStr, amount);
+        // 💸 TRANSFERT
+        boolean success = BankStorage.transfer(senderId, targetUUIDStr, amount);
 
         if (!success) {
             error(p, "Erreur lors du virement");
@@ -69,23 +68,17 @@ public class IbanPayCommand implements CommandExecutor {
 
         Player target = Bukkit.getPlayer(targetUUID);
 
-        // =========================
         // 💬 EXPÉDITEUR
-        // =========================
         p.sendMessage("");
         p.sendMessage("§8╔════════════════════════════╗");
         p.sendMessage("§8║   §a✔ Virement envoyé");
         p.sendMessage("§8╠════════════════════════════╣");
         p.sendMessage("§8║ §7Montant: §c-" + format.format(amount) + "€");
-        p.sendMessage("§8║ §7IBAN: §e" + iban);
         p.sendMessage("§8╚════════════════════════════╝");
         p.sendMessage("");
 
-        // =========================
         // 💬 DESTINATAIRE
-        // =========================
         if (target != null) {
-
             target.sendMessage("");
             target.sendMessage("§8╔════════════════════════════╗");
             target.sendMessage("§8║   §a💸 Virement reçu");
