@@ -1,6 +1,7 @@
 package fr.moodcraft.bridge.handler;
 
 import fr.moodcraft.bridge.gui.BankGUI;
+import fr.moodcraft.bridge.handler.GUIHandler;
 import fr.moodcraft.bridge.gui.WithdrawGUI;
 import fr.moodcraft.bridge.manager.AmountInputManager;
 import fr.moodcraft.bridge.manager.InputManager;
