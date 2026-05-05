@@ -4,6 +4,7 @@ import fr.moodcraft.bridge.command.*;
 import fr.moodcraft.bridge.handler.*;
 import fr.moodcraft.bridge.listener.*;
 import fr.moodcraft.bridge.manager.*;
+import fr.moodcraft.bridge.util.TransactionLogger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
@@ -24,22 +25,29 @@ public class Main extends JavaPlugin {
 
         saveDefaultConfig();
 
-        // 🔥 GUI SYSTEM
+        // =========================
+        // 🔥 CORE INIT
+        // =========================
         GUIManager.init(this);
 
         // =========================
-        // 📦 MARKET INIT
+        // 💾 DATA INIT
         // =========================
         MarketStorage.init();
+        TransactionLogger.init(); // 🔥 AJOUT IMPORTANT
+
+        // =========================
+        // 🏪 SHOP INDEX
+        // =========================
         ShopIndex.rebuild();
 
         // =========================
-        // 🔁 TASKS (marché dynamique)
+        // 🔁 MARKET TASK
         // =========================
         Bukkit.getScheduler().runTaskTimer(this,
                 MarketEngine::tick,
                 20L,
-                20L * 45 // toutes les 45s
+                20L * 45
         );
 
         // =========================
@@ -75,8 +83,9 @@ public class Main extends JavaPlugin {
         // =========================
         getLogger().info("=================================");
         getLogger().info("✅ MoodCraftBridge chargé");
-        getLogger().info("📊 Market: OK");
+        getLogger().info("📊 Market: ACTIF");
         getLogger().info("🏪 Shops indexés: OK");
+        getLogger().info("💾 Transactions: OK");
         getLogger().info("🎮 GUI + Input + Commands OK");
         getLogger().info("=================================");
     }
@@ -84,7 +93,9 @@ public class Main extends JavaPlugin {
     @Override
     public void onDisable() {
 
+        // 💾 SAVE PROPRE
         MarketStorage.save();
+        TransactionLogger.save(); // 🔥 AJOUT
 
         getLogger().info("❌ MoodCraftBridge désactivé");
     }
