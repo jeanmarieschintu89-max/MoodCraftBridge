@@ -13,3 +13,5 @@ commands:
     usage: /iban [joueur]
   ecotest:
     description: Test du marché
+  prix:
+    description: Ouvre la bourse
