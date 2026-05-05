@@ -5,14 +5,16 @@ on:
   pull_request:
   workflow_dispatch:
 
-# 🔥 ANTI FILE D’ATTENTE
+# 🔥 ANTI FILE D’ATTENTE (ULTRA IMPORTANT)
 concurrency:
-  group: moodcraft-build
+  group: global-build
   cancel-in-progress: true
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04  # ⚡ plus stable que latest
+
+    timeout-minutes: 10  # évite blocage infini
 
     steps:
 
@@ -28,18 +30,17 @@ jobs:
           java-version: 21
           cache: maven
 
-      # ⚡ CACHE MAVEN (plus rapide)
-      - name: Cache Maven
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: maven-
+      # 🔍 DEBUG (très utile)
+      - name: Debug Files
+        run: |
+          echo "📂 Contenu du repo :"
+          ls -R
 
-      # 🔥 INSTALL QUICKSHOP LOCAL (si présent)
+      # 🔥 INSTALL QUICKSHOP (SAFE)
       - name: Install QuickShop
         run: |
           if [ -f "libs/QuickShop-Hikari.jar" ]; then
+            echo "✅ QuickShop trouvé"
             mvn install:install-file \
             -Dfile=libs/QuickShop-Hikari.jar \
             -DgroupId=quickshop \
@@ -47,7 +48,7 @@ jobs:
             -Dversion=1.0 \
             -Dpackaging=jar
           else
-            echo "QuickShop jar not found, skipping..."
+            echo "⚠️ QuickShop ABSENT → skip"
           fi
 
       # 🔨 BUILD
