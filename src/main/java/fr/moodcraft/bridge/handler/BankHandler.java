@@ -14,14 +14,16 @@ public class BankHandler implements GUIHandler {
 
             // 📥 DEPOT
             case 10 -> {
+                TransferBuilder.clear(p); // 🔥 sécurité (évite vieux data)
                 TransferBuilder.setAction(p, TransferBuilder.Action.DEPOSIT);
-                DepositGUI.open(p); // ✅ FIX
+                DepositGUI.open(p);
             }
 
             // 📤 RETRAIT
             case 12 -> {
+                TransferBuilder.clear(p); // 🔥 idem
                 TransferBuilder.setAction(p, TransferBuilder.Action.WITHDRAW);
-                WithdrawGUI.open(p); // ✅ mieux aussi
+                WithdrawGUI.open(p);
             }
 
             // 💸 VIREMENT
