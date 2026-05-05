@@ -23,6 +23,7 @@ commands:
   prix:
     description: Voir les prix du marché
     usage: /prix
+    aliases: [bourse, market, commerce, cours, brs, cours, vendre, vente, minerais]
 
   sync:
     description: Synchroniser les prix QuickShop
