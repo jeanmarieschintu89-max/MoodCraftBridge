@@ -3,11 +3,8 @@ version: 1.0
 main: fr.moodcraft.bridge.Main
 api-version: 1.20
 
-depend:
-  - MoodCraftBank
-  - MoodCraftReputation
-
 commands:
-  menu:
-    description: Menu principal
-    permission: econ.use
+  ecoreload:
+    description: Reload économie
+  ecoreset:
+    description: Reset économie
