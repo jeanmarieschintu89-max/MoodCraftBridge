@@ -1,9 +1,20 @@
 package fr.moodcraft.bridge.market;
 
+import fr.moodcraft.bridge.Main;
+
 public final class MarketEngine {
 
     public static double getPrice(String item) {
         return Math.max(1, MarketState.getPrice(item));
+    }
+
+    // 🔁 alias propre (compatibilité avec ton code)
+    public static void recordSell(String item, int amount) {
+        applySell(item, amount);
+    }
+
+    public static void recordBuy(String item, int amount) {
+        applyBuy(item, amount);
     }
 
     public static void applyBuy(String item, int amount) {
@@ -14,6 +25,32 @@ public final class MarketEngine {
         MarketState.sell.merge(item, (double) amount, Double::sum);
     }
 
+    // =========================
+    // 🔄 RELOAD CONFIG
+    // =========================
+    public static void reload() {
+        Main.getInstance().reloadConfig();
+    }
+
+    // =========================
+    // ♻ RESET MARKET
+    // =========================
+    public static void reset() {
+
+        for (String item : MarketState.base.keySet()) {
+
+            double base = MarketState.base.getOrDefault(item, 1.0);
+
+            MarketState.setPrice(item, base);
+            MarketState.stock.put(item, 0.0);
+            MarketState.buy.put(item, 0.0);
+            MarketState.sell.put(item, 0.0);
+        }
+    }
+
+    // =========================
+    // ⏱ TICK
+    // =========================
     public static void tick() {
 
         var cfg = Main.getInstance().getConfig();
@@ -39,28 +76,21 @@ public final class MarketEngine {
             double buy = MarketState.buy.getOrDefault(item, 0.0);
             double sell = MarketState.sell.getOrDefault(item, 0.0);
 
-            // =========================
             // 📦 STOCK
-            // =========================
             stock += buy;
             stock -= sell;
 
-            // =========================
             // 📊 ACTIVITY
-            // =========================
             double safeStock = Math.max(0, stock);
             double coef = MarketState.activity.getOrDefault(item, 0.001);
 
             double activity = Math.sqrt(safeStock + 1) * coef;
-
             double maxActivity = price * activityCapFactor;
             if (activity > maxActivity) activity = maxActivity;
 
             price += (buy - sell) * activity;
 
-            // =========================
             // 🌟 RARITY
-            // =========================
             if (rarityEnabled) {
 
                 double rare = MarketState.rarity.getOrDefault(item, 10.0);
@@ -88,9 +118,7 @@ public final class MarketEngine {
                 }
             }
 
-            // =========================
             // 💥 IMPACT
-            // =========================
             double div = Math.max(1, MarketState.impact.getOrDefault(item, 20.0));
             double delta = (buy - sell) / div;
 
@@ -101,14 +129,10 @@ public final class MarketEngine {
 
             price += delta;
 
-            // =========================
             // 🔄 RETOUR BASE
-            // =========================
             price += (base - price) * baseReturn;
 
-            // =========================
             // 🧹 STOCK DECAY
-            // =========================
             stock *= stockDecay;
 
             if (stock > 10000) stock = 10000;
@@ -116,9 +140,7 @@ public final class MarketEngine {
 
             MarketState.stock.put(item, stock);
 
-            // =========================
             // 🧱 LIMITES
-            // =========================
             double min = base * minFactor;
             double max = base * maxFactor;
 
@@ -126,21 +148,14 @@ public final class MarketEngine {
             if (price > max) price = max;
             if (price < 1) price = 1;
 
-            // =========================
             // 💹 FINAL
-            // =========================
             price = round(price);
 
             MarketState.setPrice(item, price);
 
-            // =========================
             // 🔁 RESET
-            // =========================
             MarketState.buy.put(item, 0.0);
             MarketState.sell.put(item, 0.0);
-
-            // ❌ SUPPRIMÉ → dépendance bridge
-            // PriceUpdater.updateItem(item);
         }
     }
 
