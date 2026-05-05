@@ -55,6 +55,9 @@ commands:
     description: Ouvrir la banque
     usage: /banque
 
+  reputation:
+    description: Voir sa réputation
+
 permissions:
 
   moodcraft.admin:
