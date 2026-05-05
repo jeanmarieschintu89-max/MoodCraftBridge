@@ -1,6 +1,5 @@
 package fr.moodcraft.bridge.bank;
 
-import fr.moodcraft.bank.BankAPI;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -24,17 +23,20 @@ public class BankCommand implements CommandExecutor {
 
         double amount;
         try {
-            amount = Double.parseDouble(args[1]);
+            amount = Double.parseDouble(args[1].replace(",", "."));
         } catch (Exception e) {
             sender.sendMessage("§cMontant invalide");
             return true;
         }
 
-        BankAPI.add(uuid, amount);
+        if (amount <= 0) {
+            sender.sendMessage("§cMontant invalide");
+            return true;
+        }
 
-        sender.sendMessage("§a✔ Banque modifiée");
-        sender.sendMessage("§7UUID: §f" + uuid);
-        sender.sendMessage("§7Ajout: §e" + amount + "€");
+        BankStorage.add(uuid, amount);
+
+        sender.sendMessage("§a✔ Ajout de §e" + amount + "€ §aau compte " + uuid);
 
         return true;
     }
