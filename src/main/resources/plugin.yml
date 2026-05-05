@@ -65,6 +65,10 @@ commands:
   toprep:
     description: Voir le classement réputation
 
+  logsbanque:
+    description: Voir les logs bancaires
+    permission: moodcraft.admin
+
 permissions:
 
   moodcraft.admin:
