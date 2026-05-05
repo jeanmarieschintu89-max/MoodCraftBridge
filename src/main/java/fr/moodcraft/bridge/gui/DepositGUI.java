@@ -1,6 +1,6 @@
 package fr.moodcraft.bridge.gui;
 
-import fr.moodcraft.bank.BankAPI;
+fr.moodcraft.bridge.bank.BankStorage
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
