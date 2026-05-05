@@ -1,7 +1,8 @@
 package fr.moodcraft.bridge.manager;
 
 import com.ghostchu.quickshop.api.shop.Shop;
-import fr.moodcraft.bridge.market.MarketAPI;
+import fr.moodcraft.bridge.market.MarketState;
+import fr.moodcraft.bridge.market.ShopIndex;
 
 import java.util.Set;
 
@@ -13,12 +14,12 @@ public final class PriceUpdater {
             "netherite","amethyst","glowstone"
     );
 
-    // ⚡ UPDATE GLOBAL
+    // UPDATE GLOBAL
     public static void updateItem(String item) {
 
         if (!ALLOWED.contains(item)) return;
 
-        double price = MarketAPI.getPrice(item);
+        double price = MarketState.getPrice(item);
 
         Set<Shop> shops = ShopIndex.get(item);
         if (shops == null || shops.isEmpty()) return;
@@ -33,13 +34,13 @@ public final class PriceUpdater {
         }
     }
 
-    // ⚡ UPDATE SINGLE
+    // UPDATE UN SEUL SHOP
     public static void updateSingle(Shop shop, String item) {
 
         if (!ALLOWED.contains(item)) return;
         if (shop == null) return;
 
-        double price = MarketAPI.getPrice(item);
+        double price = MarketState.getPrice(item);
 
         if (Math.abs(shop.getPrice() - price) < 0.01) return;
 
