@@ -15,13 +15,28 @@ commands:
     description: Ouvrir le menu principal
     usage: /menu
 
+  banque:
+    description: Ouvrir la banque
+    usage: /banque
+
   iban:
     description: Voir son IBAN
     usage: /iban
 
-  ibanpay:
-    description: Virement via IBAN
-    usage: /ibanpay <iban> <montant>
+  virement:
+    description: Effectuer un virement bancaire
+    usage: /virement <iban> <montant>
+    aliases: [ibanpay, pay]
+
+  historique:
+    description: Voir son historique bancaire
+    usage: /historique [depot|retrait|virement] [joueur/page]
+    aliases: [bankhistory, history]
+
+  logsbanque:
+    description: Voir les logs bancaires (admin)
+    usage: /logsbanque
+    permission: moodcraft.admin
 
   prix:
     description: Voir les prix du marché
@@ -37,37 +52,32 @@ commands:
     usage: /trend
 
   ecoreload:
-    description: Reload economie
+    description: Recharger l'économie
     usage: /ecoreload
     permission: moodcraft.admin
 
   ecoreset:
-    description: Reset economie
+    description: Reset économie
     usage: /ecoreset
     permission: moodcraft.admin
 
   ecotest:
-    description: Test economie
+    description: Test économie
     usage: /ecotest
     permission: moodcraft.admin
 
-  banque:
-    description: Ouvrir la banque
-    usage: /banque
-
   reputation:
     description: Voir sa réputation
+    usage: /reputation
 
   rep:
-    description: Gestion de la réputation
+    description: Modifier la réputation (admin)
+    usage: /rep <joueur> <valeur>
     permission: moodcraft.admin
 
   toprep:
     description: Voir le classement réputation
-
-  logsbanque:
-    description: Voir les logs bancaires
-    permission: moodcraft.admin
+    usage: /toprep
 
 permissions:
 
