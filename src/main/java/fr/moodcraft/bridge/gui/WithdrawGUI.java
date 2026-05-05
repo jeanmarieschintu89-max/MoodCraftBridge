@@ -1,9 +1,6 @@
 package fr.moodcraft.bridge.gui;
 
-import fr.moodcraft.bridge.handler.GUIHandler;
 import fr.moodcraft.bridge.manager.GUIManager;
-import fr.moodcraft.bridge.manager.AmountInputManager;
-import fr.moodcraft.bridge.manager.InputManager;
 import fr.moodcraft.bridge.util.SafeGUI;
 import fr.moodcraft.bridge.util.VaultHook;
 import fr.moodcraft.bridge.bank.BankStorage;
@@ -12,20 +9,15 @@ import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-public class WithdrawGUI implements GUIHandler {
+public class WithdrawGUI {
 
-    private static final String ID = "bank_withdraw";
+    public static final String ID = "bank_withdraw";
 
-    // 🔥 enregistrement handler
-    public WithdrawGUI() {
-        GUIManager.register(ID, this);
-    }
-
-    public void open(Player p) {
+    // ✅ FIX: static
+    public static void open(Player p) {
 
         Inventory inv = Bukkit.createInventory(null, 27, "§cRetrait");
 
@@ -85,73 +77,5 @@ public class WithdrawGUI implements GUIHandler {
         SafeGUI.safeSet(inv, 22, SafeGUI.item(Material.BARRIER, "§cRetour"));
 
         GUIManager.open(p, ID, inv);
-    }
-
-    @Override
-    public void onClick(Player p, int slot) {
-
-        Economy eco = VaultHook.getEconomy();
-        if (eco == null) return;
-
-        double bank = BankStorage.get(p.getUniqueId().toString());
-        double amount = 0;
-
-        // 💸 montants fixes
-        if (slot == 11) amount = 100;
-        if (slot == 13) amount = 1000;
-        if (slot == 15) amount = 10000;
-
-        // 🔙 retour
-        if (slot == 22) {
-            BankGUI.open(p);
-            return;
-        }
-
-        // 🔥 MAX
-        if (slot == 20) {
-
-            if (bank <= 0) {
-                p.sendMessage("§cTu n'as rien en banque.");
-                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-                return;
-            }
-
-            BankStorage.remove(p.getUniqueId().toString(), bank);
-            eco.depositPlayer(p, bank);
-
-            p.sendMessage("§aTu as tout retiré : §f" + SafeGUI.money(bank));
-            p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
-
-            open(p);
-            return;
-        }
-
-        // 💬 CUSTOM
-        if (slot == 24) {
-            p.closeInventory();
-            AmountInputManager.wait(p, AmountInputManager.Type.WITHDRAW);
-            InputManager.wait(p, "amount_input");
-            p.sendMessage("§eEntre le montant à retirer dans le chat.");
-            return;
-        }
-
-        // ❌ rien cliqué
-        if (amount == 0) return;
-
-        // ❌ pas assez
-        if (bank < amount) {
-            p.sendMessage("§cPas assez d'argent en banque.");
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-            return;
-        }
-
-        // 💰 retrait
-        BankStorage.remove(p.getUniqueId().toString(), amount);
-        eco.depositPlayer(p, amount);
-
-        p.sendMessage("§aRetrait de §f" + SafeGUI.money(amount));
-        p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
-
-        open(p);
     }
 }
