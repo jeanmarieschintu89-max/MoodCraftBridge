@@ -90,6 +90,7 @@ public class Main extends JavaPlugin {
         registerCommand("prix", new PrixCommand());
         registerCommand("menu", new MenuCommand()); // 🔥 AJOUT
         registerCommand("trend", new GetTrendCommand()); // 🔥 AJOUT
+        registerCommand("sync", new SyncCommand());
 
         // =========================
         // 🚀 LOG
