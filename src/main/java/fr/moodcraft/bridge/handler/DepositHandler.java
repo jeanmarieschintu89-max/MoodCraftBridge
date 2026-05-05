@@ -3,6 +3,7 @@ package fr.moodcraft.bridge.handler;
 import fr.moodcraft.bank.BankAPI;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Sound;
+import fr.moodcraft.bridge.util.VaultHook;
 import org.bukkit.entity.Player;
 
 public class DepositHandler implements GUIHandler {
