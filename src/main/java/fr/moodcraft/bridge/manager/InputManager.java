@@ -1,5 +1,6 @@
 package fr.moodcraft.bridge.manager;
 
+import fr.moodcraft.bridge.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
