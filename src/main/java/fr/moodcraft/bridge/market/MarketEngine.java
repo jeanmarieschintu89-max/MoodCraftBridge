@@ -1,4 +1,4 @@
-package fr.moodcraft.market;
+package fr.moodcraft.bridge.market;
 
 public final class MarketEngine {
 
