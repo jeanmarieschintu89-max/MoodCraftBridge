@@ -1,0 +1,62 @@
+name: MoodCraftBridge
+version: 1.0
+main: fr.moodcraft.bridge.Main
+api-version: 1.21
+
+author: MoodCraft
+description: Systeme economie + banque + marche dynamique
+
+depend: [Vault]
+softdepend: [QuickShop]
+
+commands:
+
+  menu:
+    description: Ouvrir le menu principal
+    usage: /menu
+
+  iban:
+    description: Voir son IBAN
+    usage: /iban
+
+  ibanpay:
+    description: Virement via IBAN
+    usage: /ibanpay <iban> <montant>
+
+  prix:
+    description: Voir les prix du marché
+    usage: /prix
+
+  sync:
+    description: Synchroniser les prix QuickShop
+    usage: /sync
+    permission: moodcraft.admin
+
+  trend:
+    description: Voir les tendances
+    usage: /trend
+
+  ecoreload:
+    description: Reload economie
+    usage: /ecoreload
+    permission: moodcraft.admin
+
+  ecoreset:
+    description: Reset economie
+    usage: /ecoreset
+    permission: moodcraft.admin
+
+  ecotest:
+    description: Test economie
+    usage: /ecotest
+    permission: moodcraft.admin
+
+permissions:
+
+  moodcraft.admin:
+    description: Acces admin economie
+    default: op
+
+  econ.admin:
+    description: Admin banque (iban autres joueurs)
+    default: op
