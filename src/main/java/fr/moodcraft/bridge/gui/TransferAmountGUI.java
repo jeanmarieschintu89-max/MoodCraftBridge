@@ -9,18 +9,21 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
+import java.util.UUID;
+
 public class TransferAmountGUI {
 
     public static void open(Player p) {
 
         Inventory inv = Bukkit.createInventory(null, 27, "§a💸 Choix du montant");
 
-        TransferBuilder data = TransferBuilder.get(p);
+        // ✅ FIX: récupérer via getter
+        UUID targetUUID = TransferBuilder.getTarget(p);
 
         String targetName = "§7Inconnu";
 
-        if (data.target != null) {
-            var t = Bukkit.getPlayer(data.target);
+        if (targetUUID != null) {
+            Player t = Bukkit.getPlayer(targetUUID);
             if (t != null) targetName = "§e" + t.getName();
         }
 
