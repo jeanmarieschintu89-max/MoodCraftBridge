@@ -3,7 +3,7 @@ package fr.moodcraft.bridge.listener;
 import fr.moodcraft.bridge.Main;
 import fr.moodcraft.bridge.bank.BankStorage;
 import fr.moodcraft.bridge.gui.BankGUI;
-import fr.moodcraft.bridge.gui.SafeGUI;
+import fr.moodcraft.bridge.util.SafeGUI;
 import fr.moodcraft.bridge.manager.AmountInputManager;
 import fr.moodcraft.bridge.manager.InputManager;
 import fr.moodcraft.bridge.util.VaultHook;
