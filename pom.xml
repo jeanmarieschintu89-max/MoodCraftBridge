@@ -31,13 +31,7 @@
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
 
-        <!-- Spigot (Vault ici) -->
-        <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-
-        <!-- JitPack (fallback si besoin) -->
+        <!-- Vault via GitHub (JitPack) -->
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
@@ -58,15 +52,15 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- 🟡 VAULT (CORRIGÉ) -->
+        <!-- 🟡 VAULT (FIX FINAL) -->
         <dependency>
-            <groupId>net.milkbowl.vault</groupId>
+            <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
-            <version>1.7</version>
+            <version>1.7.1</version>
             <scope>provided</scope>
         </dependency>
 
-        <!-- 🔥 QUICKSHOP (LOCAL) -->
+        <!-- 🔥 QUICKSHOP (LOCAL INSTALL PAR WORKFLOW) -->
         <dependency>
             <groupId>quickshop</groupId>
             <artifactId>quickshop</artifactId>
@@ -93,12 +87,11 @@
                 </configuration>
             </plugin>
 
-            <!-- 📦 SHADE (OPTIONNEL mais propre) -->
+            <!-- 📦 SHADE (optionnel) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.5.0</version>
-
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -107,7 +100,6 @@
                         </goals>
                     </execution>
                 </executions>
-
             </plugin>
 
         </plugins>
