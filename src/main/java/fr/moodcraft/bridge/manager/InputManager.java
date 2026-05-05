@@ -59,6 +59,13 @@ public class InputManager {
     }
 
     // =========================
+    // ❌ REMOVE (alias pour compat)
+    // =========================
+    public static void remove(Player p) {
+        clear(p);
+    }
+
+    // =========================
     // ❌ CLEAR
     // =========================
     public static void clear(Player p) {
@@ -77,5 +84,12 @@ public class InputManager {
         if (p.hasMetadata("input_active")) {
             p.removeMetadata("input_active", Main.getInstance());
         }
+    }
+
+    // =========================
+    // 🧠 DEBUG / CHECK
+    // =========================
+    public static boolean isActive(Player p) {
+        return p.hasMetadata("input_active");
     }
 }
