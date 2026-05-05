@@ -34,6 +34,7 @@ public class Main extends JavaPlugin {
                 new GlobalGUIListener(),
                 new InventoryCloseListener(),
                 new InventoryGuardListener(),
+                new MineListener(),
                 new ChatInputListener()
         );
 
