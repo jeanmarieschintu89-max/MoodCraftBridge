@@ -1,11 +1,18 @@
 package fr.moodcraft.bridge.handler;
 
-fr.moodcraft.bridge.bank.BankStorage
-import net.milkbowl.vault.economy.Economy;
-import org.bukkit.Sound;
+import fr.moodcraft.bridge.bank.BankStorage;
+import fr.moodcraft.bridge.gui.BankGUI;
+import fr.moodcraft.bridge.gui.DepositGUI;
+import fr.moodcraft.bridge.manager.AmountInputManager;
+import fr.moodcraft.bridge.manager.InputManager;
+import fr.moodcraft.bridge.util.ActionLock;
+import fr.moodcraft.bridge.util.SafeGUI;
 import fr.moodcraft.bridge.util.VaultHook;
+
+import net.milkbowl.vault.economy.Economy;
+
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import fr.moodcraft.bridge.handler.GUIHandler;
 
 public class DepositHandler implements GUIHandler {
 
@@ -26,15 +33,7 @@ public class DepositHandler implements GUIHandler {
                 AmountInputManager.wait(p, AmountInputManager.Type.DEPOSIT);
                 InputManager.wait(p, "amount_input");
 
-                p.sendMessage("");
-                p.sendMessage("§8╔════════════════════════════╗");
-                p.sendMessage("§8║   §e💰 Dépôt personnalisé");
-                p.sendMessage("§8╠════════════════════════════╣");
-                p.sendMessage("§8║ §7Entre le montant à déposer");
-                p.sendMessage("§8║ §7directement dans le chat");
-                p.sendMessage("§8╚════════════════════════════╝");
-                p.sendMessage("");
-
+                p.sendMessage("§eEntre le montant dans le chat.");
                 p.playSound(p.getLocation(), Sound.UI_BUTTON_CLICK, 1f, 1f);
             }
 
@@ -42,104 +41,56 @@ public class DepositHandler implements GUIHandler {
         }
     }
 
-    // =========================
-    // 💰 DÉPÔT NORMAL
-    // =========================
     private void deposit(Player p, double amount) {
 
-        // 🔒 anti spam / double clic
         if (ActionLock.isLocked(p.getUniqueId(), 500)) return;
 
         Economy eco = VaultHook.getEconomy();
         if (eco == null) {
-            p.sendMessage("§c❌ Erreur économie (Vault)");
+            p.sendMessage("§cErreur Vault");
             return;
         }
 
         double cash = eco.getBalance(p);
 
         if (cash < amount) {
-            p.sendMessage("");
-            p.sendMessage("§8╔════════════════════════════╗");
-            p.sendMessage("§8║   §c✖ Fonds insuffisants");
-            p.sendMessage("§8╠════════════════════════════╣");
-            p.sendMessage("§8║ §7Liquide: §c" + SafeGUI.money(cash));
-            p.sendMessage("§8║ §7Demandé: §e" + SafeGUI.money(amount));
-            p.sendMessage("§8╚════════════════════════════╝");
-            p.sendMessage("");
-
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            p.sendMessage("§cFonds insuffisants");
             return;
         }
 
-        // 💸 retrait cash
         eco.withdrawPlayer(p, amount);
 
-        // 🏦 dépôt banque via API
-        BankAPI.add(p.getUniqueId().toString(), amount);
+        String id = p.getUniqueId().toString();
+        BankStorage.set(id, BankStorage.get(id) + amount);
 
-        double newBalance = BankAPI.get(p.getUniqueId().toString());
-
-        p.sendMessage("");
-        p.sendMessage("§8╔════════════════════════════╗");
-        p.sendMessage("§8║   §a✔ Dépôt effectué");
-        p.sendMessage("§8╠════════════════════════════╣");
-        p.sendMessage("§8║ §7Montant: §a+" + SafeGUI.money(amount));
-        p.sendMessage("§8║");
-        p.sendMessage("§8║ §7Banque: §6" + SafeGUI.money(newBalance));
-        p.sendMessage("§8╚════════════════════════════╝");
-        p.sendMessage("");
-
-        p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
+        p.sendMessage("§a+ " + SafeGUI.money(amount) + "€ en banque");
 
         DepositGUI.open(p);
     }
 
-    // =========================
-    // 🔥 DÉPÔT MAX
-    // =========================
     private void depositAll(Player p) {
 
         if (ActionLock.isLocked(p.getUniqueId(), 500)) return;
 
         Economy eco = VaultHook.getEconomy();
         if (eco == null) {
-            p.sendMessage("§c❌ Erreur économie (Vault)");
+            p.sendMessage("§cErreur Vault");
             return;
         }
 
         double cash = eco.getBalance(p);
 
         if (cash <= 0) {
-            p.sendMessage("");
-            p.sendMessage("§8╔════════════════════════════╗");
-            p.sendMessage("§8║   §c✖ Aucun argent");
-            p.sendMessage("§8╠════════════════════════════╣");
-            p.sendMessage("§8║ §7Tu n'as rien à déposer");
-            p.sendMessage("§8╚════════════════════════════╝");
-            p.sendMessage("");
-
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            p.sendMessage("§cAucun argent");
             return;
         }
 
         eco.withdrawPlayer(p, cash);
 
-        BankAPI.add(p.getUniqueId().toString(), cash);
+        String id = p.getUniqueId().toString();
+        BankStorage.set(id, BankStorage.get(id) + cash);
 
-        double newBalance = BankAPI.get(p.getUniqueId().toString());
-
-        p.sendMessage("");
-        p.sendMessage("§8╔════════════════════════════╗");
-        p.sendMessage("§8║   §a✔ Dépôt total");
-        p.sendMessage("§8╠════════════════════════════╣");
-        p.sendMessage("§8║ §7Montant: §a+" + SafeGUI.money(cash));
-        p.sendMessage("§8║");
-        p.sendMessage("§8║ §7Banque: §6" + SafeGUI.money(newBalance));
-        p.sendMessage("§8╚════════════════════════════╝");
-        p.sendMessage("");
-
-        p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
+        p.sendMessage("§aTout déposé (" + SafeGUI.money(cash) + "€)");
 
         DepositGUI.open(p);
     }
