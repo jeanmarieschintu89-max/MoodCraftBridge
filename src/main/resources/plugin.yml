@@ -51,6 +51,10 @@ commands:
     usage: /ecotest
     permission: moodcraft.admin
 
+  banque:
+    description: Ouvrir la banque
+    usage: /banque
+
 permissions:
 
   moodcraft.admin:
