@@ -1,63 +1,29 @@
-name: 🔨 Build Plugin
+name: Build Plugin
 
 on:
   push:
+    branches: [ "main" ]
   pull_request:
-  workflow_dispatch:
-
-# 🔥 ANTI FILE D’ATTENTE (ULTRA IMPORTANT)
-concurrency:
-  group: global-build
-  cancel-in-progress: true
 
 jobs:
   build:
-    runs-on: ubuntu-22.04  # ⚡ plus stable que latest
-
-    timeout-minutes: 10  # évite blocage infini
+    runs-on: ubuntu-latest
 
     steps:
-
-      # 📥 CLONE REPO
       - name: Checkout
         uses: actions/checkout@v4
 
-      # ☕ JAVA 21
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
-          java-version: 21
-          cache: maven
+          java-version: '21'
+          distribution: 'temurin'
 
-      # 🔍 DEBUG (très utile)
-      - name: Debug Files
-        run: |
-          echo "📂 Contenu du repo :"
-          ls -R
-
-      # 🔥 INSTALL QUICKSHOP (SAFE)
-      - name: Install QuickShop
-        run: |
-          if [ -f "libs/QuickShop-Hikari.jar" ]; then
-            echo "✅ QuickShop trouvé"
-            mvn install:install-file \
-            -Dfile=libs/QuickShop-Hikari.jar \
-            -DgroupId=quickshop \
-            -DartifactId=quickshop \
-            -Dversion=1.0 \
-            -Dpackaging=jar
-          else
-            echo "⚠️ QuickShop ABSENT → skip"
-          fi
-
-      # 🔨 BUILD
       - name: Build with Maven
-        run: mvn clean package -DskipTests
+        run: mvn clean package
 
-      # 📦 UPLOAD JAR
-      - name: Upload Artifact
+      - name: Upload JAR
         uses: actions/upload-artifact@v4
         with:
-          name: MoodCraftBridge
-          path: target/*.jar
+          name: plugin
+          path: target/*-shaded.jar
