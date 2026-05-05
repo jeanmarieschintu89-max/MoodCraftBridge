@@ -2,6 +2,7 @@ package fr.moodcraft.bridge.handler;
 
 import fr.moodcraft.bridge.GUIHandler;
 import fr.moodcraft.bridge.InputManager;
+import fr.moodcraft.bridge.handler.GUIHandler;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
