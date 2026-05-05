@@ -1,11 +1,13 @@
 package fr.moodcraft.bridge;
 
-import fr.moodcraft.bridge.command.EcoReloadCommand;
-import fr.moodcraft.bridge.command.EcoResetCommand;
+import fr.moodcraft.bridge.command.*;
+import fr.moodcraft.bridge.handler.*;
+import fr.moodcraft.bridge.listener.*;
+import fr.moodcraft.bridge.manager.GUIManager;
+
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.Listener;
-import fr.moodcraft.bridge.listener.InventoryCloseListener;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
 
@@ -21,6 +23,9 @@ public class Main extends JavaPlugin {
         instance = this;
 
         saveDefaultConfig();
+
+        // 🔥 IMPORTANT (sinon GUI bug)
+        GUIManager.init(this);
 
         // =========================
         // 🎧 LISTENERS
