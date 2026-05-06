@@ -21,9 +21,21 @@ public class ShopListener implements Listener {
     )
     public void onBuy(ShopPurchaseEvent event) {
 
+        //
+        // 🔒 SAFE
+        //
+
         if (event == null
                 || event.getShop() == null
                 || event.getShop().getItem() == null) {
+            return;
+        }
+
+        //
+        // 🏦 ADMINSHOP UNIQUEMENT
+        //
+
+        if (!event.getShop().isUnlimited()) {
             return;
         }
 
@@ -32,6 +44,7 @@ public class ShopListener implements Listener {
         //
 
         String item =
+
                 event.getShop()
                         .getItem()
                         .getType()
@@ -46,7 +59,10 @@ public class ShopListener implements Listener {
         //
 
         int amount =
-                Math.max(1, event.getAmount());
+                Math.max(
+                        1,
+                        event.getAmount()
+                );
 
         //
         // 👤 PLAYER
@@ -57,12 +73,15 @@ public class ShopListener implements Listener {
         if (event.getPurchaser() != null) {
 
             var offline =
+
                     Bukkit.getOfflinePlayer(
+
                             event.getPurchaser()
                                     .getUniqueId()
                     );
 
             if (offline.getName() != null) {
+
                 player = offline.getName();
             }
         }
@@ -102,35 +121,57 @@ public class ShopListener implements Listener {
         );
 
         //
-        // 📈 ECONOMY IMPACT
+        // 📈 IMPACT ÉCONOMIQUE
         //
 
         int impact =
+
                 Math.max(
                         1,
                         (int) Math.sqrt(amount)
                 );
 
-        if (isSellingToShop) {
+        //
+        // 📉 JOUEUR VEND AU SHOP
+        //
 
-            //
-            // 📉 joueur vend au shop
-            //
+        if (isSellingToShop) {
 
             MarketEngine.recordSell(
                     item,
                     impact
             );
 
-        } else {
+            Bukkit.getLogger().info(
 
-            //
-            // 📈 joueur achète au shop
-            //
+                    "[MoodCraft Market] SELL "
+                            + item
+                            + " x"
+                            + amount
+                            + " impact="
+                            + impact
+            );
+        }
+
+        //
+        // 📈 JOUEUR ACHÈTE AU SHOP
+        //
+
+        else {
 
             MarketEngine.recordBuy(
                     item,
                     impact * 2
+            );
+
+            Bukkit.getLogger().info(
+
+                    "[MoodCraft Market] BUY "
+                            + item
+                            + " x"
+                            + amount
+                            + " impact="
+                            + (impact * 2)
             );
         }
     }
