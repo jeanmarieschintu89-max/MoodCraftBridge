@@ -24,13 +24,16 @@ public final class ShopIndex {
     // =========================
     // 🔁 REBUILD INDEX
     // =========================
+
     public static void rebuild() {
 
         INDEX.clear();
 
-        QuickShopAPI api = QuickShopAPI.getInstance();
+        QuickShopAPI api =
+                QuickShopAPI.getInstance();
 
-        if (api == null || api.getShopManager() == null) {
+        if (api == null
+                || api.getShopManager() == null) {
 
             Bukkit.getLogger().warning(
                     "[ShopIndex] QuickShop non prêt"
@@ -40,7 +43,8 @@ public final class ShopIndex {
         }
 
         Collection<Shop> shops =
-                api.getShopManager().getAllShops();
+                api.getShopManager()
+                        .getAllShops();
 
         int indexed = 0;
 
@@ -52,10 +56,15 @@ public final class ShopIndex {
         }
 
         Bukkit.getLogger().info(
+
                 "[ShopIndex] ✔ "
+
                         + indexed
+
                         + " shops indexés | "
+
                         + INDEX.size()
+
                         + " items"
         );
     }
@@ -63,9 +72,12 @@ public final class ShopIndex {
     // =========================
     // ➕ AJOUT DYNAMIQUE
     // =========================
+
     public static boolean add(Shop shop) {
 
-        if (shop == null || shop.getItem() == null) {
+        if (shop == null
+                || shop.getItem() == null) {
+
             return false;
         }
 
@@ -74,24 +86,21 @@ public final class ShopIndex {
                         shop.getItem().getType()
                 );
 
-        if (key == null) {
+        if (key == null)
             return false;
-        }
 
-        if (!PriceUpdater.ALLOWED.contains(key)) {
+        if (!PriceUpdater.ALLOWED.contains(key))
             return false;
-        }
 
-        Set<Shop> set = INDEX.get(key);
+        Set<Shop> set =
+                INDEX.computeIfAbsent(
 
-        if (set == null) {
+                        key,
 
-            set = Collections.synchronizedSet(
-                    new HashSet<>()
-            );
-
-            INDEX.put(key, set);
-        }
+                        k -> Collections.synchronizedSet(
+                                new HashSet<>()
+                        )
+                );
 
         set.add(shop);
 
@@ -99,11 +108,14 @@ public final class ShopIndex {
     }
 
     // =========================
-    // ➖ REMOVE DYNAMIQUE
+    // ➖ REMOVE
     // =========================
+
     public static void remove(Shop shop) {
 
-        if (shop == null || shop.getItem() == null) {
+        if (shop == null
+                || shop.getItem() == null) {
+
             return;
         }
 
@@ -112,11 +124,11 @@ public final class ShopIndex {
                         shop.getItem().getType()
                 );
 
-        if (key == null) {
+        if (key == null)
             return;
-        }
 
-        Set<Shop> set = INDEX.get(key);
+        Set<Shop> set =
+                INDEX.get(key);
 
         if (set != null) {
 
@@ -131,14 +143,18 @@ public final class ShopIndex {
     // =========================
     // 📦 GET SHOPS
     // =========================
+
     public static Set<Shop> get(String item) {
 
         if (item == null) {
+
             return Collections.emptySet();
         }
 
         return INDEX.getOrDefault(
+
                 item.toLowerCase(),
+
                 Collections.emptySet()
         );
     }
@@ -146,6 +162,7 @@ public final class ShopIndex {
     // =========================
     // 📊 DEBUG
     // =========================
+
     public static int size() {
         return INDEX.size();
     }
