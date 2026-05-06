@@ -3,8 +3,9 @@ package fr.moodcraft.bridge.manager;
 import com.ghostchu.quickshop.api.QuickShopAPI;
 import com.ghostchu.quickshop.api.shop.Shop;
 
-import fr.moodcraft.bridge.Main;
 import fr.moodcraft.bridge.util.ItemNormalizer;
+
+import org.bukkit.Bukkit;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -12,15 +13,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
 
 public final class ShopIndex {
 
     private static final Map<String, Set<Shop>> INDEX =
             new ConcurrentHashMap<>();
-
-    private static final Logger log =
-            Main.getInstance().getLogger();
 
     private ShopIndex() {}
 
@@ -35,7 +32,9 @@ public final class ShopIndex {
 
         if (api == null || api.getShopManager() == null) {
 
-            log.warning("[ShopIndex] QuickShop non prêt");
+            Bukkit.getLogger().warning(
+                    "[ShopIndex] QuickShop non prêt"
+            );
 
             return;
         }
@@ -52,11 +51,13 @@ public final class ShopIndex {
             }
         }
 
-        log.info("[ShopIndex] ✔ "
-                + indexed
-                + " shops indexés | "
-                + INDEX.size()
-                + " items");
+        Bukkit.getLogger().info(
+                "[ShopIndex] ✔ "
+                        + indexed
+                        + " shops indexés | "
+                        + INDEX.size()
+                        + " items"
+        );
     }
 
     // =========================
