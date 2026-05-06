@@ -1,4 +1,4 @@
-package fr.moodcraft.bridge;
+package fr.moodcraft.bridge.handler;
 
 import fr.moodcraft.bridge.gui.MainMenuGUI;
 
