@@ -138,13 +138,17 @@ public class TransactionHistoryHandler implements GUIHandler {
         }
 
         //
-        // 📜 TRANSACTION
+        // 📜 TRANSACTIONS
         //
 
-        if (slot >= 10
-                && slot <= 25
-                && slot != 17
-                && slot != 18) {
+        boolean transactionSlot =
+
+                (slot >= 10 && slot <= 16)
+             || (slot >= 19 && slot <= 25)
+             || (slot >= 28 && slot <= 30)
+             || (slot >= 32 && slot <= 34);
+
+        if (transactionSlot) {
 
             p.playSound(
 
@@ -210,9 +214,7 @@ public class TransactionHistoryHandler implements GUIHandler {
         // 🔙 RETOUR
         //
 
-        if (slot == 31
-                || slot == 30
-                || slot == 32) {
+        if (slot == 31) {
 
             p.playSound(
 
