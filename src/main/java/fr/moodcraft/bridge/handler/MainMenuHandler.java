@@ -59,7 +59,7 @@ public class MainMenuHandler implements GUIHandler {
             // 🏦 BANQUE
             //
 
-            case 10 -> {
+            case 11 -> {
 
                 feedback(
                         p,
@@ -81,7 +81,7 @@ public class MainMenuHandler implements GUIHandler {
             // 📊 BOURSE
             //
 
-            case 14 -> {
+            case 13 -> {
 
                 feedback(
                         p,
@@ -103,7 +103,7 @@ public class MainMenuHandler implements GUIHandler {
             // 🧭 TÉLÉPORTATION
             //
 
-            case 16 -> {
+            case 15 -> {
 
                 feedback(
                         p,
@@ -121,7 +121,7 @@ public class MainMenuHandler implements GUIHandler {
             // 🏙️ VILLE
             //
 
-            case 19 -> {
+            case 20 -> {
 
                 feedback(
                         p,
@@ -143,7 +143,7 @@ public class MainMenuHandler implements GUIHandler {
             // ⛏️ MÉTIERS
             //
 
-            case 21 -> {
+            case 22 -> {
 
                 feedback(
                         p,
@@ -165,7 +165,7 @@ public class MainMenuHandler implements GUIHandler {
             // ❌ FERMER
             //
 
-            case 26 -> {
+            case 31 -> {
 
                 p.playSound(
 
