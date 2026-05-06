@@ -4,6 +4,7 @@ import com.ghostchu.quickshop.api.event.economy.ShopPurchaseEvent;
 
 import fr.moodcraft.bridge.market.MarketEngine;
 import fr.moodcraft.bridge.util.TransactionLogger;
+import fr.moodcraft.bridge.util.ItemNormalizer;
 
 import fr.moodcraft.bridge.manager.PriceUpdater;
 
@@ -27,45 +28,72 @@ public class ShopListener implements Listener {
 
         if (event == null
                 || event.getShop() == null
-                || event.getShop().getItem() == null) {
+                || event.getShop().getItem() == null
+                || event.getShop().getLocation() == null
+                || event.getShop().getLocation().getWorld() == null) {
+
             return;
         }
 
         //
-        // 🏦 ADMINSHOP UNIQUEMENT
+        // 🌍 MONDE ADMINSHOP
         //
 
-        if (!event.getShop().isUnlimited()) {
+        String world =
+
+                event.getShop()
+                        .getLocation()
+                        .getWorld()
+                        .getName();
+
+        //
+        // ❌ ignore hors spawn
+        //
+
+        if (!world.equalsIgnoreCase("world")) {
             return;
         }
 
         //
-        // 📦 ITEM
+        // 📦 ITEM NORMALISÉ
         //
 
         String item =
 
-                event.getShop()
-                        .getItem()
-                        .getType()
-                        .name()
-                        .toLowerCase();
+                ItemNormalizer.normalize(
+
+                        event.getShop()
+                                .getItem()
+                                .getType()
+                );
+
+        //
+        // ❌ item invalide
+        //
+
+        if (item == null)
+            return;
+
+        //
+        // ❌ item non autorisé
+        //
 
         if (!PriceUpdater.ALLOWED.contains(item))
             return;
 
         //
-        // 📊 AMOUNT
+        // 📊 QUANTITÉ
         //
 
         int amount =
+
                 Math.max(
                         1,
                         event.getAmount()
                 );
 
         //
-        // 👤 PLAYER
+        // 👤 JOUEUR
         //
 
         String player = "Inconnu";
@@ -87,7 +115,7 @@ public class ShopListener implements Listener {
         }
 
         //
-        // 💰 PRICE
+        // 💰 PRIX
         //
 
         double unit =
@@ -97,11 +125,34 @@ public class ShopListener implements Listener {
                 unit * amount;
 
         //
-        // 🏪 TYPE
+        // 🏪 QUICKSHOP TYPE
         //
 
         boolean isSellingToShop =
                 event.getShop().isBuying();
+
+        //
+        // 🧪 DEBUG
+        //
+
+        Bukkit.getLogger().info(
+
+                "[MoodCraft DEBUG] "
+
+                        + item
+
+                        + " | amount="
+
+                        + amount
+
+                        + " | buying="
+
+                        + isSellingToShop
+
+                        + " | player="
+
+                        + player
+        );
 
         //
         // 📄 LOG
@@ -121,7 +172,7 @@ public class ShopListener implements Listener {
         );
 
         //
-        // 📈 IMPACT ÉCONOMIQUE
+        // 📈 IMPACT MARCHÉ
         //
 
         int impact =
@@ -145,10 +196,15 @@ public class ShopListener implements Listener {
             Bukkit.getLogger().info(
 
                     "[MoodCraft Market] SELL "
+
                             + item
+
                             + " x"
+
                             + amount
+
                             + " impact="
+
                             + impact
             );
         }
@@ -167,10 +223,15 @@ public class ShopListener implements Listener {
             Bukkit.getLogger().info(
 
                     "[MoodCraft Market] BUY "
+
                             + item
+
                             + " x"
+
                             + amount
+
                             + " impact="
+
                             + (impact * 2)
             );
         }
