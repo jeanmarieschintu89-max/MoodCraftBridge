@@ -62,7 +62,8 @@ public class Main extends JavaPlugin {
                 new PayListener(),
                 new InventoryGuardListener(),
                 new InventoryCloseListener(),
-                new GlobalGUIListener()
+                new GlobalGUIListener(),
+                new FreezeListener()
         );
 
         // =========================
