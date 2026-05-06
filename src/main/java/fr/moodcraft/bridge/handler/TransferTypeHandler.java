@@ -33,7 +33,7 @@ public class TransferTypeHandler implements GUIHandler {
             // 👤 VIREMENT JOUEUR
             //
 
-            case 2 -> {
+            case 11 -> {
 
                 TransferBuilder.setAction(
 
@@ -88,7 +88,7 @@ public class TransferTypeHandler implements GUIHandler {
             // 🏦 VIREMENT IBAN
             //
 
-            case 6 -> {
+            case 15 -> {
 
                 TransferBuilder.setAction(
 
@@ -157,8 +157,7 @@ public class TransferTypeHandler implements GUIHandler {
             // 🔙 RETOUR
             //
 
-            case 8,
-                 31 -> {
+            case 22 -> {
 
                 p.playSound(
 
