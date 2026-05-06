@@ -200,6 +200,25 @@ public class Main extends JavaPlugin {
         registerCommand(
                 "banque",
                 new BanqueCommand()
+        registerCommand(
+        "depot",
+        new BanqueCommand()
+         );
+
+         registerCommand(
+                 "retrait",
+                 new BanqueCommand()
+         );
+
+         registerCommand(
+                 "virement",
+                 new BanqueCommand()
+         );
+
+         registerCommand(
+                 "rib",
+                 new BanqueCommand()
+         );
         );
 
         //
