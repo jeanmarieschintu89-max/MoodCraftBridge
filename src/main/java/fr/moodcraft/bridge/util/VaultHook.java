@@ -1,67 +1,171 @@
 package fr.moodcraft.bridge.util;
 
+import fr.moodcraft.bridge.Main;
+
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
+
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
+
+import java.util.UUID;
+import java.util.logging.Logger;
 
 public class VaultHook {
 
     private static Economy eco;
 
+    private static final Logger log =
+            Main.getInstance().getLogger();
+
     // =========================
-    // 🔌 INIT / GET ECONOMY
+    // 🔌 GET ECONOMY
     // =========================
     public static Economy getEconomy() {
 
-        if (eco != null) return eco;
+        if (eco != null) {
+            return eco;
+        }
 
         RegisteredServiceProvider<Economy> rsp =
-                Bukkit.getServicesManager().getRegistration(Economy.class);
+                Bukkit.getServicesManager()
+                        .getRegistration(Economy.class);
 
         if (rsp != null) {
             eco = rsp.getProvider();
         }
 
         if (eco == null) {
-            Main.getInstance().getLogger().warning("[VaultHook] Aucun provider trouvé !");
+            log.severe("[VaultHook] Aucun provider Vault trouvé");
         }
 
         return eco;
     }
 
     // =========================
-    // 💰 GET BALANCE
+    // 💰 BALANCE PLAYER
     // =========================
     public static double getBalance(Player p) {
+
         Economy e = getEconomy();
-        if (e == null) return 0;
+
+        if (e == null || p == null) {
+            return 0;
+        }
+
         return e.getBalance(p);
     }
 
     // =========================
-    // ➕ ADD MONEY
+    // 💰 BALANCE UUID
+    // =========================
+    public static double getBalance(UUID uuid) {
+
+        Economy e = getEconomy();
+
+        if (e == null || uuid == null) {
+            return 0;
+        }
+
+        OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+
+        return e.getBalance(player);
+    }
+
+    // =========================
+    // ➕ ADD PLAYER
     // =========================
     public static boolean add(Player p, double amount) {
 
         Economy e = getEconomy();
-        if (e == null) return false;
 
-        var res = e.depositPlayer(p, amount);
+        if (e == null || p == null || amount <= 0) {
+            return false;
+        }
+
+        EconomyResponse res =
+                e.depositPlayer(p, amount);
 
         return res.transactionSuccess();
     }
 
     // =========================
-    // ➖ REMOVE MONEY
+    // ➕ ADD UUID
+    // =========================
+    public static boolean add(UUID uuid, double amount) {
+
+        Economy e = getEconomy();
+
+        if (e == null || uuid == null || amount <= 0) {
+            return false;
+        }
+
+        OfflinePlayer player =
+                Bukkit.getOfflinePlayer(uuid);
+
+        EconomyResponse res =
+                e.depositPlayer(player, amount);
+
+        return res.transactionSuccess();
+    }
+
+    // =========================
+    // ➖ REMOVE PLAYER
     // =========================
     public static boolean remove(Player p, double amount) {
 
         Economy e = getEconomy();
-        if (e == null) return false;
 
-        var res = e.withdrawPlayer(p, amount);
+        if (e == null || p == null || amount <= 0) {
+            return false;
+        }
+
+        EconomyResponse res =
+                e.withdrawPlayer(p, amount);
 
         return res.transactionSuccess();
+    }
+
+    // =========================
+    // ➖ REMOVE UUID
+    // =========================
+    public static boolean remove(UUID uuid, double amount) {
+
+        Economy e = getEconomy();
+
+        if (e == null || uuid == null || amount <= 0) {
+            return false;
+        }
+
+        OfflinePlayer player =
+                Bukkit.getOfflinePlayer(uuid);
+
+        EconomyResponse res =
+                e.withdrawPlayer(player, amount);
+
+        return res.transactionSuccess();
+    }
+
+    // =========================
+    // 🧠 HAS MONEY
+    // =========================
+    public static boolean has(Player p, double amount) {
+
+        Economy e = getEconomy();
+
+        if (e == null || p == null) {
+            return false;
+        }
+
+        return e.has(p, amount);
+    }
+
+    // =========================
+    // 🔄 RESET CACHE
+    // =========================
+    public static void reset() {
+        eco = null;
     }
 }
