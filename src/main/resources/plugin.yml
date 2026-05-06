@@ -1,12 +1,16 @@
 name: MoodCraftBridge
 version: 1.0
+
 main: fr.moodcraft.bridge.Main
+
 api-version: 1.21
 
 author: MoodCraft
+
 description: Systeme economie + banque + marche dynamique
 
 depend: [Vault]
+
 softdepend: [QuickShop]
 
 commands:
@@ -23,6 +27,14 @@ commands:
     usage: /banque
     aliases: [bank, b]
 
+  depot:
+    description: Déposer de l'argent
+    usage: /depot <montant>
+
+  retrait:
+    description: Retirer de l'argent
+    usage: /retrait <montant>
+
   rib:
     description: Voir son RIB bancaire
     usage: /rib
@@ -34,7 +46,7 @@ commands:
   prix:
     description: Voir les prix du marché
     usage: /prix
-    aliases: [bourse, market, commerce, cours, brs, cours, vendre, vente, minerais]
+    aliases: [bourse, market, commerce, cours, brs, vendre, vente, minerais]
 
   sync:
     description: Synchroniser les prix QuickShop
