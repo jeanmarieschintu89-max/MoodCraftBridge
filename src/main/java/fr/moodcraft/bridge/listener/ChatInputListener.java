@@ -437,8 +437,6 @@ public class ChatInputListener implements Listener {
                                         "IBAN introuvable"
                                 );
 
-                                InputManager.clear(p);
-
                                 return;
                             }
 
@@ -450,8 +448,6 @@ public class ChatInputListener implements Listener {
                                         p,
                                         "Auto-virement interdit"
                                 );
-
-                                InputManager.clear(p);
 
                                 return;
                             }
@@ -510,8 +506,6 @@ public class ChatInputListener implements Listener {
                                     1f,
                                     1.2f
                             );
-
-                            InputManager.clear(p);
                         }
                     }
             );
