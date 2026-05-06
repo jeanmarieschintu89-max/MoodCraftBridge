@@ -71,7 +71,11 @@ public class VaultHook {
 
         OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
 
-        return e.getBalance(player);
+        if (player.getName() == null) {
+            return 0;
+        }
+
+        return e.getBalance(player.getName());
     }
 
     // =========================
@@ -102,11 +106,14 @@ public class VaultHook {
             return false;
         }
 
-        OfflinePlayer player =
-                Bukkit.getOfflinePlayer(uuid);
+        OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+
+        if (player.getName() == null) {
+            return false;
+        }
 
         EconomyResponse res =
-                e.depositPlayer(player, amount);
+                e.depositPlayer(player.getName(), amount);
 
         return res.transactionSuccess();
     }
@@ -139,11 +146,14 @@ public class VaultHook {
             return false;
         }
 
-        OfflinePlayer player =
-                Bukkit.getOfflinePlayer(uuid);
+        OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+
+        if (player.getName() == null) {
+            return false;
+        }
 
         EconomyResponse res =
-                e.withdrawPlayer(player, amount);
+                e.withdrawPlayer(player.getName(), amount);
 
         return res.transactionSuccess();
     }
