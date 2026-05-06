@@ -1,4 +1,3 @@
-
 package fr.moodcraft.bridge.handler;
 
 import fr.moodcraft.bridge.bank.BankStorage;
@@ -31,17 +30,57 @@ public class DepositHandler implements GUIHandler {
             // 💰 DÉPÔTS RAPIDES
             //
 
-            case 11 -> deposit(p, 100);
+            case 11 -> {
 
-            case 13 -> deposit(p, 1000);
+                p.playSound(
+                        p.getLocation(),
+                        Sound.UI_BUTTON_CLICK,
+                        1f,
+                        1.05f
+                );
 
-            case 15 -> deposit(p, 10000);
+                deposit(p, 100);
+            }
+
+            case 13 -> {
+
+                p.playSound(
+                        p.getLocation(),
+                        Sound.UI_BUTTON_CLICK,
+                        1f,
+                        1.1f
+                );
+
+                deposit(p, 1000);
+            }
+
+            case 15 -> {
+
+                p.playSound(
+                        p.getLocation(),
+                        Sound.UI_BUTTON_CLICK,
+                        1f,
+                        1.15f
+                );
+
+                deposit(p, 10000);
+            }
 
             //
             // 🏦 TOUT DÉPOSER
             //
 
-            case 21 -> depositAll(p);
+            case 21 -> {
+
+                p.playSound(
+                        p.getLocation(),
+                        Sound.BLOCK_BEACON_ACTIVATE,
+                        1f,
+                        1f
+                );
+
+                depositAll(p);
+            }
 
             //
             // ✍️ PERSONNALISÉ
