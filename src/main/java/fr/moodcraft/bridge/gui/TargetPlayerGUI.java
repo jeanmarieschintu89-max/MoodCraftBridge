@@ -14,36 +14,78 @@ import java.util.UUID;
 
 public class TargetPlayerGUI {
 
-    // mapping slot → joueur
+    // 🔥 mapping slot → joueur
     private static final Map<Integer, UUID> slotMap = new HashMap<>();
 
     public static void open(Player p) {
 
-        Inventory inv = Bukkit.createInventory(null, 54, "§fChoix du joueur");
+        Inventory inv =
+                Bukkit.createInventory(
+                        null,
+                        54,
+                        "§fChoix du joueur"
+                );
 
-        slotMap.clear(); // IMPORTANT
+        // 🔥 reset mapping
+        slotMap.clear();
 
         int slot = 0;
 
         for (Player target : Bukkit.getOnlinePlayers()) {
 
+            // ❌ soi-même
             if (target.equals(p)) continue;
 
+            // ❌ sécurité taille
+            if (slot >= 45) break;
+
+            // 💾 save UUID
             slotMap.put(slot, target.getUniqueId());
 
-            SafeGUI.safeSet(inv, slot,
-                    SafeGUI.item(Material.PLAYER_HEAD,
+            // 👤 tête joueur
+            SafeGUI.safeSet(
+                    inv,
+                    slot,
+                    SafeGUI.item(
+                            Material.PLAYER_HEAD,
                             "§a" + target.getName(),
                             "§8────────────",
-                            "§7Clique pour sélectionner"));
+                            "§7Clique pour sélectionner",
+                            "",
+                            "§e▶ Virement"
+                    )
+            );
 
             slot++;
         }
 
-        GUIManager.open(p, "bank_target", inv);
+        //
+        // 🔙 RETOUR
+        //
+
+        SafeGUI.safeSet(
+                inv,
+                49,
+                SafeGUI.item(
+                        Material.ARROW,
+                        "§cRetour"
+                )
+        );
+
+        //
+        // 📂 IMPORTANT
+        // ⚠ ancien bug ici
+        //
+
+        GUIManager.open(
+                p,
+                "transfer_target",
+                inv
+        );
     }
 
     public static UUID getTarget(int slot) {
+
         return slotMap.get(slot);
     }
 }
