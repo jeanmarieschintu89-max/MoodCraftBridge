@@ -10,14 +10,17 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 public final class ShopIndex {
 
-    private static final Map<String, Set<Shop>> INDEX = new ConcurrentHashMap<>();
+    private static final Map<String, Set<Shop>> INDEX =
+            new ConcurrentHashMap<>();
 
-    private static final Logger log = Main.getInstance().getLogger();
+    private static final Logger log =
+            Main.getInstance().getLogger();
 
     private ShopIndex() {}
 
@@ -37,7 +40,8 @@ public final class ShopIndex {
             return;
         }
 
-        Collection<Shop> shops = api.getShopManager().getAllShops();
+        Collection<Shop> shops =
+                api.getShopManager().getAllShops();
 
         int indexed = 0;
 
@@ -64,7 +68,10 @@ public final class ShopIndex {
             return false;
         }
 
-        String key = ItemNormalizer.normalize(shop.getItem().getType());
+        String key =
+                ItemNormalizer.normalize(
+                        shop.getItem().getType()
+                );
 
         if (key == null) {
             return false;
@@ -74,10 +81,18 @@ public final class ShopIndex {
             return false;
         }
 
-        INDEX.computeIfAbsent(
-                key,
-                k -> ConcurrentHashMap.newKeySet()
-        ).add(shop);
+        Set<Shop> set = INDEX.get(key);
+
+        if (set == null) {
+
+            set = Collections.synchronizedSet(
+                    new HashSet<>()
+            );
+
+            INDEX.put(key, set);
+        }
+
+        set.add(shop);
 
         return true;
     }
@@ -91,7 +106,10 @@ public final class ShopIndex {
             return;
         }
 
-        String key = ItemNormalizer.normalize(shop.getItem().getType());
+        String key =
+                ItemNormalizer.normalize(
+                        shop.getItem().getType()
+                );
 
         if (key == null) {
             return;
@@ -103,7 +121,6 @@ public final class ShopIndex {
 
             set.remove(shop);
 
-            // 🔥 cleanup mémoire
             if (set.isEmpty()) {
                 INDEX.remove(key);
             }
