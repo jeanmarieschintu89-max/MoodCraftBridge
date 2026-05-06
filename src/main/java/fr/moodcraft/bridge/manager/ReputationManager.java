@@ -1,3 +1,4 @@
+
 package fr.moodcraft.bridge.manager;
 
 import fr.moodcraft.bridge.Main;
@@ -369,25 +370,28 @@ public class ReputationManager {
 
     public static String getRank(int rep) {
 
-        if (rep >= 200)
-            return "§6Maître du Marché";
+        if (rep >= 2500)
+            return "§6Légende";
+
+        if (rep >= 1800)
+            return "§dPrestigieux";
+
+        if (rep >= 1200)
+            return "§5Influent";
+
+        if (rep >= 700)
+            return "§bReconnu";
+
+        if (rep >= 350)
+            return "§aRespecté";
 
         if (rep >= 120)
-            return "§dÉlite Commerciale";
+            return "§fÉtabli";
 
-        if (rep >= 80)
-            return "§bInfluenceur Éco";
+        if (rep >= 40)
+            return "§7Habitué";
 
-        if (rep >= 50)
-            return "§2Pilier du Marché";
-
-        if (rep >= 25)
-            return "§aMarchand Actif";
-
-        if (rep >= 10)
-            return "§fCommerçant";
-
-        return "§7Visiteur";
+        return "§8Inconnu";
     }
 
     // =========================
