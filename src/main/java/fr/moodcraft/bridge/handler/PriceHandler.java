@@ -1,98 +1,212 @@
-private void sell(Player p, String id, Material mat) {
+package fr.moodcraft.bridge.handler;
 
-    int amount = count(p, mat);
+import fr.moodcraft.bridge.gui.MainMenuGUI;
+import fr.moodcraft.bridge.market.MarketEngine;
+import fr.moodcraft.bridge.util.VaultHook;
 
-    if (amount <= 0) {
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
 
-        p.sendMessage(
-                "§cTu n'as aucun "
-                        + mat.name().toLowerCase()
-        );
+public class PriceHandler implements GUIHandler {
 
-        return;
+    @Override
+    public void onClick(Player p, int slot) {
+
+        switch (slot) {
+
+            case 4:
+                MainMenuGUI.open(p);
+                return;
+
+            case 10:
+                sell(p, "netherite", Material.NETHERITE_INGOT);
+                return;
+
+            case 11:
+                sell(p, "emerald", Material.EMERALD);
+                return;
+
+            case 12:
+                sell(p, "diamond", Material.DIAMOND);
+                return;
+
+            case 13:
+                sell(p, "gold", Material.GOLD_INGOT);
+                return;
+
+            case 14:
+                sell(p, "copper", Material.COPPER_INGOT);
+                return;
+
+            case 15:
+                sell(p, "iron", Material.IRON_INGOT);
+                return;
+
+            case 16:
+                sell(p, "glowstone", Material.GLOWSTONE_DUST);
+                return;
+
+            case 19:
+                sell(p, "quartz", Material.QUARTZ);
+                return;
+
+            case 20:
+                sell(p, "amethyst", Material.AMETHYST_SHARD);
+                return;
+
+            case 21:
+                sell(p, "redstone", Material.REDSTONE);
+                return;
+
+            case 22:
+                sell(p, "lapis", Material.LAPIS_LAZULI);
+                return;
+
+            case 23:
+                sell(p, "coal", Material.COAL);
+                return;
+        }
     }
 
-    double unit =
-            MarketEngine.getPrice(id);
+    private void sell(Player p, String id, Material mat) {
 
-    double gross =
-            unit * amount;
+        int amount = count(p, mat);
 
-    double taxRate = 0.20;
+        if (amount <= 0) {
 
-    double tax =
-            gross * taxRate;
+            p.sendMessage(
+                    "§cTu n'as aucun "
+                            + mat.name().toLowerCase()
+            );
 
-    double total =
-            gross - tax;
+            return;
+        }
 
-    //
-    // 💰 ARGENT
-    //
+        double unit =
+                MarketEngine.getPrice(id);
 
-    VaultHook.getEconomy()
-            .depositPlayer(p, total);
+        double gross =
+                unit * amount;
 
-    //
-    // 📦 REMOVE ITEMS
-    //
+        double taxRate = 0.20;
 
-    remove(p, mat, amount);
+        double tax =
+                gross * taxRate;
 
-    //
-    // 📉 IMPACT BOURSE
-    //
+        double total =
+                gross - tax;
 
-    MarketEngine.recordSell(id, amount);
+        //
+        // 💰 ARGENT
+        //
 
-    //
-    // ✨ MESSAGE
-    //
+        VaultHook.getEconomy()
+                .depositPlayer(p, total);
 
-    p.sendMessage("");
-    p.sendMessage("§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-    p.sendMessage("§6✦ §fVente effectuée");
-    p.sendMessage("");
+        //
+        // 📦 REMOVE ITEMS
+        //
 
-    p.sendMessage(
-            "§7Item: §e"
-                    + amount
-                    + "x "
-                    + id
-    );
+        remove(p, mat, amount);
 
-    p.sendMessage(
-            "§7Brut: §f"
-                    + String.format("%.2f", gross)
-                    + "€"
-    );
+        //
+        // 📉 IMPACT BOURSE
+        //
 
-    p.sendMessage(
-            "§cTaxe (20%): §f-"
-                    + String.format("%.2f", tax)
-                    + "€"
-    );
+        MarketEngine.recordSell(id, amount);
 
-    p.sendMessage(
-            "§aNet reçu: §f"
-                    + String.format("%.2f", total)
-                    + "€"
-    );
+        //
+        // ✨ MESSAGE
+        //
 
-    p.sendMessage("");
-    p.sendMessage("§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        p.sendMessage("");
+        p.sendMessage("§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        p.sendMessage("§6✦ §fVente effectuée");
+        p.sendMessage("");
 
-    p.sendTitle(
-            "§a+"
-                    + String.format("%.2f", total)
-                    + "€",
+        p.sendMessage(
+                "§7Item: §e"
+                        + amount
+                        + "x "
+                        + id
+        );
 
-            "§cTaxe: -"
-                    + String.format("%.2f", tax)
-                    + "€",
+        p.sendMessage(
+                "§7Brut: §f"
+                        + String.format("%.2f", gross)
+                        + "€"
+        );
 
-            5,
-            25,
-            8
-    );
+        p.sendMessage(
+                "§cTaxe (20%): §f-"
+                        + String.format("%.2f", tax)
+                        + "€"
+        );
+
+        p.sendMessage(
+                "§aNet reçu: §f"
+                        + String.format("%.2f", total)
+                        + "€"
+        );
+
+        p.sendMessage("");
+        p.sendMessage("§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
+        p.sendTitle(
+                "§a+"
+                        + String.format("%.2f", total)
+                        + "€",
+
+                "§cTaxe: -"
+                        + String.format("%.2f", tax)
+                        + "€",
+
+                5,
+                25,
+                8
+        );
+    }
+
+    private int count(Player p, Material mat) {
+
+        int total = 0;
+
+        for (var item : p.getInventory().getContents()) {
+
+            if (item != null
+                    && item.getType() == mat) {
+
+                total += item.getAmount();
+            }
+        }
+
+        return total;
+    }
+
+    private void remove(Player p, Material mat, int amount) {
+
+        int left = amount;
+
+        for (var item : p.getInventory().getContents()) {
+
+            if (item == null
+                    || item.getType() != mat)
+                continue;
+
+            int take =
+                    Math.min(
+                            item.getAmount(),
+                            left
+                    );
+
+            item.setAmount(
+                    item.getAmount() - take
+            );
+
+            left -= take;
+
+            if (left <= 0)
+                break;
+        }
+    }
 }
