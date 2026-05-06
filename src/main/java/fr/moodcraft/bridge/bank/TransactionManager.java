@@ -46,10 +46,12 @@ public class TransactionManager {
             globalLogs = new ArrayList<>();
 
     //
-    // 📦 MAX HISTORIQUE
+    // 📦 LIMITES
     //
 
     private static final int MAX = 50;
+
+    private static final int GLOBAL_MAX = 200;
 
     //
     // 🚨 FRAUDE
@@ -71,7 +73,9 @@ public class TransactionManager {
     public static void init() {
 
         file = new File(
+
                 Main.getInstance().getDataFolder(),
+
                 "transactions.yml"
         );
 
@@ -97,14 +101,18 @@ public class TransactionManager {
             if (key.equals("global"))
                 continue;
 
-            history.put(
+            try {
 
-                    UUID.fromString(key),
+                history.put(
 
-                    new ArrayList<>(
-                            config.getStringList(key)
-                    )
-            );
+                        UUID.fromString(key),
+
+                        new ArrayList<>(
+                                config.getStringList(key)
+                        )
+                );
+
+            } catch (Exception ignored) {}
         }
 
         if (config.contains("global")) {
@@ -114,7 +122,11 @@ public class TransactionManager {
             );
         }
 
-        log("§aChargé (" + history.size() + " joueurs)");
+        log(
+                "§aTransactionManager chargé §8("
+                        + history.size()
+                        + " joueurs)"
+        );
     }
 
     //
@@ -131,6 +143,33 @@ public class TransactionManager {
 
             e.printStackTrace();
         }
+    }
+
+    //
+    // 💰 FORMAT ARGENT
+    //
+
+    private static String money(double value) {
+
+        return String.format(
+                "%,.2f",
+                value
+        ) + "€";
+    }
+
+    //
+    // 👤 NOM SAFE
+    //
+
+    private static String playerName(UUID uuid) {
+
+        String name =
+                Bukkit.getOfflinePlayer(uuid)
+                        .getName();
+
+        return name != null
+                ? name
+                : uuid.toString().substring(0, 8);
     }
 
     //
@@ -152,8 +191,11 @@ public class TransactionManager {
                              String line) {
 
         List<String> list =
+
                 history.computeIfAbsent(
+
                         uuid,
+
                         k -> new ArrayList<>()
                 );
 
@@ -180,7 +222,7 @@ public class TransactionManager {
 
         globalLogs.add(0, line);
 
-        if (globalLogs.size() > 200) {
+        if (globalLogs.size() > GLOBAL_MAX) {
 
             globalLogs.remove(
                     globalLogs.size() - 1
@@ -217,23 +259,33 @@ public class TransactionManager {
                 t -> now - t > SPAM_WINDOW
         );
 
+        //
+        // 💣 GROS MONTANT
+        //
+
         if (amount >= ALERT_AMOUNT) {
 
             alert(
-                    "Gros virement: "
-                            + amount
-                            + "€ ("
-                            + uuid
+
+                    "Gros virement détecté §8• §e"
+                            + playerName(uuid)
+                            + " §7("
+                            + money(amount)
                             + ")"
             );
         }
 
+        //
+        // ⚠ SPAM
+        //
+
         if (list.size() >= SPAM_LIMIT) {
 
             alert(
-                    "Spam virement: "
-                            + uuid
-                            + " ("
+
+                    "Spam transferts §8• §e"
+                            + playerName(uuid)
+                            + " §7("
                             + list.size()
                             + "/min)"
             );
@@ -251,12 +303,15 @@ public class TransactionManager {
         );
 
         Bukkit.getOnlinePlayers()
+
                 .stream()
+
                 .filter(
                         p -> p.hasPermission(
                                 "moodcraft.admin"
                         )
                 )
+
                 .forEach(
                         p -> p.sendMessage(
                                 "§4⚠ " + msg
@@ -272,28 +327,27 @@ public class TransactionManager {
                                 UUID to,
                                 double amount) {
 
-        String date =
-                now();
+        String date = now();
 
         String sender =
 
                 "§c-"
-                        + amount
-                        + "€ §8→ §7"
-                        + Bukkit.getOfflinePlayer(to).getName()
-                        + " §8("
+                        + money(amount)
+                        + " §8→ §e"
+                        + playerName(to)
+                        + " §8• "
                         + date
-                        + ") §8[TRANSFER]";
+                        + " §8[TRANSFER]";
 
         String receiver =
 
                 "§a+"
-                        + amount
-                        + "€ §8← §7"
-                        + Bukkit.getOfflinePlayer(from).getName()
-                        + " §8("
+                        + money(amount)
+                        + " §8← §e"
+                        + playerName(from)
+                        + " §8• "
                         + date
-                        + ") §8[TRANSFER]";
+                        + " §8[TRANSFER]";
 
         push(from, sender);
 
@@ -301,32 +355,32 @@ public class TransactionManager {
 
         pushGlobal(
 
-                "§eVIREMENT §7"
-                        + Bukkit.getOfflinePlayer(from).getName()
-                        + " → "
-                        + Bukkit.getOfflinePlayer(to).getName()
-                        + " §f"
-                        + amount
-                        + "€"
+                "§6💸 VIREMENT §8• §e"
+                        + playerName(from)
+                        + " §7→ §e"
+                        + playerName(to)
+                        + " §8("
+                        + money(amount)
+                        + ")"
         );
 
         checkFraude(from, amount);
 
         log(
+
                 "TRANSFER "
-                        + from
+                        + playerName(from)
                         + " -> "
-                        + to
+                        + playerName(to)
                         + " : "
-                        + amount
-                        + "€"
+                        + money(amount)
         );
 
         save();
     }
 
     //
-    // 📥 DEPOT
+    // 📥 DÉPÔT
     //
 
     public static void deposit(UUID uuid,
@@ -337,19 +391,18 @@ public class TransactionManager {
                 uuid,
 
                 "§a+"
-                        + amount
-                        + "€ §8• Dépôt §8("
+                        + money(amount)
+                        + " §8• Dépôt bancaire §8• "
                         + now()
-                        + ") §8[DEPOSIT]"
+                        + " §8[DEPOSIT]"
         );
 
         pushGlobal(
 
-                "§aDEPOT §7"
-                        + Bukkit.getOfflinePlayer(uuid).getName()
-                        + " +"
-                        + amount
-                        + "€"
+                "§a🏦 DEPOT §8• §e"
+                        + playerName(uuid)
+                        + " §7+"
+                        + money(amount)
         );
 
         save();
@@ -367,19 +420,18 @@ public class TransactionManager {
                 uuid,
 
                 "§c-"
-                        + amount
-                        + "€ §8• Retrait §8("
+                        + money(amount)
+                        + " §8• Retrait bancaire §8• "
                         + now()
-                        + ") §8[WITHDRAW]"
+                        + " §8[WITHDRAW]"
         );
 
         pushGlobal(
 
-                "§cRETRAIT §7"
-                        + Bukkit.getOfflinePlayer(uuid).getName()
-                        + " -"
-                        + amount
-                        + "€"
+                "§c🏦 RETRAIT §8• §e"
+                        + playerName(uuid)
+                        + " §7-"
+                        + money(amount)
         );
 
         save();
@@ -399,27 +451,27 @@ public class TransactionManager {
                 uuid,
 
                 "§6-"
-                        + amount
-                        + "€ §8• Achat §e"
+                        + money(amount)
+                        + " §8• Achat §e"
                         + qty
                         + "x "
                         + item
-                        + " §8("
+                        + " §8• "
                         + now()
-                        + ") §8[MARKET_BUY]"
+                        + " §8[MARKET_BUY]"
         );
 
         pushGlobal(
 
-                "§6ACHAT §7"
-                        + Bukkit.getOfflinePlayer(uuid).getName()
-                        + " §f"
+                "§6📈 ACHAT §8• §e"
+                        + playerName(uuid)
+                        + " §7"
                         + qty
                         + "x "
                         + item
                         + " §8("
-                        + amount
-                        + "€)"
+                        + money(amount)
+                        + ")"
         );
 
         save();
@@ -439,27 +491,27 @@ public class TransactionManager {
                 uuid,
 
                 "§a+"
-                        + amount
-                        + "€ §8• Vente §e"
+                        + money(amount)
+                        + " §8• Vente §e"
                         + qty
                         + "x "
                         + item
-                        + " §8("
+                        + " §8• "
                         + now()
-                        + ") §8[MARKET_SELL]"
+                        + " §8[MARKET_SELL]"
         );
 
         pushGlobal(
 
-                "§aVENTE §7"
-                        + Bukkit.getOfflinePlayer(uuid).getName()
-                        + " §f"
+                "§a📊 VENTE §8• §e"
+                        + playerName(uuid)
+                        + " §7"
                         + qty
                         + "x "
                         + item
                         + " §8("
-                        + amount
-                        + "€)"
+                        + money(amount)
+                        + ")"
         );
 
         save();
@@ -474,24 +526,33 @@ public class TransactionManager {
                                            String search) {
 
         List<String> list =
+
                 history.getOrDefault(
+
                         uuid,
+
                         new ArrayList<>()
                 );
 
         return list.stream()
 
                 .filter(
+
                         line ->
+
                                 filter == null
+
                                         || line.contains(
                                         "[" + filter + "]"
                                 )
                 )
 
                 .filter(
+
                         line ->
+
                                 search == null
+
                                         || line.toLowerCase()
                                         .contains(
                                                 search.toLowerCase()
@@ -525,7 +586,7 @@ public class TransactionManager {
     }
 
     //
-    // 🌍 LOGS
+    // 🌍 GLOBAL
     //
 
     public static List<String> getGlobal() {
@@ -534,19 +595,21 @@ public class TransactionManager {
     }
 
     //
-    // 📜 GET PLAYER HISTORY
+    // 📜 HISTORIQUE
     //
 
     public static List<String> getHistory(UUID uuid) {
 
         return history.getOrDefault(
+
                 uuid,
+
                 new ArrayList<>()
         );
     }
 
     //
-    // 🧹 CLEAR PLAYER
+    // 🧹 CLEAR
     //
 
     public static void clear(UUID uuid) {
