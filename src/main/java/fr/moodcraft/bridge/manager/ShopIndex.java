@@ -31,7 +31,7 @@ public final class ShopIndex {
             add(shop);
         }
 
-        System.out.println("[ShopIndex] ✔ " + INDEX.size() + " items indexés");
+        Main.getInstance().getLogger().info("[ShopIndex] ✔ 12 items indexés");
     }
 
     // ➕ ajout dynamique
