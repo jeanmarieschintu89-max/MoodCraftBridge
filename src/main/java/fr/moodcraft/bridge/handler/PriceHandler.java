@@ -5,7 +5,10 @@ import fr.moodcraft.bridge.bank.TransactionManager;
 import fr.moodcraft.bridge.gui.MainMenuGUI;
 
 import fr.moodcraft.bridge.market.MarketEngine;
+import fr.moodcraft.bridge.market.MarketState;
 
+import fr.moodcraft.bridge.util.ActionLock;
+import fr.moodcraft.bridge.util.SafeGUI;
 import fr.moodcraft.bridge.util.VaultHook;
 
 import org.bukkit.Material;
@@ -15,6 +18,8 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 public class PriceHandler implements GUIHandler {
+
+    private static final double TAX_RATE = 0.20;
 
     @Override
     public void onClick(Player p,
@@ -29,9 +34,13 @@ public class PriceHandler implements GUIHandler {
             case 4 -> {
 
                 p.playSound(
+
                         p.getLocation(),
+
                         Sound.UI_BUTTON_CLICK,
+
                         1f,
+
                         0.9f
                 );
 
@@ -41,68 +50,92 @@ public class PriceHandler implements GUIHandler {
             }
 
             //
-            // 🔥 MINERAIS
+            // 💎 MINERAIS
             //
 
-            case 10 -> {
-                sell(p, "netherite", Material.NETHERITE_INGOT);
-                return;
-            }
+            case 10 -> sell(
+                    p,
+                    "netherite",
+                    Material.NETHERITE_INGOT,
+                    "Netherite"
+            );
 
-            case 11 -> {
-                sell(p, "emerald", Material.EMERALD);
-                return;
-            }
+            case 11 -> sell(
+                    p,
+                    "emerald",
+                    Material.EMERALD,
+                    "Émeraude"
+            );
 
-            case 12 -> {
-                sell(p, "diamond", Material.DIAMOND);
-                return;
-            }
+            case 12 -> sell(
+                    p,
+                    "diamond",
+                    Material.DIAMOND,
+                    "Diamant"
+            );
 
-            case 13 -> {
-                sell(p, "gold", Material.GOLD_INGOT);
-                return;
-            }
+            case 13 -> sell(
+                    p,
+                    "gold",
+                    Material.GOLD_INGOT,
+                    "Or"
+            );
 
-            case 14 -> {
-                sell(p, "copper", Material.COPPER_INGOT);
-                return;
-            }
+            case 14 -> sell(
+                    p,
+                    "copper",
+                    Material.COPPER_INGOT,
+                    "Cuivre"
+            );
 
-            case 15 -> {
-                sell(p, "iron", Material.IRON_INGOT);
-                return;
-            }
+            case 15 -> sell(
+                    p,
+                    "iron",
+                    Material.IRON_INGOT,
+                    "Fer"
+            );
 
-            case 16 -> {
-                sell(p, "glowstone", Material.GLOWSTONE_DUST);
-                return;
-            }
+            case 16 -> sell(
+                    p,
+                    "glowstone",
+                    Material.GLOWSTONE_DUST,
+                    "Glowstone"
+            );
 
-            case 19 -> {
-                sell(p, "quartz", Material.QUARTZ);
-                return;
-            }
+            case 19 -> sell(
+                    p,
+                    "quartz",
+                    Material.QUARTZ,
+                    "Quartz"
+            );
 
-            case 20 -> {
-                sell(p, "amethyst", Material.AMETHYST_SHARD);
-                return;
-            }
+            case 20 -> sell(
+                    p,
+                    "amethyst",
+                    Material.AMETHYST_SHARD,
+                    "Améthyste"
+            );
 
-            case 21 -> {
-                sell(p, "redstone", Material.REDSTONE);
-                return;
-            }
+            case 21 -> sell(
+                    p,
+                    "redstone",
+                    Material.REDSTONE,
+                    "Redstone"
+            );
 
-            case 22 -> {
-                sell(p, "lapis", Material.LAPIS_LAZULI);
-                return;
-            }
+            case 22 -> sell(
+                    p,
+                    "lapis",
+                    Material.LAPIS_LAZULI,
+                    "Lapis"
+            );
 
-            case 23 -> {
-                sell(p, "coal", Material.COAL);
-                return;
-            }
+            case 23 -> sell(
+                    p,
+                    "coal",
+                    Material.COAL,
+                    "Charbon"
+            );
         }
     }
 
@@ -112,10 +145,28 @@ public class PriceHandler implements GUIHandler {
 
     private void sell(Player p,
                       String id,
-                      Material mat) {
+                      Material mat,
+                      String display) {
+
+        //
+        // 🔒 ANTI SPAM
+        //
+
+        if (ActionLock.isLocked(
+                p.getUniqueId(),
+                500
+        )) return;
+
+        //
+        // 📦 COUNT
+        //
 
         int amount =
                 count(p, mat);
+
+        //
+        // ❌ AUCUN ITEM
+        //
 
         if (amount <= 0) {
 
@@ -126,17 +177,17 @@ public class PriceHandler implements GUIHandler {
             );
 
             p.sendMessage(
-                    "§c✦ §fMarché MoodCraft"
+                    "§c✦ Marché MoodCraft"
             );
 
             p.sendMessage("");
 
             p.sendMessage(
-                    "§7Tu ne possèdes aucun:"
+                    "§7Aucune ressource détectée:"
             );
 
             p.sendMessage(
-                    "§e" + mat.name().toLowerCase()
+                    "§e" + display
             );
 
             p.sendMessage("");
@@ -148,10 +199,14 @@ public class PriceHandler implements GUIHandler {
             p.sendMessage("");
 
             p.playSound(
+
                     p.getLocation(),
+
                     Sound.ENTITY_VILLAGER_NO,
+
                     1f,
-                    1f
+
+                    0.9f
             );
 
             return;
@@ -171,13 +226,21 @@ public class PriceHandler implements GUIHandler {
         // 🏛 TAXE
         //
 
-        double taxRate = 0.20;
-
         double tax =
-                gross * taxRate;
+                gross * TAX_RATE;
 
         double total =
                 gross - tax;
+
+        //
+        // 📉 TENDANCE
+        //
+
+        String trend =
+                MarketState.trend.getOrDefault(
+                        id,
+                        "§7Stable"
+                );
 
         //
         // 💰 ARGENT
@@ -190,7 +253,7 @@ public class PriceHandler implements GUIHandler {
                 );
 
         //
-        // 📦 REMOVE ITEMS
+        // 📦 REMOVE
         //
 
         remove(
@@ -200,7 +263,7 @@ public class PriceHandler implements GUIHandler {
         );
 
         //
-        // 📉 IMPACT BOURSE
+        // 📊 IMPACT ÉCO
         //
 
         MarketEngine.recordSell(
@@ -234,47 +297,102 @@ public class PriceHandler implements GUIHandler {
         );
 
         p.sendMessage(
-                "§6✦ §fVente marché effectuée"
+                "§6✦ §fTransaction Marché"
         );
 
         p.sendMessage("");
 
         p.sendMessage(
-                "§7Ressource: §e"
+                "§7Ressource vendue:"
+        );
+
+        p.sendMessage(
+                "§e"
                         + amount
                         + "x "
-                        + id
+                        + display
         );
 
         p.sendMessage("");
 
         p.sendMessage(
-                "§7Prix unitaire: §f"
-                        + String.format("%.2f", unit)
-                        + "€"
+                "§7Cours du marché:"
         );
 
         p.sendMessage(
-                "§7Montant brut: §f"
-                        + String.format("%.2f", gross)
-                        + "€"
+                "§6"
+                        + SafeGUI.money(unit)
+                        + "€ §8/unité"
+        );
+
+        p.sendMessage("");
+
+        p.sendMessage(
+                "§7Tendance économique:"
         );
 
         p.sendMessage(
-                "§cTaxe marché (20%): §f-"
-                        + String.format("%.2f", tax)
+                trend
+        );
+
+        p.sendMessage("");
+
+        p.sendMessage(
+                "§7Montant brut:"
+        );
+
+        p.sendMessage(
+                "§f"
+                        + SafeGUI.money(gross)
                         + "€"
         );
 
         p.sendMessage("");
 
         p.sendMessage(
-                "§aNet reçu: §f"
-                        + String.format("%.2f", total)
+                "§cTaxe économique:"
+        );
+
+        p.sendMessage(
+                "§c-"
+                        + SafeGUI.money(tax)
                         + "€"
         );
 
         p.sendMessage("");
+
+        p.sendMessage(
+                "§aProfit net:"
+        );
+
+        p.sendMessage(
+                "§a+"
+                        + SafeGUI.money(total)
+                        + "€"
+        );
+
+        p.sendMessage("");
+
+        //
+        // 🌟 GROS PROFITS
+        //
+
+        if (total >= 50000) {
+
+            p.sendMessage(
+                    "§6✦ Vente majeure détectée"
+            );
+
+            p.sendMessage(
+                    "§7Le marché a enregistré"
+            );
+
+            p.sendMessage(
+                    "§7une forte activité économique."
+            );
+
+            p.sendMessage("");
+        }
 
         p.sendMessage(
                 "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -286,12 +404,33 @@ public class PriceHandler implements GUIHandler {
         // 🔊 SOUND
         //
 
-        p.playSound(
-                p.getLocation(),
-                Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
-                1f,
-                1.15f
-        );
+        if (total >= 50000) {
+
+            p.playSound(
+
+                    p.getLocation(),
+
+                    Sound.UI_TOAST_CHALLENGE_COMPLETE,
+
+                    1f,
+
+                    1f
+            );
+        }
+
+        else {
+
+            p.playSound(
+
+                    p.getLocation(),
+
+                    Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
+
+                    1f,
+
+                    1.15f
+            );
+        }
 
         //
         // 🎬 TITLE
@@ -300,16 +439,16 @@ public class PriceHandler implements GUIHandler {
         p.sendTitle(
 
                 "§a+"
-                        + String.format("%.2f", total)
+                        + SafeGUI.money(total)
                         + "€",
 
-                "§cTaxe: -"
-                        + String.format("%.2f", tax)
-                        + "€",
+                "§fMarché MoodCraft",
 
                 5,
-                25,
-                8
+
+                35,
+
+                10
         );
     }
 
