@@ -1,98 +1,98 @@
-package fr.moodcraft.bridge.handler;
+private void sell(Player p, String id, Material mat) {
 
-import fr.moodcraft.bridge.gui.MainMenuGUI;
-import fr.moodcraft.bridge.handler.GUIHandler;
-import fr.moodcraft.bridge.market.MarketEngine;
-import fr.moodcraft.bridge.util.VaultHook;
+    int amount = count(p, mat);
 
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
+    if (amount <= 0) {
 
-public class PriceHandler implements GUIHandler {
+        p.sendMessage(
+                "§cTu n'as aucun "
+                        + mat.name().toLowerCase()
+        );
 
-    @Override
-    public void onClick(Player p, int slot) {
-
-        switch (slot) {
-
-            case 4:
-                MainMenuGUI.open(p);
-                return;
-
-            case 10: sell(p, "netherite", Material.NETHERITE_INGOT); return;
-            case 11: sell(p, "emerald", Material.EMERALD); return;
-            case 12: sell(p, "diamond", Material.DIAMOND); return;
-
-            case 13: sell(p, "gold", Material.GOLD_INGOT); return;
-            case 14: sell(p, "copper", Material.COPPER_INGOT); return;
-            case 15: sell(p, "iron", Material.IRON_INGOT); return;
-
-            case 16: sell(p, "glowstone", Material.GLOWSTONE_DUST); return;
-
-            case 19: sell(p, "quartz", Material.QUARTZ); return;
-            case 20: sell(p, "amethyst", Material.AMETHYST_SHARD); return;
-            case 21: sell(p, "redstone", Material.REDSTONE); return;
-            case 22: sell(p, "lapis", Material.LAPIS_LAZULI); return;
-            case 23: sell(p, "coal", Material.COAL); return;
-        }
+        return;
     }
 
-    private void sell(Player p, String id, Material mat) {
+    double unit =
+            MarketEngine.getPrice(id);
 
-        int amount = count(p, mat);
+    double gross =
+            unit * amount;
 
-        if (amount <= 0) {
-            p.sendMessage("§cTu n'as aucun " + mat.name().toLowerCase());
-            return;
-        }
+    double taxRate = 0.20;
 
-        double unit = MarketEngine.getPrice(id);
-        double gross = unit * amount;
+    double tax =
+            gross * taxRate;
 
-        double taxRate = 0.20;
-        double tax = gross * taxRate;
-        double total = gross - tax;
+    double total =
+            gross - tax;
 
-        VaultHook.getEconomy().depositPlayer(p, total);
+    //
+    // 💰 ARGENT
+    //
 
-        remove(p, mat, amount);
+    VaultHook.getEconomy()
+            .depositPlayer(p, total);
 
-        p.sendMessage("§a✔ Vente: §f" + amount + "x " + id +
-                "\n§7Brut: §f" + String.format("%.2f", gross) + "€" +
-                "\n§cTaxe (20%): §f-" + String.format("%.2f", tax) + "€" +
-                "\n§eNet: §f" + String.format("%.2f", total) + "€");
+    //
+    // 📦 REMOVE ITEMS
+    //
 
-        p.sendTitle("§a+" + String.format("%.2f", total) + "€",
-                "§cTaxe: -" + String.format("%.2f", tax) + "€",
-                5, 20, 5);
-    }
+    remove(p, mat, amount);
 
-    private int count(Player p, Material mat) {
-        int total = 0;
+    //
+    // 📉 IMPACT BOURSE
+    //
 
-        for (var item : p.getInventory().getContents()) {
-            if (item != null && item.getType() == mat) {
-                total += item.getAmount();
-            }
-        }
+    MarketEngine.recordSell(id, amount);
 
-        return total;
-    }
+    //
+    // ✨ MESSAGE
+    //
 
-    private void remove(Player p, Material mat, int amount) {
+    p.sendMessage("");
+    p.sendMessage("§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    p.sendMessage("§6✦ §fVente effectuée");
+    p.sendMessage("");
 
-        int left = amount;
+    p.sendMessage(
+            "§7Item: §e"
+                    + amount
+                    + "x "
+                    + id
+    );
 
-        for (var item : p.getInventory().getContents()) {
+    p.sendMessage(
+            "§7Brut: §f"
+                    + String.format("%.2f", gross)
+                    + "€"
+    );
 
-            if (item == null || item.getType() != mat) continue;
+    p.sendMessage(
+            "§cTaxe (20%): §f-"
+                    + String.format("%.2f", tax)
+                    + "€"
+    );
 
-            int take = Math.min(item.getAmount(), left);
-            item.setAmount(item.getAmount() - take);
+    p.sendMessage(
+            "§aNet reçu: §f"
+                    + String.format("%.2f", total)
+                    + "€"
+    );
 
-            left -= take;
+    p.sendMessage("");
+    p.sendMessage("§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
-            if (left <= 0) break;
-        }
-    }
+    p.sendTitle(
+            "§a+"
+                    + String.format("%.2f", total)
+                    + "€",
+
+            "§cTaxe: -"
+                    + String.format("%.2f", tax)
+                    + "€",
+
+            5,
+            25,
+            8
+    );
 }
