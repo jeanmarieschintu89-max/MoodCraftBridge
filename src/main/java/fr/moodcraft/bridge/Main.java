@@ -63,6 +63,8 @@ public class Main extends JavaPlugin {
         IbanManager.init();
 
         TransactionManager.init();
+        
+        ReputationHistoryManager.init();
 
         GUIManager.init(this);
 
