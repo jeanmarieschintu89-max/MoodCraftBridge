@@ -1,7 +1,9 @@
+
 package fr.moodcraft.bridge.handler;
 
-import fr.moodcraft.bridge.gui.TargetPlayerGUI;
 import fr.moodcraft.bridge.gui.TransferAmountGUI;
+import fr.moodcraft.bridge.gui.TransferTypeGUI;
+import fr.moodcraft.bridge.gui.TargetPlayerGUI;
 import fr.moodcraft.bridge.manager.TransferBuilder;
 
 import org.bukkit.Bukkit;
@@ -14,27 +16,83 @@ public class TargetPlayerHandler implements GUIHandler {
     @Override
     public void onClick(Player p, int slot) {
 
-        UUID targetUUID = TargetPlayerGUI.getTarget(slot);
+        //
+        // 🔙 RETOUR
+        //
 
-        if (targetUUID == null) return;
+        if (slot == 49) {
 
-        Player target = Bukkit.getPlayer(targetUUID);
+            TransferTypeGUI.open(p);
 
-        if (target == null) {
-            p.sendMessage("§cJoueur introuvable.");
             return;
         }
 
+        //
+        // 👤 TARGET
+        //
+
+        UUID targetUUID =
+                TargetPlayerGUI.getTarget(slot);
+
+        if (targetUUID == null) {
+
+            p.sendMessage("§cAucun joueur sélectionné.");
+
+            return;
+        }
+
+        Player target =
+                Bukkit.getPlayer(targetUUID);
+
+        if (target == null || !target.isOnline()) {
+
+            p.sendMessage("§cJoueur introuvable.");
+
+            return;
+        }
+
+        //
+        // ❌ sécurité soi-même
+        //
+
+        if (target.equals(p)) {
+
+            p.sendMessage("§cTu ne peux pas te transférer d'argent.");
+
+            return;
+        }
+
+        //
         // 🔥 feedback
-        p.sendMessage("§a✔ Joueur sélectionné: §e" + target.getName());
+        //
 
-        // 🔥 action
-        TransferBuilder.setAction(p, TransferBuilder.Action.PLAYER_TRANSFER);
+        p.sendMessage(
+                "§a✔ Joueur sélectionné: §e"
+                        + target.getName()
+        );
 
-        // 🔥 target
-        TransferBuilder.setTarget(p, targetUUID);
+        //
+        // 💾 action
+        //
 
-        // 👉 montant
+        TransferBuilder.setAction(
+                p,
+                TransferBuilder.Action.PLAYER_TRANSFER
+        );
+
+        //
+        // 🎯 target
+        //
+
+        TransferBuilder.setTarget(
+                p,
+                targetUUID
+        );
+
+        //
+        // 💸 montant
+        //
+
         TransferAmountGUI.open(p);
     }
 }
