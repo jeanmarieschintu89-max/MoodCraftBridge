@@ -1,22 +1,27 @@
 package fr.moodcraft.bridge.manager;
 
-import fr.moodcraft.bridge.handler.GUIHandler;
+import fr.moodcraft.bridge.Main;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 public class GUIManager {
 
-    private static final Map<UUID, String> open = new HashMap<>();
     private static final Map<String, GUIHandler> handlers = new HashMap<>();
+    private static final Map<UUID, String> open = new HashMap<>();
     private static final Set<UUID> opening = new HashSet<>();
 
-    // 🔥 plugin instance safe
     private static Plugin plugin;
+    private static final Logger log = Main.getInstance().getLogger();
 
+    // =========================
+    // 🔧 INIT
+    // =========================
     public static void init(Plugin pl) {
         plugin = pl;
     }
@@ -29,7 +34,12 @@ public class GUIManager {
         UUID uuid = p.getUniqueId();
 
         if (id == null) {
-            Main.getInstance().getLogger().warning("[GUI] Déjà enregistré: " + id);
+            log.warning("[GUI] ID NULL");
+            return;
+        }
+
+        if (inv == null) {
+            log.warning("[GUI] Inventory NULL: " + id);
             return;
         }
 
@@ -44,6 +54,8 @@ public class GUIManager {
     }
 
     // =========================
+    // 🔍 GET
+    // =========================
     public static String get(Player p) {
         return open.get(p.getUniqueId());
     }
@@ -57,46 +69,81 @@ public class GUIManager {
     }
 
     // =========================
+    // ❌ CLOSE
+    // =========================
     public static void close(Player p) {
 
         UUID uuid = p.getUniqueId();
 
-        if (opening.contains(uuid)) return;
+        if (opening.contains(uuid)) {
+            return;
+        }
 
         open.remove(uuid);
     }
 
     // =========================
+    // 🧠 REGISTER HANDLER
+    // =========================
     public static void register(String id, GUIHandler handler) {
 
+        if (id == null) {
+            log.warning("[GUI] Tentative register ID NULL");
+            return;
+        }
+
+        if (handler == null) {
+            log.warning("[GUI] Handler NULL: " + id);
+            return;
+        }
+
         if (handlers.containsKey(id)) {
-            System.out.println("[GUI] ⚠ Déjà enregistré: " + id);
+            log.warning("[GUI] Déjà enregistré: " + id);
         }
 
         handlers.put(id, handler);
+
+        log.info("[GUI] Handler enregistré: " + id);
     }
 
+    // =========================
+    // 🖱 HANDLE CLICK
     // =========================
     public static void handle(Player p, int slot) {
 
         String id = get(p);
 
-        if (id == null) return;
+        if (id == null) {
+            return;
+        }
 
         GUIHandler handler = handlers.get(id);
 
-        if (handler == null) return;
+        if (handler == null) {
+            log.warning("[GUI] Aucun handler: " + id);
+            return;
+        }
 
         try {
+
             handler.onClick(p, slot);
+
         } catch (Exception e) {
+
+            log.severe("[GUI] Erreur handler: " + id);
+
             e.printStackTrace();
         }
     }
 
     // =========================
+    // 🔥 FORCE CLOSE
+    // =========================
     public static void forceClose(Player p) {
-        open.remove(p.getUniqueId());
-        opening.remove(p.getUniqueId());
+
+        UUID uuid = p.getUniqueId();
+
+        open.remove(uuid);
+        opening.remove(uuid);
     }
 }
