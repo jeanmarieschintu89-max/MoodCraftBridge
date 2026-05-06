@@ -140,10 +140,6 @@ public class BanqueCommand implements CommandExecutor {
                 );
             }
 
-            //
-            // 🏦 ARGENT BANQUE
-            //
-
             String senderUUID =
                     p.getUniqueId().toString();
 
@@ -158,10 +154,6 @@ public class BanqueCommand implements CommandExecutor {
 
             Player target =
                     Bukkit.getPlayer(targetUUID);
-
-            //
-            // 🌟 RÉPUTATION
-            //
 
             String targetName =
                     Bukkit.getOfflinePlayer(
@@ -262,10 +254,6 @@ public class BanqueCommand implements CommandExecutor {
                     1.2f
             );
 
-            //
-            // ✨ RECEVEUR
-            //
-
             if (target != null
                     && target.isOnline()) {
 
@@ -334,9 +322,7 @@ public class BanqueCommand implements CommandExecutor {
         String sub =
                 args[0].toLowerCase();
 
-        switch (sub) {
-
-            //
+        switch (sub) {//
             // 📥 DEPOT
             //
 
@@ -444,153 +430,6 @@ public class BanqueCommand implements CommandExecutor {
             }
 
             //
-            // 💸 /banque virement
-            //
-
-            case "virement" -> {
-
-                if (args.length < 3)
-                    return usage(
-                            p,
-                            "/banque virement <iban> <montant>"
-                    );
-
-                String iban =
-                        args[1]
-                                .replace(" ", "")
-                                .toUpperCase();
-
-                double amount =
-                        parseAmount(
-                                p,
-                                args[2]
-                        );
-
-                if (amount <= 0)
-                    return true;
-
-                UUID targetUUID =
-                        IbanManager.getOwner(
-                                iban
-                        );
-
-                if (targetUUID == null)
-                    return error(
-                            p,
-                            "IBAN introuvable."
-                    );
-
-                if (targetUUID.equals(
-                        p.getUniqueId()
-                )) {
-
-                    return error(
-                            p,
-                            "Auto-virement interdit."
-                    );
-                }
-
-                String senderUUID =
-                        p.getUniqueId().toString();
-
-                if (BankStorage.get(senderUUID)
-                        < amount) {
-
-                    return error(
-                            p,
-                            "Fonds insuffisants."
-                    );
-                }
-
-                Player target =
-                        Bukkit.getPlayer(targetUUID);
-
-                BankStorage.remove(
-                        senderUUID,
-                        amount
-                );
-
-                BankStorage.add(
-                        targetUUID.toString(),
-                        amount
-                );
-
-                TransactionManager.transfer(
-                        p.getUniqueId(),
-                        targetUUID,
-                        amount
-                );
-
-                p.sendMessage("");
-
-                p.sendMessage(
-                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                );
-
-                p.sendMessage(
-                        "§6✦ §fBanque MoodCraft"
-                );
-
-                p.sendMessage("");
-
-                p.sendMessage(
-                        "§a✔ §fVirement effectué"
-                );
-
-                p.sendMessage("");
-
-                p.sendMessage(
-                        "§7Montant envoyé: §c-"
-                                + SafeGUI.money(amount)
-                                + "€"
-                );
-
-                p.sendMessage("");
-
-                p.sendMessage(
-                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                );
-
-                p.sendMessage("");
-
-                if (target != null
-                        && target.isOnline()) {
-
-                    target.sendMessage("");
-
-                    target.sendMessage(
-                            "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                    );
-
-                    target.sendMessage(
-                            "§6✦ §fBanque MoodCraft"
-                    );
-
-                    target.sendMessage("");
-
-                    target.sendMessage(
-                            "§a✔ §fVirement reçu"
-                    );
-
-                    target.sendMessage("");
-
-                    target.sendMessage(
-                            "§7Montant reçu: §a+"
-                                    + SafeGUI.money(amount)
-                                    + "€"
-                    );
-
-                    target.sendMessage("");
-
-                    target.sendMessage(
-                            "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                    );
-
-                    target.sendMessage("");
-                }
-            }
-
-            //
             // 📜 HISTORIQUE
             //
 
@@ -687,8 +526,7 @@ public class BanqueCommand implements CommandExecutor {
                 );
 
                 p.sendMessage(
-                        "§e"
-                                + iban
+                        "§e" + iban
                 );
 
                 p.sendMessage("");
@@ -711,9 +549,7 @@ public class BanqueCommand implements CommandExecutor {
                         1f,
                         1.2f
                 );
-            }
-
-            //
+            }//
             // 🔒 ADMIN
             //
 
@@ -729,71 +565,249 @@ public class BanqueCommand implements CommandExecutor {
                     );
                 }
 
-                if (args.length < 3)
-                    return usage(
-                            p,
-                            "/banque admin <action> <joueur>"
-                    );
+                p.sendMessage(
+                        "§cAdministration bancaire active."
+                );
+            }
 
-                Player target =
-                        Bukkit.getPlayer(args[2]);
+            //
+            // 📜 LOGS
+            //
 
-                if (target == null)
+            case "logs" -> {
+
+                if (!p.hasPermission(
+                        "moodcraft.admin"
+                )) {
+
                     return error(
                             p,
-                            "Joueur introuvable."
+                            "Permission refusée."
                     );
+                }
 
-                String uuid =
-                        target.getUniqueId().toString();
+                p.sendMessage("");
 
-                String action =
-                        args[1].toLowerCase();
+                p.sendMessage(
+                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                );
 
-                switch (action) {
+                p.sendMessage(
+                        "§6✦ §fLogs bancaires"
+                );
 
-                    case "solde" -> {
+                p.sendMessage("");
 
-                        p.sendMessage("");
-
-                        p.sendMessage(
-                                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                TransactionManager.getGlobal()
+                        .stream()
+                        .limit(10)
+                        .forEach(
+                                line -> p.sendMessage(" " + line)
                         );
 
-                        p.sendMessage(
-                                "§6🏦 §fCompte bancaire"
-                        );
+                p.sendMessage("");
 
-                        p.sendMessage("");
+                p.sendMessage(
+                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                );
 
-                        p.sendMessage(
-                                "§7Joueur: §e"
-                                        + target.getName()
-                        );
+                p.sendMessage("");
+            }
 
-                        p.sendMessage(
-                                "§7Solde: §a"
-                                        + BankStorage.get(uuid)
-                                        + "€"
-                        );
+            default ->
+                    p.sendMessage(
+                            "§cSous-commande inconnue."
+                    );
+        }
 
-                        p.sendMessage("");
+        return true;
+    }
 
-                        p.sendMessage(
-                                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                        );
+    //
+    // 🔢 PARSE
+    //
 
-                        p.sendMessage("");
-                    }
+    private double parseAmount(Player p,
+                               String s) {
 
-                    case "ajouter" -> {
+        try {
 
-                        if (args.length < 4)
-                            return usage(
-                                    p,
-                                    "/banque admin ajouter <joueur> <montant>"
-                            );
+            return Double.parseDouble(
+                    s.replace(",", ".")
+            );
 
-                        double amount =
-                                parseAmount(
-                                    
+        } catch (Exception e) {
+
+            error(
+                    p,
+                    "Montant invalide."
+            );
+
+            return -1;
+        }
+    }
+
+    //
+    // 🔢 NUMBER
+    //
+
+    private boolean isNumber(String s) {
+
+        try {
+
+            Integer.parseInt(s);
+
+            return true;
+
+        } catch (Exception e) {
+
+            return false;
+        }
+    }
+
+    //
+    // ❌ ERROR
+    //
+
+    private boolean error(Player p,
+                          String msg) {
+
+        p.sendMessage("");
+
+        p.sendMessage(
+                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        );
+
+        p.sendMessage(
+                "§c✦ §fBanque MoodCraft"
+        );
+
+        p.sendMessage("");
+
+        p.sendMessage(
+                "§7" + msg
+        );
+
+        p.sendMessage("");
+
+        p.sendMessage(
+                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        );
+
+        p.sendMessage("");
+
+        p.playSound(
+                p.getLocation(),
+                Sound.ENTITY_VILLAGER_NO,
+                1f,
+                1f
+        );
+
+        return true;
+    }
+
+    //
+    // ✅ SUCCESS
+    //
+
+    private boolean success(Player p,
+                            String type,
+                            String amount) {
+
+        p.sendMessage("");
+
+        p.sendMessage(
+                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        );
+
+        p.sendMessage(
+                "§6✦ §fTransaction bancaire"
+        );
+
+        p.sendMessage("");
+
+        p.sendMessage(
+                "§7Type: §e" + type
+        );
+
+        p.sendMessage(
+                "§7Montant: §a" + amount
+        );
+
+        p.sendMessage("");
+
+        p.sendMessage(
+                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        );
+
+        p.sendMessage("");
+
+        p.playSound(
+                p.getLocation(),
+                Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
+                1f,
+                1.15f
+        );
+
+        return true;
+    }
+
+    //
+    // 📘 USAGE
+    //
+
+    private boolean usage(Player p,
+                          String msg) {
+
+        p.sendMessage("");
+
+        p.sendMessage(
+                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        );
+
+        p.sendMessage(
+                "§6✦ §fCommande bancaire"
+        );
+
+        p.sendMessage("");
+
+        p.sendMessage(
+                "§7Usage: §e" + msg
+        );
+
+        p.sendMessage("");
+
+        p.sendMessage(
+                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        );
+
+        p.sendMessage("");
+
+        p.playSound(
+                p.getLocation(),
+                Sound.BLOCK_NOTE_BLOCK_BASS,
+                1f,
+                0.8f
+        );
+
+        return true;
+    }
+
+    //
+    // 🌍 FILTER
+    //
+
+    private String translate(String s) {
+
+        return switch (s.toLowerCase()) {
+
+            case "depot" -> "DEPOSIT";
+
+            case "retrait" -> "WITHDRAW";
+
+            case "virement" -> "TRANSFER";
+
+            default -> null;
+        };
+    }
+}
