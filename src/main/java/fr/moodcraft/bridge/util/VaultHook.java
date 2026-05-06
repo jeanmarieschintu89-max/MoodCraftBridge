@@ -24,7 +24,7 @@ public class VaultHook {
         }
 
         if (eco == null) {
-            Main.getInstance().getLogger().info("[ShopIndex] ✔ 12 items indexés");
+            Main.getInstance().getLogger().warning("[VaultHook] Aucun provider trouvé !");
         }
 
         return eco;
