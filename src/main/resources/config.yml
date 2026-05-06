@@ -12,6 +12,10 @@ base:
   glowstone: 15
   amethyst: 6
 
+#
+# ⚖ Influence générale du minerai
+#
+
 weight:
   netherite: 0.9
   emerald: 1.0
@@ -26,33 +30,47 @@ weight:
   amethyst: 0.6
   glowstone: 0.6
 
+#
+# 💥 Résistance aux variations
+# plus le chiffre est grand = plus stable
+#
+
 impact:
-  netherite: 3
-  emerald: 4
-  diamond: 5
-  gold: 7
-  iron: 8
-  copper: 10
-  quartz: 9
-  redstone: 11
-  lapis: 11
-  coal: 14
-  amethyst: 10
-  glowstone: 10
+  netherite: 20
+  emerald: 25
+  diamond: 30
+  gold: 55
+  iron: 75
+  copper: 95
+  quartz: 90
+  redstone: 110
+  lapis: 110
+  coal: 150
+  amethyst: 100
+  glowstone: 100
+
+#
+# 📈 Activité économique
+# influence offre/demande
+#
 
 activity:
-  netherite: 0.025
-  emerald: 0.035
-  diamond: 0.045
-  gold: 0.060
-  iron: 0.070
-  copper: 0.080
-  quartz: 0.070
-  redstone: 0.090
-  lapis: 0.090
-  coal: 0.120
-  amethyst: 0.080
-  glowstone: 0.080
+  netherite: 0.0012
+  emerald: 0.0015
+  diamond: 0.0018
+  gold: 0.0024
+  iron: 0.0030
+  copper: 0.0034
+  quartz: 0.0030
+  redstone: 0.0040
+  lapis: 0.0040
+  coal: 0.0050
+  amethyst: 0.0035
+  glowstone: 0.0035
+
+#
+# 🌟 Seuil rareté
+#
 
 rarity:
   netherite: 40
@@ -65,84 +83,133 @@ rarity:
   redstone: 900
   lapis: 900
   coal: 1400
+  amethyst: 750
+  glowstone: 750
+
+#
+# ⚙ MOTEUR ÉCONOMIQUE
+#
 
 engine:
-  base_return: 0.002
-  max_change: 0.35
-  activity_cap: 0.08
+
+  #
+  # 🔄 Retour progressif au prix base
+  #
+
+  base_return: 0.004
+
+  #
+  # 📉 Variation max par tick
+  #
+
+  max_change: 0.08
+
+  #
+  # 📊 Limite activité
+  #
+
+  activity_cap: 0.03
+
+  #
+  # 🧱 Limites prix
+  #
 
   min_price_factor: 0.45
-  max_price_factor: 3.5
+  max_price_factor: 2.8
 
-  stock_decay: 0.92
+  #
+  # 🧹 Nettoyage stock
+  #
 
-  buy_multiplier: 1.45
+  stock_decay: 0.90
+
+  #
+  # 🛒 Bonus achat
+  #
+
+  buy_multiplier: 1.35
+
+  #
+  # 💸 Vente normale
+  #
+
   sell_multiplier: 1.0
+
+  #
+  # 🌟 Rareté
+  #
 
   rarity:
     enabled: true
-    boost: 0.004
-    exponent: 1.15
-    max_boost: 0.08
+
+    boost: 0.0012
+
+    exponent: 1.08
+
+    max_boost: 0.025
+
+#
+# 🌟 RÉGLAGES SPÉCIAUX
+#
 
 rarity_settings:
 
   netherite:
-    boost: 0.007
-    exponent: 1.22
-    max_boost: 0.12
+    boost: 0.0020
+    exponent: 1.15
+    max_boost: 0.040
 
   emerald:
-    boost: 0.006
-    exponent: 1.18
-    max_boost: 0.10
+    boost: 0.0016
+    exponent: 1.12
+    max_boost: 0.035
 
   diamond:
-    boost: 0.0065
-    exponent: 1.20
-    max_boost: 0.11
+    boost: 0.0018
+    exponent: 1.14
+    max_boost: 0.038
 
   gold:
-    boost: 0.004
-    exponent: 1.10
-    max_boost: 0.07
+    boost: 0.0013
+    exponent: 1.08
+    max_boost: 0.028
 
   iron:
-    boost: 0.003
-    exponent: 1.08
-    max_boost: 0.06
+    boost: 0.0011
+    exponent: 1.06
+    max_boost: 0.024
 
   copper:
-    boost: 0.0025
-    exponent: 1.06
-    max_boost: 0.05
+    boost: 0.0010
+    exponent: 1.05
+    max_boost: 0.022
 
   quartz:
-    boost: 0.0028
-    exponent: 1.07
-    max_boost: 0.05
+    boost: 0.0010
+    exponent: 1.05
+    max_boost: 0.022
 
   redstone:
-    boost: 0.0032
-    exponent: 1.08
-    max_boost: 0.06
+    boost: 0.0012
+    exponent: 1.06
+    max_boost: 0.024
 
   lapis:
-    boost: 0.0032
-    exponent: 1.08
-    max_boost: 0.06
+    boost: 0.0012
+    exponent: 1.06
+    max_boost: 0.024
 
   coal:
-    boost: 0.0015
+    boost: 0.0007
     exponent: 1.02
-    max_boost: 0.03
+    max_boost: 0.015
 
   amethyst:
-    boost: 0.0028
-    exponent: 1.07
-    max_boost: 0.05
+    boost: 0.0010
+    exponent: 1.05
+    max_boost: 0.022
 
   glowstone:
-    boost: 0.0028
-    exponent: 1.07
-    max_boost: 0.05
+    boost: 0.0010
+    exponent: 1.05
+    max_boost: 0.022
