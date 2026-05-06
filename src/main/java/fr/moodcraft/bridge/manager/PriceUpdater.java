@@ -1,6 +1,7 @@
 package fr.moodcraft.bridge.manager;
 
 import com.ghostchu.quickshop.api.shop.Shop;
+
 import fr.moodcraft.bridge.market.MarketEngine;
 
 import org.bukkit.Bukkit;
@@ -12,8 +13,12 @@ public final class PriceUpdater {
 
     private PriceUpdater() {}
 
-    // 🔥 LISTE ITEMS AUTORISÉS
-    public static final Set<String> ALLOWED = new HashSet<>();
+    //
+    // 🔥 ITEMS AUTORISÉS
+    //
+
+    public static final Set<String> ALLOWED =
+            new HashSet<>();
 
     static {
 
@@ -34,59 +39,101 @@ public final class PriceUpdater {
     // =========================
     // 📊 UPDATE ITEM
     // =========================
-    public static void updateItem(String item, double price) {
 
-        Set<Shop> shops = ShopIndex.get(item);
+    public static void updateItem(
+            String item,
+            double price
+    ) {
 
-        if (shops == null || shops.isEmpty()) return;
+        if (item == null)
+            return;
+
+        Set<Shop> shops =
+                ShopIndex.get(item);
+
+        if (shops == null
+                || shops.isEmpty()) {
+
+            return;
+        }
+
+        int updated = 0;
 
         for (Shop shop : shops) {
 
             try {
 
-                if (Math.abs(shop.getPrice() - price) < 0.01)
+                if (shop == null)
+                    continue;
+
+                double current =
+                        shop.getPrice();
+
+                //
+                // 🔒 ÉVITE UPDATE INUTILE
+                //
+
+                if (Math.abs(current - price) < 0.01)
                     continue;
 
                 shop.setPrice(price);
 
-            } catch (Exception e) {
+                updated++;
 
-                Bukkit.getLogger().warning(
-                        "[PriceUpdater] erreur shop: " + item
-                );
-            }
+            } catch (Exception ignored) {}
         }
-    }
 
-    // =========================
-    // 🧠 COMPAT
-    // =========================
-    public static void updateItem(String item) {
+        //
+        // 📊 DEBUG LIGHT
+        //
 
-        double price = MarketEngine.getPrice(item);
+        if (updated > 0) {
 
-        updateItem(item, price);
-    }
+            Bukkit.getLogger().info(
 
-    // =========================
-    // 🔁 UPDATE SINGLE SHOP
-    // =========================
-    public static void updateSingle(Shop shop, String item) {
+                    "[PriceUpdater] "
 
-        try {
+                            + item
 
-            double price = MarketEngine.getPrice(item);
+                            + " → "
 
-            if (Math.abs(shop.getPrice() - price) < 0.01)
-                return;
+                            + updated
 
-            shop.setPrice(price);
-
-        } catch (Exception e) {
-
-            Bukkit.getLogger().warning(
-                    "[PriceUpdater] erreur single shop: " + item
+                            + " shops sync"
             );
         }
+    }
+
+    // =========================
+    // 🧠 UPDATE AUTO
+    // =========================
+
+    public static void updateItem(
+            String item
+    ) {
+
+        if (item == null)
+            return;
+
+        updateItem(
+                item,
+                MarketEngine.getPrice(item)
+        );
+    }
+
+    // =========================
+    // ❌ SINGLE UPDATE
+    // =========================
+    //
+    // plus utilisé
+    // économie tick-based maintenant
+    //
+
+    public static void updateSingle(
+            Shop shop,
+            String item
+    ) {
+
+        // volontairement vide
     }
 }
