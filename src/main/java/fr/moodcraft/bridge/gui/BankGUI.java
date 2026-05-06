@@ -1,11 +1,14 @@
 package fr.moodcraft.bridge.gui;
 
 import fr.moodcraft.bridge.bank.BankStorage;
-import fr.moodcraft.bridge.util.SafeGUI;
-import fr.moodcraft.bridge.util.VaultHook;
+
 import fr.moodcraft.bridge.manager.GUIManager;
 
+import fr.moodcraft.bridge.util.SafeGUI;
+import fr.moodcraft.bridge.util.VaultHook;
+
 import org.bukkit.Bukkit;
+
 import org.bukkit.Material;
 
 import org.bukkit.entity.Player;
@@ -23,6 +26,19 @@ public class BankGUI {
                         "§6✦ §0Banque MoodCraft"
                 );
 
+        //
+        // 🖤 BORDURES
+        //
+
+        SafeGUI.fillBorders(
+                inv,
+                Material.BLACK_STAINED_GLASS_PANE
+        );
+
+        //
+        // 💰 SOLDES
+        //
+
         double bank =
                 BankStorage.get(
                         p.getUniqueId().toString()
@@ -38,55 +54,58 @@ public class BankGUI {
         } catch (Exception ignored) {}
 
         //
-        // 🖤 FILL
+        // 💰 ARGENT
         //
 
-        SafeGUI.fill(
+        SafeGUI.safeSet(
+
                 inv,
-                Material.BLACK_STAINED_GLASS_PANE,
-                " "
-        );
 
-        //
-        // 💰 INFORMATIONS
-        //
+                4,
 
-        SafeGUI.safeSet(inv, 4,
+                SafeGUI.glow(
 
-                SafeGUI.item(
-                        Material.GOLD_BLOCK,
+                        SafeGUI.item(
 
-                        "§6✦ §fCompte bancaire",
+                                Material.GOLD_INGOT,
 
-                        "§8━━━━━━━━━━━━━━━━",
-                        "",
-                        "§7Liquide:",
-                        "§a" + SafeGUI.money(cash) + "€",
-                        "",
-                        "§7Banque:",
-                        "§6" + SafeGUI.money(bank) + "€",
-                        "",
-                        "§8MoodCraft Financial System"
+                                "§6✦ §fCompte bancaire",
+
+                                "§8━━━━━━━━━━━━━━━━",
+                                "",
+                                "§7Liquide:",
+                                "§a" + SafeGUI.money(cash) + "€",
+                                "",
+                                "§7Banque:",
+                                "§6" + SafeGUI.money(bank) + "€",
+                                "",
+                                "§8MoodCraft Financial System"
+                        )
                 )
         );
 
         //
-        // 📥 DÉPÔT
+        // 📥 DEPOT
         //
 
-        SafeGUI.safeSet(inv, 10,
+        SafeGUI.safeSet(
+
+                inv,
+
+                10,
 
                 SafeGUI.item(
-                        Material.EMERALD,
+
+                        Material.CHEST,
 
                         "§a✦ §fDéposer",
 
                         "§8━━━━━━━━━━━━━━━━",
                         "",
-                        "§7Transférer ton argent",
-                        "§7liquide vers la banque.",
+                        "§7Déposer de l'argent",
+                        "§7sur ton compte bancaire.",
                         "",
-                        "§e▶ Cliquer pour déposer"
+                        "§e▶ Cliquer"
                 )
         );
 
@@ -94,19 +113,24 @@ public class BankGUI {
         // 📤 RETRAIT
         //
 
-        SafeGUI.safeSet(inv, 12,
+        SafeGUI.safeSet(
+
+                inv,
+
+                12,
 
                 SafeGUI.item(
-                        Material.REDSTONE,
+
+                        Material.HOPPER,
 
                         "§c✦ §fRetirer",
 
                         "§8━━━━━━━━━━━━━━━━",
                         "",
                         "§7Retirer de l'argent",
-                        "§7depuis ton compte.",
+                        "§7depuis la banque.",
                         "",
-                        "§e▶ Cliquer pour retirer"
+                        "§e▶ Cliquer"
                 )
         );
 
@@ -114,21 +138,24 @@ public class BankGUI {
         // 💸 VIREMENT
         //
 
-        SafeGUI.safeSet(inv, 14,
+        SafeGUI.safeSet(
+
+                inv,
+
+                14,
 
                 SafeGUI.item(
+
                         Material.WRITABLE_BOOK,
 
-                        "§e✦ §fVirement bancaire",
+                        "§e✦ §fVirement",
 
                         "§8━━━━━━━━━━━━━━━━",
                         "",
                         "§7Envoyer de l'argent",
                         "§7à un autre joueur.",
                         "",
-                        "§7Compatible IBAN MoodCraft",
-                        "",
-                        "§e▶ Cliquer pour transférer"
+                        "§e▶ Cliquer"
                 )
         );
 
@@ -136,19 +163,24 @@ public class BankGUI {
         // 🏦 IBAN
         //
 
-        SafeGUI.safeSet(inv, 16,
+        SafeGUI.safeSet(
+
+                inv,
+
+                16,
 
                 SafeGUI.item(
-                        Material.NAME_TAG,
 
-                        "§b✦ §fMon IBAN",
+                        Material.BOOK,
+
+                        "§b✦ §fIBAN",
 
                         "§8━━━━━━━━━━━━━━━━",
                         "",
-                        "§7Consulter ton identifiant",
-                        "§7bancaire personnel.",
+                        "§7Consulter ton",
+                        "§7RIB bancaire.",
                         "",
-                        "§e▶ Cliquer pour afficher"
+                        "§e▶ Cliquer"
                 )
         );
 
@@ -156,43 +188,58 @@ public class BankGUI {
         // 📜 HISTORIQUE
         //
 
-        SafeGUI.safeSet(inv, 20,
+        SafeGUI.safeSet(
+
+                inv,
+
+                20,
 
                 SafeGUI.item(
+
                         Material.KNOWLEDGE_BOOK,
 
-                        "§d✦ §fHistorique bancaire",
+                        "§d✦ §fHistorique",
 
                         "§8━━━━━━━━━━━━━━━━",
                         "",
-                        "§7Voir tes:",
+                        "§7Consulter toutes",
+                        "§7tes transactions.",
+                        "",
                         "§8• Dépôts",
                         "§8• Retraits",
                         "§8• Virements",
-                        "§8• Achats",
-                        "§8• Ventes",
+                        "§8• Marché",
                         "",
-                        "§e▶ Cliquer pour consulter"
+                        "§e▶ Cliquer"
                 )
         );
 
         //
-        // 📈 ACTIVITÉ ÉCO
+        // 📈 ACTIVITÉ
         //
 
-        SafeGUI.safeSet(inv, 24,
+        SafeGUI.safeSet(
+
+                inv,
+
+                24,
 
                 SafeGUI.item(
-                        Material.COMPARATOR,
 
-                        "§6✦ §fActivité économique",
+                        Material.AMETHYST_SHARD,
+
+                        "§5✦ §fActivité",
 
                         "§8━━━━━━━━━━━━━━━━",
                         "",
-                        "§7Suivre ton activité",
-                        "§7sur le marché MoodCraft.",
+                        "§7Statistiques",
+                        "§7économiques avancées.",
                         "",
-                        "§e▶ Statistiques économiques"
+                        "§8• Profit",
+                        "§8• Volume",
+                        "§8• Trading",
+                        "",
+                        "§e▶ Bientôt"
                 )
         );
 
@@ -200,14 +247,19 @@ public class BankGUI {
         // 🔙 RETOUR
         //
 
-        SafeGUI.safeSet(inv, 31,
+        SafeGUI.safeSet(
+
+                inv,
+
+                31,
 
                 SafeGUI.item(
+
                         Material.BARRIER,
 
                         "§c✦ §fRetour",
 
-                        "§7Retour au menu principal"
+                        "§7Retour au menu principal."
                 )
         );
 
