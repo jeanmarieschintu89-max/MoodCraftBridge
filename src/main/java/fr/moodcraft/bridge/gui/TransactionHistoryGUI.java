@@ -18,7 +18,11 @@ import java.util.List;
 
 public class TransactionHistoryGUI {
 
-    private static final int PAGE_SIZE = 21;
+    //
+    // 📄 20 transactions par page
+    //
+
+    private static final int PAGE_SIZE = 20;
 
     public static void open(Player p,
                             int page) {
@@ -77,7 +81,7 @@ public class TransactionHistoryGUI {
 
                 19,20,21,22,23,24,25,
 
-                28,29,30,31,32,33,34
+                28,29,30,32,33,34
         };
 
         //
