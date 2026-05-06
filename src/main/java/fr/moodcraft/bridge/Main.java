@@ -88,6 +88,7 @@ public class Main extends JavaPlugin {
         // 📜 COMMANDES
         // =========================
         registerCommand("menu", new MenuCommand());
+        registerCommand("freeze", new FreezeCommand());
 
         // 🏦 BANQUE
         registerCommand("banque", new BanqueCommand());
