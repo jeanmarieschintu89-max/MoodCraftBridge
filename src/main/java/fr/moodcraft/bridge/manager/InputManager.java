@@ -1,6 +1,8 @@
+
 package fr.moodcraft.bridge.manager;
 
 import fr.moodcraft.bridge.Main;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -12,84 +14,213 @@ import java.util.UUID;
 
 public class InputManager {
 
-    private static final Map<UUID, String> inputs = new HashMap<>();
-    private static final Map<UUID, BukkitTask> timeouts = new HashMap<>();
+    //
+    // 🧠 INPUTS
+    //
+
+    private static final Map<UUID, String>
+            inputs = new HashMap<>();
+
+    //
+    // ⏱ TIMEOUTS
+    //
+
+    private static final Map<UUID, BukkitTask>
+            timeouts = new HashMap<>();
+
+    //
+    // 💾 DATA
+    //
+
+    private static final Map<UUID, String>
+            data = new HashMap<>();
 
     // =========================
     // ⏳ WAIT + TIMEOUT AUTO
     // =========================
-    public static void wait(Player p, String type) {
 
-        UUID uuid = p.getUniqueId();
+    public static void wait(Player p,
+                            String type) {
 
-        // 🔥 reset ancien état proprement
+        UUID uuid =
+                p.getUniqueId();
+
+        //
+        // 🔥 RESET ANCIEN ÉTAT
+        //
+
         clear(p);
 
-        inputs.put(uuid, type);
+        inputs.put(
+                uuid,
+                type
+        );
 
-        // 🔒 metadata propre
-        p.setMetadata("input_active", new FixedMetadataValue(Main.getInstance(), true));
+        //
+        // 🔒 METADATA
+        //
 
-        // ⏱ timeout sécurisé
-        BukkitTask task = Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
+        p.setMetadata(
+                "input_active",
 
-            if (!has(p)) return;
+                new FixedMetadataValue(
+                        Main.getInstance(),
+                        true
+                )
+        );
 
-            clear(p);
+        //
+        // ⏱ TIMEOUT
+        //
 
-            p.sendMessage("§c⏳ Temps écoulé. Opération annulée.");
+        BukkitTask task =
+                Bukkit.getScheduler()
+                        .runTaskLater(
 
-        }, 20L * 30);
+                                Main.getInstance(),
 
-        timeouts.put(uuid, task);
+                                () -> {
+
+                                    if (!has(p))
+                                        return;
+
+                                    clear(p);
+
+                                    p.sendMessage(
+                                            "§c⏳ Temps écoulé. Opération annulée."
+                                    );
+
+                                },
+
+                                20L * 30
+                        );
+
+        timeouts.put(
+                uuid,
+                task
+        );
     }
 
     // =========================
     // 🔍 HAS
     // =========================
+
     public static boolean has(Player p) {
-        return inputs.containsKey(p.getUniqueId());
+
+        return inputs.containsKey(
+                p.getUniqueId()
+        );
     }
 
     // =========================
     // 📥 GET
     // =========================
+
     public static String get(Player p) {
-        return inputs.get(p.getUniqueId());
+
+        return inputs.get(
+                p.getUniqueId()
+        );
     }
 
     // =========================
-    // ❌ REMOVE (alias pour compat)
+    // 💾 SET DATA
     // =========================
+
+    public static void setData(Player p,
+                               String value) {
+
+        data.put(
+                p.getUniqueId(),
+                value
+        );
+    }
+
+    // =========================
+    // 📥 GET DATA
+    // =========================
+
+    public static String getData(Player p) {
+
+        return data.get(
+                p.getUniqueId()
+        );
+    }
+
+    // =========================
+    // 🧹 CLEAR DATA
+    // =========================
+
+    public static void clearData(Player p) {
+
+        data.remove(
+                p.getUniqueId()
+        );
+    }
+
+    // =========================
+    // ❌ REMOVE
+    // =========================
+
     public static void remove(Player p) {
+
         clear(p);
     }
 
     // =========================
     // ❌ CLEAR
     // =========================
+
     public static void clear(Player p) {
 
-        UUID uuid = p.getUniqueId();
+        UUID uuid =
+                p.getUniqueId();
+
+        //
+        // 🧹 REMOVE INPUT
+        //
 
         inputs.remove(uuid);
 
-        // 🔥 cancel timeout proprement
+        //
+        // 🧹 REMOVE DATA
+        //
+
+        data.remove(uuid);
+
+        //
+        // 🔥 CANCEL TIMEOUT
+        //
+
         if (timeouts.containsKey(uuid)) {
-            timeouts.get(uuid).cancel();
+
+            timeouts.get(uuid)
+                    .cancel();
+
             timeouts.remove(uuid);
         }
 
-        // 🔥 remove metadata safe
+        //
+        // 🔥 REMOVE METADATA
+        //
+
         if (p.hasMetadata("input_active")) {
-            p.removeMetadata("input_active", Main.getInstance());
+
+            p.removeMetadata(
+                    "input_active",
+                    Main.getInstance()
+            );
         }
     }
 
     // =========================
-    // 🧠 DEBUG / CHECK
+    // 🧠 DEBUG
     // =========================
+
     public static boolean isActive(Player p) {
-        return p.hasMetadata("input_active");
+
+        return p.hasMetadata(
+                "input_active"
+        );
     }
 }
