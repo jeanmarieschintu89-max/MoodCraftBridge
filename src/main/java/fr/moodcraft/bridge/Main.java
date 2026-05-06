@@ -177,6 +177,9 @@ public class Main extends JavaPlugin {
         GUIManager.register(
                 "profile_gui",
                 new ProfileHandler()
+        GUIManager.register(
+                "transaction_history",
+                new TransactionHistoryHandler()
         );
 
         // =========================
