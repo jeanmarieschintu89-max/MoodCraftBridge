@@ -1,164 +1,276 @@
-package fr.moodcraft.bridge.util;
+package fr.moodcraft.bridge.gui;
+
+import fr.moodcraft.bridge.bank.BankStorage;
+
+import fr.moodcraft.bridge.manager.GUIManager;
+
+import fr.moodcraft.bridge.util.SafeGUI;
+import fr.moodcraft.bridge.util.VaultHook;
+
+import org.bukkit.Bukkit;
 
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
+
+import org.bukkit.entity.Player;
+
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
+public class BankGUI {
 
-public class SafeGUI {
+    public static void open(Player p) {
 
-    private static final DecimalFormat MONEY_FORMAT = new DecimalFormat("#,##0.00");
+        Inventory inv =
+                Bukkit.createInventory(
+                        null,
+                        36,
+                        "§6✦ §0Banque MoodCraft"
+                );
 
-    // =========================
-    // 🎯 ITEM VIA MATERIAL
-    // =========================
-    public static ItemStack item(Material mat, String name, String... lore) {
+        //
+        // 🖤 BORDURES
+        //
 
-        if (mat == null) mat = Material.BARRIER;
-
-        ItemStack it = new ItemStack(mat);
-        ItemMeta meta = it.getItemMeta();
-
-        if (meta == null) return it;
-
-        meta.setDisplayName("§r" + (name == null ? "" : name));
-        meta.setLore(formatLore(lore));
-
-        hideAll(meta);
-
-        it.setItemMeta(meta);
-        return it;
-    }
-
-    // =========================
-    // 🔥 ITEM VIA ITEMSTACK
-    // =========================
-    public static ItemStack item(ItemStack base, String name, String... lore) {
-
-        if (base == null) return item(Material.BARRIER, " ");
-
-        ItemStack it = base.clone();
-        ItemMeta meta = it.getItemMeta();
-
-        if (meta == null) return it;
-
-        meta.setDisplayName("§r" + (name == null ? "" : name));
-        meta.setLore(formatLore(lore));
-
-        hideAll(meta);
-
-        it.setItemMeta(meta);
-        return it;
-    }
-
-    // =========================
-    // 🧠 FORMAT LORE
-    // =========================
-    private static List<String> formatLore(String... lore) {
-
-        List<String> fixed = new ArrayList<>();
-
-        if (lore != null) {
-            for (String line : lore) {
-                fixed.add(line == null ? "" : "§7" + line);
-            }
-        }
-
-        return fixed;
-    }
-
-    // =========================
-    // 🔒 HIDE ALL FLAGS
-    // =========================
-    private static void hideAll(ItemMeta meta) {
-        meta.addItemFlags(
-                ItemFlag.HIDE_ATTRIBUTES,
-                ItemFlag.HIDE_ENCHANTS,
-                ItemFlag.HIDE_UNBREAKABLE,
-                ItemFlag.HIDE_DESTROYS,
-                ItemFlag.HIDE_PLACED_ON,
-                ItemFlag.HIDE_ADDITIONAL_TOOLTIP
+        SafeGUI.fillBorders(
+                inv,
+                Material.BLACK_STAINED_GLASS_PANE
         );
-    }
 
-    // =========================
-    // ✨ GLOW
-    // =========================
-    public static ItemStack glow(ItemStack item) {
+        //
+        // 💰 SOLDES
+        //
 
-        if (item == null) return null;
+        double bank =
+                BankStorage.get(
+                        p.getUniqueId().toString()
+                );
 
-        ItemStack clone = item.clone();
-        ItemMeta meta = clone.getItemMeta();
-
-        if (meta == null) return clone;
-
-        meta.addEnchant(Enchantment.UNBREAKING, 1, true);
-        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-
-        clone.setItemMeta(meta);
-        return clone;
-    }
-
-    // =========================
-    // ❌ REMOVE GLOW
-    // =========================
-    public static ItemStack removeGlow(ItemStack item) {
-
-        if (item == null) return null;
-
-        ItemStack clone = item.clone();
-        ItemMeta meta = clone.getItemMeta();
-
-        if (meta == null) return clone;
-
-        meta.getEnchants().keySet().forEach(meta::removeEnchant);
-
-        clone.setItemMeta(meta);
-        return clone;
-    }
-
-    // =========================
-    // 🛡️ SAFE SET SLOT
-    // =========================
-    public static void safeSet(Inventory inv, int slot, ItemStack item) {
-
-        if (inv == null) return;
+        double cash = 0;
 
         try {
-            inv.setItem(slot, item == null ? new ItemStack(Material.BARRIER) : item);
-        } catch (Exception e) {
-            inv.setItem(slot, new ItemStack(Material.BARRIER));
-        }
-    }
 
-    // =========================
-    // 🧱 BORDURES
-    // =========================
-    public static void fillBorders(Inventory inv, Material mat) {
+            cash =
+                    VaultHook.getBalance(p);
 
-        if (inv == null) return;
+        } catch (Exception ignored) {}
 
-        ItemStack pane = item(mat, " ");
-        int size = inv.getSize();
+        //
+        // 💰 ARGENT
+        //
 
-        for (int i = 0; i < size; i++) {
-            if (i < 9 || i >= size - 9 || i % 9 == 0 || i % 9 == 8) {
-                inv.setItem(i, pane.clone());
-            }
-        }
-    }
+        SafeGUI.safeSet(
 
-    // =========================
-    // 💰 FORMAT ARGENT
-    // =========================
-    public static String money(double v) {
-        return MONEY_FORMAT.format(v);
+                inv,
+
+                4,
+
+                SafeGUI.glow(
+
+                        SafeGUI.item(
+
+                                Material.GOLD_INGOT,
+
+                                "§6✦ §fCompte bancaire",
+
+                                "§8━━━━━━━━━━━━━━━━",
+                                "",
+                                "§7Liquide:",
+                                "§a" + SafeGUI.money(cash) + "€",
+                                "",
+                                "§7Banque:",
+                                "§6" + SafeGUI.money(bank) + "€",
+                                "",
+                                "§8MoodCraft Financial System"
+                        )
+                )
+        );
+
+        //
+        // 📥 DEPOT
+        //
+
+        SafeGUI.safeSet(
+
+                inv,
+
+                10,
+
+                SafeGUI.item(
+
+                        Material.CHEST,
+
+                        "§a✦ §fDéposer",
+
+                        "§8━━━━━━━━━━━━━━━━",
+                        "",
+                        "§7Déposer de l'argent",
+                        "§7sur ton compte bancaire.",
+                        "",
+                        "§e▶ Cliquer"
+                )
+        );
+
+        //
+        // 📤 RETRAIT
+        //
+
+        SafeGUI.safeSet(
+
+                inv,
+
+                12,
+
+                SafeGUI.item(
+
+                        Material.HOPPER,
+
+                        "§c✦ §fRetirer",
+
+                        "§8━━━━━━━━━━━━━━━━",
+                        "",
+                        "§7Retirer de l'argent",
+                        "§7depuis la banque.",
+                        "",
+                        "§e▶ Cliquer"
+                )
+        );
+
+        //
+        // 💸 VIREMENT
+        //
+
+        SafeGUI.safeSet(
+
+                inv,
+
+                14,
+
+                SafeGUI.item(
+
+                        Material.WRITABLE_BOOK,
+
+                        "§e✦ §fVirement",
+
+                        "§8━━━━━━━━━━━━━━━━",
+                        "",
+                        "§7Envoyer de l'argent",
+                        "§7à un autre joueur.",
+                        "",
+                        "§e▶ Cliquer"
+                )
+        );
+
+        //
+        // 🏦 IBAN
+        //
+
+        SafeGUI.safeSet(
+
+                inv,
+
+                16,
+
+                SafeGUI.item(
+
+                        Material.BOOK,
+
+                        "§b✦ §fIBAN",
+
+                        "§8━━━━━━━━━━━━━━━━",
+                        "",
+                        "§7Consulter ton",
+                        "§7RIB bancaire.",
+                        "",
+                        "§e▶ Cliquer"
+                )
+        );
+
+        //
+        // 📜 HISTORIQUE
+        //
+
+        SafeGUI.safeSet(
+
+                inv,
+
+                20,
+
+                SafeGUI.item(
+
+                        Material.KNOWLEDGE_BOOK,
+
+                        "§d✦ §fHistorique",
+
+                        "§8━━━━━━━━━━━━━━━━",
+                        "",
+                        "§7Consulter toutes",
+                        "§7tes transactions.",
+                        "",
+                        "§8• Dépôts",
+                        "§8• Retraits",
+                        "§8• Virements",
+                        "§8• Marché",
+                        "",
+                        "§e▶ Cliquer"
+                )
+        );
+
+        //
+        // 📈 ACTIVITÉ
+        //
+
+        SafeGUI.safeSet(
+
+                inv,
+
+                24,
+
+                SafeGUI.item(
+
+                        Material.AMETHYST_SHARD,
+
+                        "§5✦ §fActivité",
+
+                        "§8━━━━━━━━━━━━━━━━",
+                        "",
+                        "§7Statistiques",
+                        "§7économiques avancées.",
+                        "",
+                        "§8• Profit",
+                        "§8• Volume",
+                        "§8• Trading",
+                        "",
+                        "§e▶ Bientôt"
+                )
+        );
+
+        //
+        // 🔙 RETOUR
+        //
+
+        SafeGUI.safeSet(
+
+                inv,
+
+                31,
+
+                SafeGUI.item(
+
+                        Material.BARRIER,
+
+                        "§c✦ §fRetour",
+
+                        "§7Retour au menu principal."
+                )
+        );
+
+        //
+        // 🚀 OPEN
+        //
+
+        GUIManager.open(
+                p,
+                "bank_main",
+                inv
+        );
     }
 }
