@@ -23,6 +23,14 @@ commands:
     usage: /banque
     aliases: [bank, b]
 
+  rib:
+    description: Voir son RIB bancaire
+    usage: /rib
+
+  virement:
+    description: Effectuer un virement bancaire
+    usage: /virement <iban> <montant>
+
   prix:
     description: Voir les prix du marché
     usage: /prix
@@ -57,7 +65,7 @@ commands:
     usage: /reputation
 
   rep:
-    description: Modifier la réputation (admin)
+    description: Modifier la réputation
     usage: /rep <joueur> <valeur>
     permission: moodcraft.admin
 
