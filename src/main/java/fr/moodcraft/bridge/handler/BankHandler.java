@@ -1,5 +1,6 @@
 package fr.moodcraft.bridge.handler;
 
+import fr.moodcraft.bridge.bank.IbanManager;
 import fr.moodcraft.bridge.gui.*;
 import fr.moodcraft.bridge.manager.TransferBuilder;
 
@@ -67,18 +68,20 @@ public class BankHandler implements GUIHandler {
 
                 p.closeInventory();
 
-                p.sendMessage("§8§m-----------------------------");
-                p.sendMessage("§6🏦 Ton IBAN MoodCraft");
+                p.sendMessage("§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+                p.sendMessage("§6🏦 §fTon IBAN MoodCraft");
                 p.sendMessage("");
 
                 p.sendMessage(
                         "§e"
-                                + fr.moodcraft.bridge.manager.IbanManager.get(p)
+                                + IbanManager.get(
+                                p.getUniqueId()
+                        )
                 );
 
                 p.sendMessage("");
                 p.sendMessage("§7Utilisable pour les virements.");
-                p.sendMessage("§8§m-----------------------------");
+                p.sendMessage("§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
                 p.playSound(
                         p.getLocation(),
