@@ -1,16 +1,28 @@
 package fr.moodcraft.bridge.bank;
 
 import fr.moodcraft.bridge.Main;
+
 import org.bukkit.Bukkit;
+
 import org.bukkit.configuration.file.*;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.util.*;
 
 public class IbanManager {
 
+    //
+    // 📂 FILE
+    //
+
     private static File file;
+
+    //
+    // ⚙ CONFIG
+    //
+
     private static FileConfiguration config;
 
     //
@@ -34,8 +46,10 @@ public class IbanManager {
     public static void init() {
 
         file = new File(
+
                 Main.getInstance()
                         .getDataFolder(),
+
                 "iban.yml"
         );
 
@@ -72,7 +86,10 @@ public class IbanManager {
 
             iban = normalize(iban);
 
-            playerIban.put(uuid, iban);
+            playerIban.put(
+                    uuid,
+                    iban
+            );
 
             ibanToPlayer.put(
                     iban,
@@ -123,11 +140,7 @@ public class IbanManager {
         //
 
         String iban =
-                "FR"
-                        + uuid.toString()
-                        .replace("-", "")
-                        .substring(0, 10)
-                        .toUpperCase();
+                generate();
 
         //
         // 💾 SAVE
@@ -146,15 +159,54 @@ public class IbanManager {
     }
 
     // =========================
+    // 🎲 GENERATE
+    // =========================
+
+    public static String generate() {
+
+        Random random =
+                new Random();
+
+        String iban;
+
+        do {
+
+            StringBuilder sb =
+                    new StringBuilder("FR");
+
+            //
+            // 🔢 10 CHIFFRES
+            //
+
+            for (int i = 0; i < 10; i++) {
+
+                sb.append(
+                        random.nextInt(10)
+                );
+            }
+
+            iban = sb.toString();
+
+        } while (
+                ibanToPlayer.containsKey(iban)
+        );
+
+        return iban;
+    }
+
+    // =========================
     // 🔒 UNIQUE CHECK
     // =========================
 
-    public static boolean isUnique(String iban,
-                                   UUID requester) {
+    public static boolean isUnique(
+            String iban,
+            UUID requester
+    ) {
 
         iban = normalize(iban);
 
         if (!ibanToPlayer.containsKey(iban)) {
+
             return true;
         }
 
@@ -166,8 +218,10 @@ public class IbanManager {
     // ➕ SET IBAN
     // =========================
 
-    public static boolean set(UUID uuid,
-                              String iban) {
+    public static boolean set(
+            UUID uuid,
+            String iban
+    ) {
 
         iban = normalize(iban);
 
@@ -222,7 +276,10 @@ public class IbanManager {
         // 💾 SAVE NEW
         //
 
-        playerIban.put(uuid, iban);
+        playerIban.put(
+                uuid,
+                iban
+        );
 
         ibanToPlayer.put(
                 iban,
@@ -279,9 +336,12 @@ public class IbanManager {
     // 🧠 NORMALIZE
     // =========================
 
-    private static String normalize(String iban) {
+    private static String normalize(
+            String iban
+    ) {
 
-        return iban.replace(" ", "")
+        return iban
+                .replace(" ", "")
                 .toUpperCase();
     }
 
