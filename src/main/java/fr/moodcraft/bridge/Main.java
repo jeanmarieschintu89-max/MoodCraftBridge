@@ -27,6 +27,7 @@ public class Main extends JavaPlugin {
     public void onEnable() {
 
         instance = this;
+
         saveDefaultConfig();
 
         // =========================
@@ -44,6 +45,7 @@ public class Main extends JavaPlugin {
         // 📊 CONFIG MARCHÉ
         // =========================
         loadBase();
+
         loadSection("activity", MarketState.activity);
         loadSection("impact", MarketState.impact);
         loadSection("rarity", MarketState.rarity);
@@ -85,7 +87,7 @@ public class Main extends JavaPlugin {
         // =========================
         registerCommand("menu", new MenuCommand());
 
-        // 🏦 BANQUE (CENTRAL)
+        // 🏦 BANQUE
         registerCommand("banque", new BanqueCommand());
 
         // 📊 MARCHÉ
@@ -98,22 +100,30 @@ public class Main extends JavaPlugin {
         registerCommand("ecoreset", new EcoResetCommand());
         registerCommand("ecotest", new EcoTestCommand());
 
-        // 🧠 RÉPUTATION (propre)
+        // 🧠 RÉPUTATION
         registerCommand("reputation", new ReputationCommand());
         registerCommand("rep", new ReputationCommand());
 
         // =========================
         // 🔁 TASKS
         // =========================
-        ShopIndex.rebuild();
 
-        Bukkit.getScheduler().runTaskTimer(this,
+        // 🔥 attendre QuickShop
+        Bukkit.getScheduler().runTaskLater(
+                this,
+                ShopIndex::rebuild,
+                40L
+        );
+
+        Bukkit.getScheduler().runTaskTimer(
+                this,
                 ShopIndex::rebuild,
                 20L * 60,
                 20L * 60
         );
 
-        Bukkit.getScheduler().runTaskTimer(this,
+        Bukkit.getScheduler().runTaskTimer(
+                this,
                 MarketEngine::tick,
                 20L,
                 20L * 45
@@ -132,32 +142,59 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+
         BankStorage.save();
         MarketStorage.save();
     }
 
+    // =========================
+    // 🎧 EVENTS
+    // =========================
     private void registerEvents(Listener... listeners) {
+
         for (Listener listener : listeners) {
-            Bukkit.getPluginManager().registerEvents(listener, this);
+
+            Bukkit.getPluginManager()
+                    .registerEvents(listener, this);
         }
     }
 
-    private void registerCommand(String name, org.bukkit.command.CommandExecutor executor) {
+    // =========================
+    // 📜 COMMANDES
+    // =========================
+    private void registerCommand(
+            String name,
+            org.bukkit.command.CommandExecutor executor
+    ) {
+
         if (getCommand(name) != null) {
-            getCommand(name).setExecutor(executor);
+
+            getCommand(name)
+                    .setExecutor(executor);
         }
     }
 
+    // =========================
+    // 📊 BASE
+    // =========================
     private void loadBase() {
-        if (getConfig().getConfigurationSection("base") == null) return;
 
-        for (String key : getConfig().getConfigurationSection("base").getKeys(false)) {
+        if (getConfig()
+                .getConfigurationSection("base") == null)
+            return;
 
-            double value = getConfig().getDouble("base." + key);
+        for (String key :
+                getConfig()
+                        .getConfigurationSection("base")
+                        .getKeys(false)) {
+
+            double value =
+                    getConfig().getDouble("base." + key);
 
             MarketState.base.put(key, value);
 
             if (!MarketState.price.containsKey(key)) {
+
                 MarketState.price.put(key, value);
             }
 
@@ -167,11 +204,27 @@ public class Main extends JavaPlugin {
         }
     }
 
-    private void loadSection(String path, Map<String, Double> map) {
-        if (getConfig().getConfigurationSection(path) == null) return;
+    // =========================
+    // 📊 LOAD SECTION
+    // =========================
+    private void loadSection(
+            String path,
+            Map<String, Double> map
+    ) {
 
-        for (String key : getConfig().getConfigurationSection(path).getKeys(false)) {
-            map.put(key, getConfig().getDouble(path + "." + key));
+        if (getConfig()
+                .getConfigurationSection(path) == null)
+            return;
+
+        for (String key :
+                getConfig()
+                        .getConfigurationSection(path)
+                        .getKeys(false)) {
+
+            map.put(
+                    key,
+                    getConfig().getDouble(path + "." + key)
+            );
         }
     }
 }
