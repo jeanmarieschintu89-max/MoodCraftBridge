@@ -3,6 +3,7 @@ package fr.moodcraft.bridge.handler;
 import fr.moodcraft.bridge.gui.*;
 import fr.moodcraft.bridge.manager.TransferBuilder;
 
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 public class BankHandler implements GUIHandler {
@@ -12,33 +13,87 @@ public class BankHandler implements GUIHandler {
 
         switch (slot) {
 
+            //
             // 📥 DEPOT
+            //
+
             case 10 -> {
-                TransferBuilder.clear(p); // 🔥 sécurité (évite vieux data)
-                TransferBuilder.setAction(p, TransferBuilder.Action.DEPOSIT);
+
+                // 🔥 reset sécurité
+                TransferBuilder.clear(p);
+
+                TransferBuilder.setAction(
+                        p,
+                        TransferBuilder.Action.DEPOSIT
+                );
+
                 DepositGUI.open(p);
             }
 
+            //
             // 📤 RETRAIT
+            //
+
             case 12 -> {
-                TransferBuilder.clear(p); // 🔥 idem
-                TransferBuilder.setAction(p, TransferBuilder.Action.WITHDRAW);
+
+                // 🔥 reset sécurité
+                TransferBuilder.clear(p);
+
+                TransferBuilder.setAction(
+                        p,
+                        TransferBuilder.Action.WITHDRAW
+                );
+
                 WithdrawGUI.open(p);
             }
 
+            //
             // 💸 VIREMENT
+            //
+
             case 14 -> {
-                TransferBuilder.clear(p); // 🔥 important
+
+                // 🔥 reset ancien transfert
+                TransferBuilder.clear(p);
+
                 TransferTypeGUI.open(p);
             }
 
-            // 🏦 IBAN
+            //
+            // 🏦 VOIR MON IBAN
+            //
+
             case 16 -> {
-                IbanGUI.open(p);
+
+                p.closeInventory();
+
+                p.sendMessage("§8§m-----------------------------");
+                p.sendMessage("§6🏦 Ton IBAN MoodCraft");
+                p.sendMessage("");
+
+                p.sendMessage(
+                        "§e"
+                                + fr.moodcraft.bridge.manager.IbanManager.get(p)
+                );
+
+                p.sendMessage("");
+                p.sendMessage("§7Utilisable pour les virements.");
+                p.sendMessage("§8§m-----------------------------");
+
+                p.playSound(
+                        p.getLocation(),
+                        Sound.BLOCK_NOTE_BLOCK_PLING,
+                        1f,
+                        1.2f
+                );
             }
 
+            //
             // 🔙 RETOUR
+            //
+
             case 22 -> {
+
                 MainMenuGUI.open(p);
             }
         }
