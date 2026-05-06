@@ -27,9 +27,49 @@ public class SafeGUI {
         if (mat == null)
             mat = Material.BARRIER;
 
-        ItemStack it = new ItemStack(mat);
+        ItemStack it =
+                new ItemStack(mat);
 
-        ItemMeta meta = it.getItemMeta();
+        ItemMeta meta =
+                it.getItemMeta();
+
+        if (meta == null)
+            return it;
+
+        meta.setDisplayName(
+                "§r" + (name == null ? "" : name)
+        );
+
+        meta.setLore(
+                formatLore(lore)
+        );
+
+        hideAll(meta);
+
+        it.setItemMeta(meta);
+
+        return it;
+    }
+
+    //
+    // 🔥 ITEMSTACK
+    //
+
+    public static ItemStack item(ItemStack base,
+                                 String name,
+                                 String... lore) {
+
+        if (base == null)
+            return item(
+                    Material.BARRIER,
+                    " "
+            );
+
+        ItemStack it =
+                base.clone();
+
+        ItemMeta meta =
+                it.getItemMeta();
 
         if (meta == null)
             return it;
@@ -63,6 +103,7 @@ public class SafeGUI {
             for (String line : lore) {
 
                 fixed.add(
+
                         line == null
                                 ? ""
                                 : "§7" + line
@@ -109,14 +150,44 @@ public class SafeGUI {
             return clone;
 
         meta.addEnchant(
+
                 Enchantment.UNBREAKING,
+
                 1,
+
                 true
         );
 
         meta.addItemFlags(
                 ItemFlag.HIDE_ENCHANTS
         );
+
+        clone.setItemMeta(meta);
+
+        return clone;
+    }
+
+    //
+    // ❌ REMOVE GLOW
+    //
+
+    public static ItemStack removeGlow(ItemStack item) {
+
+        if (item == null)
+            return null;
+
+        ItemStack clone =
+                item.clone();
+
+        ItemMeta meta =
+                clone.getItemMeta();
+
+        if (meta == null)
+            return clone;
+
+        meta.getEnchants()
+                .keySet()
+                .forEach(meta::removeEnchant);
 
         clone.setItemMeta(meta);
 
@@ -137,7 +208,9 @@ public class SafeGUI {
         try {
 
             inv.setItem(
+
                     slot,
+
                     item == null
                             ? new ItemStack(Material.BARRIER)
                             : item
@@ -146,7 +219,9 @@ public class SafeGUI {
         } catch (Exception e) {
 
             inv.setItem(
+
                     slot,
+
                     new ItemStack(Material.BARRIER)
             );
         }
@@ -178,6 +253,32 @@ public class SafeGUI {
                 inv.setItem(
                         i,
                         pane.clone()
+                );
+            }
+        }
+    }
+
+    //
+    // 🔲 FILL INVENTORY
+    //
+
+    public static void fill(Inventory inv,
+                            Material mat,
+                            String name) {
+
+        if (inv == null)
+            return;
+
+        ItemStack fill =
+                item(mat, name);
+
+        for (int i = 0; i < inv.getSize(); i++) {
+
+            if (inv.getItem(i) == null) {
+
+                inv.setItem(
+                        i,
+                        fill.clone()
                 );
             }
         }
