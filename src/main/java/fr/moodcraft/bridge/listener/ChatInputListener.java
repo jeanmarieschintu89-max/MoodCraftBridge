@@ -13,9 +13,11 @@ import fr.moodcraft.bridge.util.VaultHook;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class ChatInputListener implements Listener {
@@ -33,7 +35,8 @@ public class ChatInputListener implements Listener {
 
             e.setCancelled(true);
 
-            String msg = e.getMessage();
+            String msg =
+                    e.getMessage();
 
             Bukkit.getScheduler().runTask(
                     Main.getInstance(),
@@ -49,20 +52,27 @@ public class ChatInputListener implements Listener {
 
                         try {
 
-                            amount = Double.parseDouble(
-                                    msg.replace(",", ".")
-                            );
+                            amount =
+                                    Double.parseDouble(
+                                            msg.replace(",", ".")
+                                    );
 
                         } catch (Exception ex) {
 
-                            error(p, "Nombre invalide");
+                            error(
+                                    p,
+                                    "Nombre invalide"
+                            );
 
                             return;
                         }
 
                         if (amount <= 0) {
 
-                            error(p, "Montant invalide");
+                            error(
+                                    p,
+                                    "Montant invalide"
+                            );
 
                             return;
                         }
@@ -237,17 +247,34 @@ public class ChatInputListener implements Listener {
                                 );
 
                                 p.sendMessage("");
-                                p.sendMessage("§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-                                p.sendMessage("§a✔ §fVirement effectué");
+
+                                p.sendMessage(
+                                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                                );
+
+                                p.sendMessage(
+                                        "§6✦ §fBanque MoodCraft"
+                                );
+
                                 p.sendMessage("");
 
                                 p.sendMessage(
-                                        "§7Montant: §c-"
+                                        "§a✔ §fVirement effectué"
+                                );
+
+                                p.sendMessage("");
+
+                                p.sendMessage(
+                                        "§7Montant envoyé: §c-"
                                                 + SafeGUI.money(amount)
                                 );
 
                                 p.sendMessage("");
-                                p.sendMessage("§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
+                                p.sendMessage(
+                                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                                );
+
                                 p.sendMessage("");
 
                                 p.playSound(
@@ -261,17 +288,34 @@ public class ChatInputListener implements Listener {
                                         && target.isOnline()) {
 
                                     target.sendMessage("");
-                                    target.sendMessage("§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-                                    target.sendMessage("§a✔ §fVirement reçu");
+
+                                    target.sendMessage(
+                                            "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                                    );
+
+                                    target.sendMessage(
+                                            "§6✦ §fBanque MoodCraft"
+                                    );
+
                                     target.sendMessage("");
 
                                     target.sendMessage(
-                                            "§7Montant: §a+"
+                                            "§a✔ §fVirement reçu"
+                                    );
+
+                                    target.sendMessage("");
+
+                                    target.sendMessage(
+                                            "§7Montant reçu: §a+"
                                                     + SafeGUI.money(amount)
                                     );
 
                                     target.sendMessage("");
-                                    target.sendMessage("§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
+                                    target.sendMessage(
+                                            "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                                    );
+
                                     target.sendMessage("");
 
                                     target.playSound(
@@ -408,16 +452,41 @@ public class ChatInputListener implements Listener {
                             );
 
                             p.sendMessage("");
-                            p.sendMessage("§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-                            p.sendMessage("§a✔ §fIBAN valide");
-                            p.sendMessage("");
 
                             p.sendMessage(
-                                    "§7Entre maintenant le montant."
+                                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                            );
+
+                            p.sendMessage(
+                                    "§6✦ §fBanque MoodCraft"
                             );
 
                             p.sendMessage("");
-                            p.sendMessage("§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
+                            p.sendMessage(
+                                    "§7IBAN détecté avec succès."
+                            );
+
+                            p.sendMessage(
+                                    "§7Destinataire vérifié."
+                            );
+
+                            p.sendMessage("");
+
+                            p.sendMessage(
+                                    "§eEntre maintenant le montant"
+                            );
+
+                            p.sendMessage(
+                                    "§7dans le chat."
+                            );
+
+                            p.sendMessage("");
+
+                            p.sendMessage(
+                                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                            );
+
                             p.sendMessage("");
 
                             p.playSound(
@@ -440,17 +509,31 @@ public class ChatInputListener implements Listener {
     // ❌ ERROR
     // =========================
 
-    private void error(Player p, String msg) {
+    private void error(Player p,
+                       String msg) {
 
         p.sendMessage("");
-        p.sendMessage("§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-        p.sendMessage("§c✦ §fBanque MoodCraft");
+
+        p.sendMessage(
+                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        );
+
+        p.sendMessage(
+                "§c✦ §fBanque MoodCraft"
+        );
+
         p.sendMessage("");
 
-        p.sendMessage("§7" + msg);
+        p.sendMessage(
+                "§7" + msg
+        );
 
         p.sendMessage("");
-        p.sendMessage("§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
+        p.sendMessage(
+                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        );
+
         p.sendMessage("");
 
         p.playSound(
@@ -465,15 +548,20 @@ public class ChatInputListener implements Listener {
     // ✅ SUCCESS
     // =========================
 
-    private void success(
-            Player p,
-            String type,
-            String value
-    ) {
+    private void success(Player p,
+                         String type,
+                         String value) {
 
         p.sendMessage("");
-        p.sendMessage("§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-        p.sendMessage("§6✦ §fBanque MoodCraft");
+
+        p.sendMessage(
+                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        );
+
+        p.sendMessage(
+                "§6✦ §fBanque MoodCraft"
+        );
+
         p.sendMessage("");
 
         p.sendMessage(
@@ -481,7 +569,11 @@ public class ChatInputListener implements Listener {
         );
 
         p.sendMessage("");
-        p.sendMessage("§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
+        p.sendMessage(
+                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        );
+
         p.sendMessage("");
 
         p.playSound(
