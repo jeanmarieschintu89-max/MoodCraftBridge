@@ -1,6 +1,7 @@
 package fr.moodcraft.bridge.manager;
 
 import com.ghostchu.quickshop.api.shop.Shop;
+
 import fr.moodcraft.bridge.Main;
 import fr.moodcraft.bridge.market.MarketEngine;
 
@@ -10,14 +11,20 @@ import java.util.logging.Logger;
 
 public final class PriceUpdater {
 
-    private static final Logger log = Main.getInstance().getLogger();
-
     private PriceUpdater() {}
+
+    // =========================
+    // 🔧 LOGGER SAFE
+    // =========================
+    private static Logger log() {
+        return Main.getInstance().getLogger();
+    }
 
     // =========================
     // 🔥 ITEMS AUTORISÉS
     // =========================
-    public static final Set<String> ALLOWED = new HashSet<>();
+    public static final Set<String> ALLOWED =
+            new HashSet<String>();
 
     static {
 
@@ -57,28 +64,39 @@ public final class PriceUpdater {
                 }
 
                 shop.setPrice(price);
+
                 updated++;
 
             } catch (Exception e) {
 
-                log.warning("[PriceUpdater] Erreur shop: "
-                        + item + " | " + e.getMessage());
+                log().warning(
+                        "[PriceUpdater] Erreur shop: "
+                                + item
+                                + " | "
+                                + e.getMessage()
+                );
             }
         }
 
         if (updated > 0) {
-            log.info("[PriceUpdater] "
-                    + item + " → "
-                    + updated + " shops mis à jour");
+
+            log().info(
+                    "[PriceUpdater] "
+                            + item
+                            + " → "
+                            + updated
+                            + " shops mis à jour"
+            );
         }
     }
 
     // =========================
-    // 🧠 COMPAT ANCIEN CODE
+    // 🧠 COMPAT
     // =========================
     public static void updateItem(String item) {
 
-        double price = MarketEngine.getPrice(item);
+        double price =
+                MarketEngine.getPrice(item);
 
         updateItem(item, price);
     }
@@ -88,9 +106,14 @@ public final class PriceUpdater {
     // =========================
     public static void updateSingle(Shop shop, String item) {
 
+        if (shop == null || item == null) {
+            return;
+        }
+
         try {
 
-            double price = MarketEngine.getPrice(item);
+            double price =
+                    MarketEngine.getPrice(item);
 
             if (Math.abs(shop.getPrice() - price) < 0.01) {
                 return;
@@ -100,8 +123,12 @@ public final class PriceUpdater {
 
         } catch (Exception e) {
 
-            log.warning("[PriceUpdater] Erreur single shop: "
-                    + item + " | " + e.getMessage());
+            log().warning(
+                    "[PriceUpdater] Erreur single shop: "
+                            + item
+                            + " | "
+                            + e.getMessage()
+            );
         }
     }
 }
