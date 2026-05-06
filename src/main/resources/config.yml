@@ -51,7 +51,6 @@ impact:
 
 #
 # 📈 Activité économique
-# influence offre/demande
 #
 
 activity:
@@ -96,13 +95,13 @@ engine:
   # 🔄 Retour progressif au prix base
   #
 
-  base_return: 0.004
+  base_return: 0.012
 
   #
   # 📉 Variation max par tick
   #
 
-  max_change: 0.08
+  max_change: 0.035
 
   #
   # 📊 Limite activité
@@ -115,7 +114,7 @@ engine:
   #
 
   min_price_factor: 0.45
-  max_price_factor: 2.8
+  max_price_factor: 1.5
 
   #
   # 🧹 Nettoyage stock
@@ -142,11 +141,11 @@ engine:
   rarity:
     enabled: true
 
-    boost: 0.0012
+    boost: 0.0010
 
-    exponent: 1.08
+    exponent: 1.05
 
-    max_boost: 0.025
+    max_boost: 0.018
 
 #
 # 🌟 RÉGLAGES SPÉCIAUX
@@ -155,61 +154,61 @@ engine:
 rarity_settings:
 
   netherite:
-    boost: 0.0020
-    exponent: 1.15
-    max_boost: 0.040
-
-  emerald:
-    boost: 0.0016
-    exponent: 1.12
-    max_boost: 0.035
-
-  diamond:
-    boost: 0.0018
-    exponent: 1.14
-    max_boost: 0.038
-
-  gold:
-    boost: 0.0013
-    exponent: 1.08
-    max_boost: 0.028
-
-  iron:
-    boost: 0.0011
-    exponent: 1.06
-    max_boost: 0.024
-
-  copper:
-    boost: 0.0010
-    exponent: 1.05
-    max_boost: 0.022
-
-  quartz:
-    boost: 0.0010
-    exponent: 1.05
-    max_boost: 0.022
-
-  redstone:
-    boost: 0.0012
-    exponent: 1.06
-    max_boost: 0.024
-
-  lapis:
-    boost: 0.0012
-    exponent: 1.06
-    max_boost: 0.024
-
-  coal:
-    boost: 0.0007
-    exponent: 1.02
+    boost: 0.0009
+    exponent: 1.04
     max_boost: 0.015
 
-  amethyst:
+  emerald:
     boost: 0.0010
-    exponent: 1.05
+    exponent: 1.06
+    max_boost: 0.020
+
+  diamond:
+    boost: 0.0011
+    exponent: 1.07
     max_boost: 0.022
 
-  glowstone:
+  gold:
+    boost: 0.0012
+    exponent: 1.07
+    max_boost: 0.024
+
+  iron:
     boost: 0.0010
     exponent: 1.05
-    max_boost: 0.022
+    max_boost: 0.020
+
+  copper:
+    boost: 0.0009
+    exponent: 1.04
+    max_boost: 0.018
+
+  quartz:
+    boost: 0.0009
+    exponent: 1.04
+    max_boost: 0.018
+
+  redstone:
+    boost: 0.0010
+    exponent: 1.05
+    max_boost: 0.020
+
+  lapis:
+    boost: 0.0010
+    exponent: 1.05
+    max_boost: 0.020
+
+  coal:
+    boost: 0.0006
+    exponent: 1.02
+    max_boost: 0.012
+
+  amethyst:
+    boost: 0.0009
+    exponent: 1.04
+    max_boost: 0.018
+
+  glowstone:
+    boost: 0.0009
+    exponent: 1.04
+    max_boost: 0.018
