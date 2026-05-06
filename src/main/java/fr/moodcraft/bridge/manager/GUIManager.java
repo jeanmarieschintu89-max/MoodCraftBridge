@@ -29,7 +29,7 @@ public class GUIManager {
         UUID uuid = p.getUniqueId();
 
         if (id == null) {
-            System.out.println("[GUI] ❌ ID NULL");
+            Main.getInstance().getLogger().warning("[GUI] Déjà enregistré: " + id);
             return;
         }
 
