@@ -36,6 +36,121 @@ public class BanqueCommand implements CommandExecutor {
         if (!(sender instanceof Player p))
             return true;
 
+//
+        // 📥 /depot
+        //
+
+        if (label.equalsIgnoreCase("depot")) {
+
+            if (args.length < 1) {
+
+                return usage(
+                        p,
+                        "/depot <montant>"
+                );
+            }
+
+            double amount =
+                    parseAmount(
+                            p,
+                            args[0]
+                    );
+
+            if (amount <= 0)
+                return true;
+
+            if (VaultHook.getBalance(p)
+                    < amount) {
+
+                return error(
+                        p,
+                        "Pas assez d'argent."
+                );
+            }
+
+            VaultHook.remove(
+                    p,
+                    amount
+            );
+
+            BankStorage.add(
+                    p.getUniqueId().toString(),
+                    amount
+            );
+
+            TransactionManager.deposit(
+                    p.getUniqueId(),
+                    amount
+            );
+
+            success(
+                    p,
+                    "Dépôt",
+                    "+" + SafeGUI.money(amount)
+            );
+
+            return true;
+        }
+
+        //
+        // 📤 /retrait
+        //
+
+        if (label.equalsIgnoreCase("retrait")) {
+
+            if (args.length < 1) {
+
+                return usage(
+                        p,
+                        "/retrait <montant>"
+                );
+            }
+
+            double amount =
+                    parseAmount(
+                            p,
+                            args[0]
+                    );
+
+            if (amount <= 0)
+                return true;
+
+            String uuid =
+                    p.getUniqueId().toString();
+
+            if (BankStorage.get(uuid)
+                    < amount) {
+
+                return error(
+                        p,
+                        "Fonds insuffisants."
+                );
+            }
+
+            BankStorage.remove(
+                    uuid,
+                    amount
+            );
+
+            VaultHook.add(
+                    p,
+                    amount
+            );
+
+            TransactionManager.withdraw(
+                    p.getUniqueId(),
+                    amount
+            );
+
+            success(
+                    p,
+                    "Retrait",
+                    "-" + SafeGUI.money(amount)
+            );
+
+            return true;
+        }
+
         //
         // 🏦 /rib
         //
