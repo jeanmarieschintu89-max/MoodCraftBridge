@@ -169,69 +169,16 @@ public class BankHandler implements GUIHandler {
 
             case 20 -> {
 
-                p.closeInventory();
-
-                p.sendMessage("");
-
-                p.sendMessage(
-                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                );
-
-                p.sendMessage(
-                        "§d✦ §fHistorique bancaire"
-                );
-
-                p.sendMessage("");
-
-                p.sendMessage(
-                        "§7Commande disponible:"
-                );
-
-                p.sendMessage("");
-
-                p.sendMessage(
-                        "§e/banque historique"
-                );
-
-                p.sendMessage("");
-
-                p.sendMessage(
-                        "§7Tu peux consulter:"
-                );
-
-                p.sendMessage(
-                        "§8• Dépôts"
-                );
-
-                p.sendMessage(
-                        "§8• Retraits"
-                );
-
-                p.sendMessage(
-                        "§8• Virements"
-                );
-
-                p.sendMessage(
-                        "§8• Achats"
-                );
-
-                p.sendMessage(
-                        "§8• Ventes"
-                );
-
-                p.sendMessage("");
-
-                p.sendMessage(
-                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                );
-
-                p.sendMessage("");
-
                 p.playSound(
                         p.getLocation(),
-                        Sound.BLOCK_NOTE_BLOCK_CHIME,
+                        Sound.UI_BUTTON_CLICK,
                         1f,
-                        1.2f
+                        1.1f
+                );
+
+                TransactionHistoryGUI.open(
+                        p,
+                        1
                 );
             }
 
