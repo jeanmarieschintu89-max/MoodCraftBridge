@@ -7,17 +7,34 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 public class GUIManager {
 
-    private static final Map<String, GUIHandler> handlers = new HashMap<>();
-    private static final Map<UUID, String> open = new HashMap<>();
-    private static final Set<UUID> opening = new HashSet<>();
+    private static final Map<String, GUIHandler> handlers =
+            new HashMap<>();
+
+    private static final Map<UUID, String> open =
+            new HashMap<>();
+
+    private static final Set<UUID> opening =
+            new HashSet<>();
 
     private static Plugin plugin;
-    private static final Logger log = Main.getInstance().getLogger();
+
+    private GUIManager() {}
+
+    // =========================
+    // 🔧 LOGGER SAFE
+    // =========================
+    private static Logger log() {
+        return Main.getInstance().getLogger();
+    }
 
     // =========================
     // 🔧 INIT
@@ -34,12 +51,12 @@ public class GUIManager {
         UUID uuid = p.getUniqueId();
 
         if (id == null) {
-            log.warning("[GUI] ID NULL");
+            log().warning("[GUI] ID NULL");
             return;
         }
 
         if (inv == null) {
-            log.warning("[GUI] Inventory NULL: " + id);
+            log().warning("[GUI] Inventory NULL: " + id);
             return;
         }
 
@@ -48,9 +65,13 @@ public class GUIManager {
 
         p.openInventory(inv);
 
-        Bukkit.getScheduler().runTask(plugin, () ->
-                opening.remove(uuid)
-        );
+        Bukkit.getScheduler().runTask(plugin, new Runnable() {
+
+            @Override
+            public void run() {
+                opening.remove(uuid);
+            }
+        });
     }
 
     // =========================
@@ -83,27 +104,27 @@ public class GUIManager {
     }
 
     // =========================
-    // 🧠 REGISTER HANDLER
+    // 🧠 REGISTER
     // =========================
     public static void register(String id, GUIHandler handler) {
 
         if (id == null) {
-            log.warning("[GUI] Tentative register ID NULL");
+            log().warning("[GUI] Tentative register ID NULL");
             return;
         }
 
         if (handler == null) {
-            log.warning("[GUI] Handler NULL: " + id);
+            log().warning("[GUI] Handler NULL: " + id);
             return;
         }
 
         if (handlers.containsKey(id)) {
-            log.warning("[GUI] Déjà enregistré: " + id);
+            log().warning("[GUI] Déjà enregistré: " + id);
         }
 
         handlers.put(id, handler);
 
-        log.info("[GUI] Handler enregistré: " + id);
+        log().info("[GUI] Handler enregistré: " + id);
     }
 
     // =========================
@@ -120,7 +141,7 @@ public class GUIManager {
         GUIHandler handler = handlers.get(id);
 
         if (handler == null) {
-            log.warning("[GUI] Aucun handler: " + id);
+            log().warning("[GUI] Aucun handler: " + id);
             return;
         }
 
@@ -130,7 +151,7 @@ public class GUIManager {
 
         } catch (Exception e) {
 
-            log.severe("[GUI] Erreur handler: " + id);
+            log().severe("[GUI] Erreur handler: " + id);
 
             e.printStackTrace();
         }
