@@ -15,6 +15,9 @@ commands:
     description: Ouvrir le menu principal
     usage: /menu
 
+  freeze:
+    permission: moodcraft.admin
+
   banque:
     description: Systeme bancaire complet
     usage: /banque
