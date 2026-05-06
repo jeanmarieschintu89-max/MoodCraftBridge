@@ -254,7 +254,7 @@ public class Main extends JavaPlugin {
 
         registerCommand(
                 "toprep",
-                new TopRepCommand()
+                new ReputationCommand()
         );
 
         // =========================
