@@ -304,17 +304,6 @@ public class Main extends JavaPlugin {
 
                 this,
 
-                ShopIndex::rebuild,
-
-                20L * 60,
-
-                20L * 60
-        );
-
-        Bukkit.getScheduler().runTaskTimer(
-
-                this,
-
                 MarketEngine::tick,
 
                 20L,
