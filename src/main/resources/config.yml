@@ -55,18 +55,16 @@ activity:
   glowstone: 0.080
 
 rarity:
-  netherite: 1
-  emerald: 2
-  diamond: 3
-  gold: 5
-  iron: 6
-  copper: 7
-  quartz: 7
-  redstone: 8
-  lapis: 8
-  coal: 10
-  amethyst: 9
-  glowstone: 9
+  netherite: 40
+  emerald: 120
+  diamond: 180
+  gold: 300
+  iron: 500
+  copper: 700
+  quartz: 600
+  redstone: 900
+  lapis: 900
+  coal: 1400
 
 engine:
   base_return: 0.002
