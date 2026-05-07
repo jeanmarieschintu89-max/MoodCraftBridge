@@ -2,6 +2,10 @@ package fr.moodcraft.bridge.handler;
 
 import fr.moodcraft.bridge.gui.ContractGUI;
 import fr.moodcraft.bridge.gui.MainMenuGUI;
+import fr.moodcraft.bridge.contract.Contract;
+
+import fr.moodcraft.bridge.manager.ContractCompleteManager;
+import fr.moodcraft.bridge.manager.ContractManager;
 
 import fr.moodcraft.bridge.util.ActionLock;
 
