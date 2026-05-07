@@ -1,3 +1,4 @@
+
 package fr.moodcraft.bridge;
 
 import fr.moodcraft.bridge.command.FreezeCommand;
@@ -63,7 +64,7 @@ public class Main extends JavaPlugin {
         IbanManager.init();
 
         TransactionManager.init();
-        
+
         ReputationHistoryManager.init();
 
         GUIManager.init(this);
@@ -178,13 +179,20 @@ public class Main extends JavaPlugin {
                 "profile_gui",
                 new ProfileHandler()
         );
+
         GUIManager.register(
                 "transaction_history",
                 new TransactionHistoryHandler()
+        );
 
         GUIManager.register(
                 "contracts",
                 new ContractHandler()
+        );
+
+        GUIManager.register(
+                "public_contracts",
+                new PublicContractsHandler()
         );
 
         // =========================
@@ -341,6 +349,10 @@ public class Main extends JavaPlugin {
 
         getLogger().info(
                 "🧠 Réputation: OK"
+        );
+
+        getLogger().info(
+                "📜 Contrats: OK"
         );
 
         getLogger().info(
