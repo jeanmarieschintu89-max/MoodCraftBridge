@@ -1,8 +1,10 @@
+
 package fr.moodcraft.bridge.handler;
 
 import fr.moodcraft.bridge.Main;
 
 import fr.moodcraft.bridge.gui.BankGUI;
+import fr.moodcraft.bridge.gui.ContractGUI;
 import fr.moodcraft.bridge.gui.PriceGUI;
 import fr.moodcraft.bridge.gui.ProfileGUI;
 import fr.moodcraft.bridge.gui.TeleportGUI;
@@ -100,20 +102,24 @@ public class MainMenuHandler implements GUIHandler {
             }
 
             //
-            // 🧭 TÉLÉPORTATION
+            // 📜 CONTRATS
             //
 
-            case 15 -> {
+            case 16 -> {
 
                 feedback(
                         p,
-                        Sound.ITEM_CHORUS_FRUIT_TELEPORT,
+                        Sound.BLOCK_NOTE_BLOCK_CHIME,
                         1f
+                );
+
+                p.sendMessage(
+                        "§8✦ §7Connexion au réseau contrats..."
                 );
 
                 openNext(
                         p,
-                        () -> TeleportGUI.open(p)
+                        () -> ContractGUI.open(p)
                 );
             }
 
@@ -158,6 +164,24 @@ public class MainMenuHandler implements GUIHandler {
                 openNext(
                         p,
                         () -> p.performCommand("jobs join")
+                );
+            }
+
+            //
+            // 🌍 TÉLÉPORTATION
+            //
+
+            case 24 -> {
+
+                feedback(
+                        p,
+                        Sound.ITEM_CHORUS_FRUIT_TELEPORT,
+                        1f
+                );
+
+                openNext(
+                        p,
+                        () -> TeleportGUI.open(p)
                 );
             }
 
