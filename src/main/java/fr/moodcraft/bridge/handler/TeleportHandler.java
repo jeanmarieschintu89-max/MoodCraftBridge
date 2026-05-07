@@ -51,7 +51,7 @@ public class TeleportHandler implements GUIHandler {
             // 🛒 ADMIN SHOP
             //
 
-            case 11 -> {
+            case 12 -> {
 
                 teleport(
 
@@ -73,7 +73,7 @@ public class TeleportHandler implements GUIHandler {
             // 🎮 MINI-JEUX
             //
 
-            case 12 -> {
+            case 14 -> {
 
                 teleport(
 
@@ -95,7 +95,7 @@ public class TeleportHandler implements GUIHandler {
             // 🌍 RTP
             //
 
-            case 13 -> {
+            case 16 -> {
 
                 teleport(
 
@@ -117,7 +117,7 @@ public class TeleportHandler implements GUIHandler {
             // 🏠 SPAWN
             //
 
-            case 14 -> {
+            case 20 -> {
 
                 teleport(
 
@@ -139,7 +139,7 @@ public class TeleportHandler implements GUIHandler {
             // 🏙️ VILLE
             //
 
-            case 15 -> {
+            case 24 -> {
 
                 teleport(
 
@@ -161,8 +161,7 @@ public class TeleportHandler implements GUIHandler {
             // 🔙 RETOUR
             //
 
-            case 22,
-                 31 -> {
+            case 31 -> {
 
                 p.playSound(
 
