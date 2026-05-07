@@ -11,7 +11,8 @@ description: Systeme economie + banque + marche dynamique
 
 depend: [Vault]
 
-softdepend: [QuickShop]
+softdepend:
+  - QuickShop
 
 commands:
 
@@ -20,12 +21,16 @@ commands:
     usage: /menu
 
   freeze:
+    description: Freeze un joueur
+    usage: /freeze <joueur>
     permission: moodcraft.admin
 
   banque:
     description: Systeme bancaire complet
     usage: /banque
-    aliases: [bank, b]
+    aliases:
+      - bank
+      - b
 
   depot:
     description: Déposer de l'argent
@@ -46,7 +51,15 @@ commands:
   prix:
     description: Voir les prix du marché
     usage: /prix
-    aliases: [bourse, market, commerce, cours, brs, vendre, vente, minerais]
+    aliases:
+      - bourse
+      - market
+      - commerce
+      - cours
+      - brs
+      - vendre
+      - vente
+      - minerais
 
   sync:
     description: Synchroniser les prix QuickShop
@@ -55,7 +68,7 @@ commands:
 
   trend:
     description: Voir les tendances
-    usage: /trend
+    usage: /trend <item>
 
   ecoreload:
     description: Recharger l'économie
@@ -84,8 +97,10 @@ commands:
   toprep:
     description: Voir le classement réputation
     usage: /toprep
-  
+
   subvention:
+    description: Gérer les subventions
+    usage: /subvention
     permission: moodcraft.admin
 
 permissions:
