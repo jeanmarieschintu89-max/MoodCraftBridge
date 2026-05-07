@@ -50,7 +50,7 @@ public class PriceHandler implements GUIHandler {
             }
 
             //
-            // 💎 MINERAIS
+            // 💎 LIGNE 1
             //
 
             case 10 -> sell(
@@ -102,35 +102,39 @@ public class PriceHandler implements GUIHandler {
                     "Glowstone"
             );
 
-            case 19 -> sell(
+            //
+            // 💎 LIGNE 2
+            //
+
+            case 20 -> sell(
                     p,
                     "quartz",
                     Material.QUARTZ,
                     "Quartz"
             );
 
-            case 20 -> sell(
+            case 21 -> sell(
                     p,
                     "amethyst",
                     Material.AMETHYST_SHARD,
                     "Améthyste"
             );
 
-            case 21 -> sell(
+            case 22 -> sell(
                     p,
                     "redstone",
                     Material.REDSTONE,
                     "Redstone"
             );
 
-            case 22 -> sell(
+            case 23 -> sell(
                     p,
                     "lapis",
                     Material.LAPIS_LAZULI,
                     "Lapis"
             );
 
-            case 23 -> sell(
+            case 24 -> sell(
                     p,
                     "coal",
                     Material.COAL,
