@@ -1,189 +1,354 @@
-package fr.moodcraft.bridge.contract;
+package fr.moodcraft.bridge.manager;
+
+import fr.moodcraft.bridge.Main;
+
+import fr.moodcraft.bridge.contract.Contract;
 
 import org.bukkit.Material;
 
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.io.File;
+import java.io.IOException;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
-public class Contract {
+public class ContractManager {
 
     //
-    // 🆔 ID
+    // 📦 CONTRATS
     //
 
-    private final String id;
+    private static final Map<String, Contract>
+            contracts = new HashMap<>();
 
     //
-    // 👤 CRÉATEUR
+    // 🧠 SLOT MAP
     //
 
-    private final UUID owner;
+    private static final Map<Integer, Contract>
+            slotMap = new HashMap<>();
 
     //
-    // 🤝 TRAVAILLEUR
+    // 💾 FILE
     //
 
-    private UUID worker;
+    private static File file;
 
-    //
-    // 📦 ITEM
-    //
-
-    private final Material item;
-
-    //
-    // 🔢 QUANTITÉ
-    //
-
-    private final int amount;
-
-    //
-    // 💰 RÉCOMPENSE
-    //
-
-    private final double reward;
-
-    //
-    // 📊 STATUS
-    //
-
-    private Status status;
-
-    //
-    // 🕒 DATE
-    //
-
-    private final long createdAt;
+    private static FileConfiguration config;
 
     // =========================
-    // 🚀 CONSTRUCTOR
+    // 🚀 INIT
     // =========================
 
-    public Contract(
-            String id,
+    public static void init() {
+
+        file = new File(
+
+                Main.getInstance()
+                        .getDataFolder(),
+
+                "contracts.yml"
+        );
+
+        if (!file.exists()) {
+
+            try {
+
+                file.getParentFile().mkdirs();
+
+                file.createNewFile();
+
+            } catch (IOException e) {
+
+                e.printStackTrace();
+            }
+        }
+
+        config =
+                YamlConfiguration.loadConfiguration(file);
+
+        load();
+    }
+
+    // =========================
+    // 📥 LOAD
+    // =========================
+
+    public static void load() {
+
+        contracts.clear();
+
+        for (String id :
+
+                config.getKeys(false)) {
+
+            try {
+
+                UUID owner =
+                        UUID.fromString(
+
+                                config.getString(
+                                        id + ".owner"
+                                )
+                        );
+
+                Material material =
+                        Material.valueOf(
+
+                                config.getString(
+                                        id + ".item"
+                                )
+                        );
+
+                int amount =
+                        config.getInt(
+                                id + ".amount"
+                        );
+
+                double reward =
+                        config.getDouble(
+                                id + ".reward"
+                        );
+
+                Contract contract =
+                        new Contract(
+
+                                id,
+
+                                owner,
+
+                                material,
+
+                                amount,
+
+                                reward
+                        );
+
+                //
+                // 📊 STATUS
+                //
+
+                String status =
+                        config.getString(
+                                id + ".status",
+                                "OPEN"
+                        );
+
+                contract.setStatus(
+
+                        Contract.Status.valueOf(
+                                status
+                        )
+                );
+
+                //
+                // 🤝 WORKER
+                //
+
+                if (config.contains(
+                        id + ".worker"
+                )) {
+
+                    contract.setWorker(
+
+                            UUID.fromString(
+
+                                    config.getString(
+                                            id + ".worker"
+                                    )
+                            )
+                    );
+                }
+
+                contracts.put(
+                        id,
+                        contract
+                );
+
+            } catch (Exception e) {
+
+                Bukkit.getLogger().warning(
+                        "[MoodCraft] Contrat invalide: "
+                                + id
+                );
+            }
+        }
+    }
+
+    // =========================
+    // 💾 SAVE
+    // =========================
+
+    public static void save() {
+
+        for (String key :
+                config.getKeys(false)) {
+
+            config.set(key, null);
+        }
+
+        for (Contract contract :
+
+                contracts.values()) {
+
+            String id =
+                    contract.getId();
+
+            config.set(
+                    id + ".owner",
+                    contract.getOwner().toString()
+            );
+
+            config.set(
+                    id + ".item",
+                    contract.getItem().name()
+            );
+
+            config.set(
+                    id + ".amount",
+                    contract.getAmount()
+            );
+
+            config.set(
+                    id + ".reward",
+                    contract.getReward()
+            );
+
+            config.set(
+                    id + ".status",
+                    contract.getStatus().name()
+            );
+
+            if (contract.getWorker() != null) {
+
+                config.set(
+                        id + ".worker",
+                        contract.getWorker().toString()
+                );
+            }
+        }
+
+        try {
+
+            config.save(file);
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }
+    }
+
+    // =========================
+    // ➕ CREATE
+    // =========================
+
+    public static Contract create(
+
             UUID owner,
+
             Material item,
+
             int amount,
+
             double reward
     ) {
 
-        this.id = id;
+        String id =
+                UUID.randomUUID()
+                        .toString()
+                        .substring(0, 8)
+                        .toUpperCase();
 
-        this.owner = owner;
+        Contract contract =
+                new Contract(
 
-        this.item = item;
+                        id,
 
-        this.amount = amount;
+                        owner,
 
-        this.reward = reward;
+                        item,
 
-        this.status = Status.OPEN;
+                        amount,
 
-        this.createdAt =
-                System.currentTimeMillis();
+                        reward
+                );
+
+        contracts.put(
+                id,
+                contract
+        );
+
+        save();
+
+        return contract;
     }
 
     // =========================
-    // 📊 STATUS
+    // 🔍 GET
     // =========================
 
-    public enum Status {
+    public static Contract get(String id) {
 
-        OPEN,
-
-        IN_PROGRESS,
-
-        COMPLETED,
-
-        CANCELLED
+        return contracts.get(id);
     }
 
     // =========================
-    // 🆔 GET ID
+    // 📜 GET ALL
     // =========================
 
-    public String getId() {
+    public static Collection<Contract> getAll() {
 
-        return id;
+        return contracts.values();
     }
 
     // =========================
-    // 👤 GET OWNER
+    // ❌ REMOVE
     // =========================
 
-    public UUID getOwner() {
+    public static void remove(String id) {
 
-        return owner;
+        contracts.remove(id);
+
+        save();
     }
 
     // =========================
-    // 🤝 GET WORKER
+    // 📦 SET SLOT
     // =========================
 
-    public UUID getWorker() {
+    public static void setSlot(
+            int slot,
+            Contract contract
+    ) {
 
-        return worker;
+        slotMap.put(
+                slot,
+                contract
+        );
     }
 
     // =========================
-    // 🤝 SET WORKER
+    // 🔍 GET SLOT
     // =========================
 
-    public void setWorker(UUID worker) {
+    public static Contract getBySlot(
+            int slot
+    ) {
 
-        this.worker = worker;
+        return slotMap.get(slot);
     }
 
     // =========================
-    // 📦 GET ITEM
+    // 🧹 CLEAR SLOTS
     // =========================
 
-    public Material getItem() {
+    public static void clearSlots() {
 
-        return item;
-    }
-
-    // =========================
-    // 🔢 GET AMOUNT
-    // =========================
-
-    public int getAmount() {
-
-        return amount;
-    }
-
-    // =========================
-    // 💰 GET REWARD
-    // =========================
-
-    public double getReward() {
-
-        return reward;
-    }
-
-    // =========================
-    // 📊 GET STATUS
-    // =========================
-
-    public Status getStatus() {
-
-        return status;
-    }
-
-    // =========================
-    // 📊 SET STATUS
-    // =========================
-
-    public void setStatus(Status status) {
-
-        this.status = status;
-    }
-
-    // =========================
-    // 🕒 GET CREATED
-    // =========================
-
-    public long getCreatedAt() {
-
-        return createdAt;
+        slotMap.clear();
     }
 }
