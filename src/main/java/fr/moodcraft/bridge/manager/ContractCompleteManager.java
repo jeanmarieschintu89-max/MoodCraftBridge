@@ -74,24 +74,28 @@ public class ContractCompleteManager {
             );
 
             p.sendMessage(
-                    "§c✦ §fContrat impossible"
+                    "§c✦ §fLivraison refusée"
             );
 
             p.sendMessage("");
 
             p.sendMessage(
-                    "§7Ressources insuffisantes."
+                    "§7Le réseau logistique MoodCraft"
+            );
+
+            p.sendMessage(
+                    "§7détecte un stock insuffisant."
             );
 
             p.sendMessage("");
 
             p.sendMessage(
-                    "§7Objet requis: §f"
+                    "§7Ressource demandée: §f"
                             + material.name()
             );
 
             p.sendMessage(
-                    "§7Quantité: §e"
+                    "§7Quantité requise: §e"
                             + amount
             );
 
@@ -111,7 +115,7 @@ public class ContractCompleteManager {
 
                     1f,
 
-                    1f
+                    0.9f
             );
 
             return false;
@@ -188,7 +192,7 @@ public class ContractCompleteManager {
 
                 3,
 
-                "Contrat livré"
+                "Livraison économique"
         );
 
         //
@@ -210,23 +214,35 @@ public class ContractCompleteManager {
         );
 
         p.sendMessage(
-                "§6✦ §fContrat livré"
+                "§6✦ §fLivraison validée"
         );
 
         p.sendMessage("");
 
         p.sendMessage(
-                "§7Objet: §f"
+                "§7Le réseau économique MoodCraft"
+        );
+
+        p.sendMessage(
+                "§7confirme la réception des ressources."
+        );
+
+        p.sendMessage("");
+
+        p.sendMessage(
+                "§7Ressource livrée: §f"
                         + material.name()
         );
 
         p.sendMessage(
-                "§7Quantité: §e"
+                "§7Quantité transférée: §e"
                         + amount
         );
 
+        p.sendMessage("");
+
         p.sendMessage(
-                "§7Récompense: §a+"
+                "§7Paiement reçu: §a+"
                         + SafeGUI.money(reward)
                         + "€"
         );
@@ -234,7 +250,7 @@ public class ContractCompleteManager {
         p.sendMessage("");
 
         p.sendMessage(
-                "§a✔ Livraison validée"
+                "§a✔ Paiement transféré automatiquement"
         );
 
         p.sendMessage("");
@@ -253,7 +269,7 @@ public class ContractCompleteManager {
 
                 1f,
 
-                1.1f
+                1.05f
         );
 
         //
@@ -263,17 +279,25 @@ public class ContractCompleteManager {
         Bukkit.broadcastMessage("");
 
         Bukkit.broadcastMessage(
-                "§6✦ §fContrat accompli par §e"
-                        + p.getName()
+                "§6✦ §fLe réseau contrats annonce :"
         );
 
         Bukkit.broadcastMessage(
-                "§7"
+                "§e"
+                        + p.getName()
+
+                        + " §7a livré §e"
+
                         + amount
+
                         + "x "
+
                         + material.name()
-                        + " §7livrés pour §a"
+
+                        + " §7contre §a"
+
                         + SafeGUI.money(reward)
+
                         + "€"
         );
 
