@@ -4,7 +4,7 @@ import fr.moodcraft.bridge.Main;
 
 import fr.moodcraft.bridge.contract.Contract;
 
-fr.moodcraft.bridge.gui.CreateContractGUI
+import fr.moodcraft.bridge.gui.CreateContractGUI;
 import fr.moodcraft.bridge.gui.ContractGUI;
 import fr.moodcraft.bridge.gui.MainMenuGUI;
 
@@ -57,7 +57,7 @@ public class ContractHandler implements GUIHandler {
                         "§8✦ §7Initialisation du contrat..."
                 );
 
-                ContractCreateGUI.open(p);
+                CreateContractGUI.open(p);
             }
 
             //
