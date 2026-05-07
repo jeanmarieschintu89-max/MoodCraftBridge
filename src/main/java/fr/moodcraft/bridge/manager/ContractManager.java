@@ -324,3 +324,4 @@ public class ContractManager {
 
     public static void setSlot(
             int slot,
+    }
