@@ -323,5 +323,33 @@ public class ContractManager {
     // =========================
 
     public static void setSlot(
-            int slot,
-    }
+        int slot,
+        Contract contract
+) {
+
+    slotMap.put(
+            slot,
+            contract
+    );
+}
+
+// =========================
+// 🔍 GET SLOT
+// =========================
+
+public static Contract getBySlot(
+        int slot
+) {
+
+    return slotMap.get(slot);
+}
+
+// =========================
+// 🧹 CLEAR SLOTS
+// =========================
+
+public static void clearSlots() {
+
+    slotMap.clear();
+}
+}
