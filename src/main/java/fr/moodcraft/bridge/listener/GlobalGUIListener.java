@@ -1,3 +1,4 @@
+
 package fr.moodcraft.bridge.listener;
 
 import org.bukkit.entity.Player;
@@ -33,12 +34,38 @@ public class GlobalGUIListener implements Listener {
         if (id.equals("create_contract")) {
 
             //
-            // ✅ SLOT ITEM LIBRE
+            // ❌ ANTI BYPASS
             //
 
-            if (e.getSlot() == 13
-                    && e.getClickedInventory()
-                    == e.getView().getTopInventory()) {
+            if (e.isShiftClick()
+                    || e.getClick().isKeyboardClick()
+                    || e.getClick() == ClickType.NUMBER_KEY
+                    || e.getClick() == ClickType.DOUBLE_CLICK
+                    || e.getClick() == ClickType.DROP
+                    || e.getClick() == ClickType.CONTROL_DROP) {
+
+                e.setCancelled(true);
+
+                return;
+            }
+
+            //
+            // ✅ SLOT 13 LIBRE
+            //
+
+            if (e.getRawSlot() == 13) {
+
+                e.setCancelled(false);
+
+                return;
+            }
+
+            //
+            // ✅ INVENTAIRE JOUEUR AUTORISÉ
+            //
+
+            if (e.getClickedInventory()
+                    == e.getView().getBottomInventory()) {
 
                 e.setCancelled(false);
 
@@ -74,20 +101,6 @@ public class GlobalGUIListener implements Listener {
             return;
 
         //
-        // 🔒 ANTI BYPASS
-        //
-
-        if (e.isShiftClick()
-                || e.getClick().isKeyboardClick()
-                || e.getClick() == ClickType.NUMBER_KEY
-                || e.getClick() == ClickType.DOUBLE_CLICK
-                || e.getClick() == ClickType.DROP
-                || e.getClick() == ClickType.CONTROL_DROP) {
-
-            return;
-        }
-
-        //
         // 🔥 HANDLE
         //
 
@@ -116,7 +129,18 @@ public class GlobalGUIListener implements Listener {
         if (id.equals("create_contract")) {
 
             //
-            // ✅ AUTORISE SLOT 13
+            // ❌ ANTI BYPASS
+            //
+
+            if (e.getRawSlots().size() > 1) {
+
+                e.setCancelled(true);
+
+                return;
+            }
+
+            //
+            // ✅ SLOT 13 AUTORISÉ
             //
 
             if (e.getRawSlots().contains(13)) {
