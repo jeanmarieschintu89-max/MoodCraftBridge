@@ -1,8 +1,15 @@
 package fr.moodcraft.bridge.listener;
 
 import org.bukkit.entity.Player;
-import org.bukkit.event.*;
-import org.bukkit.event.inventory.*;
+
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+
 import fr.moodcraft.bridge.manager.GUIManager;
 
 public class GlobalGUIListener implements Listener {
@@ -10,43 +17,120 @@ public class GlobalGUIListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void click(InventoryClickEvent e) {
 
-        if (!(e.getWhoClicked() instanceof Player p)) return;
+        if (!(e.getWhoClicked() instanceof Player p))
+            return;
 
-        String id = GUIManager.get(p);
-        if (id == null) return;
+        String id =
+                GUIManager.get(p);
 
-        // 🔥 bloque TOUT
+        if (id == null)
+            return;
+
+        //
+        // 🌌 CREATE CONTRACT
+        //
+
+        if (id.equals("create_contract")) {
+
+            //
+            // ✅ SLOT ITEM LIBRE
+            //
+
+            if (e.getSlot() == 13
+                    && e.getClickedInventory()
+                    == e.getView().getTopInventory()) {
+
+                e.setCancelled(false);
+
+                return;
+            }
+        }
+
+        //
+        // 🔥 BLOCK ALL
+        //
+
         e.setCancelled(true);
 
-        // 🔒 uniquement GUI du haut
-        if (e.getClickedInventory() != e.getView().getTopInventory()) return;
+        //
+        // 🔒 UNIQUEMENT GUI TOP
+        //
 
-        int slot = e.getSlot();
+        if (e.getClickedInventory()
+                != e.getView().getTopInventory())
+            return;
 
-        // 🔒 sécurité slot
-        if (slot < 0 || slot >= e.getView().getTopInventory().getSize()) return;
+        int slot =
+                e.getSlot();
 
-        // 🔒 anti bypass complet
+        //
+        // 🔒 SLOT SAFE
+        //
+
+        if (slot < 0
+                || slot >= e.getView()
+                .getTopInventory()
+                .getSize())
+            return;
+
+        //
+        // 🔒 ANTI BYPASS
+        //
+
         if (e.isShiftClick()
                 || e.getClick().isKeyboardClick()
                 || e.getClick() == ClickType.NUMBER_KEY
                 || e.getClick() == ClickType.DOUBLE_CLICK
                 || e.getClick() == ClickType.DROP
                 || e.getClick() == ClickType.CONTROL_DROP) {
+
             return;
         }
 
-        // 🔥 handle sécurisé
-        GUIManager.handle(p, slot);
+        //
+        // 🔥 HANDLE
+        //
+
+        GUIManager.handle(
+                p,
+                slot
+        );
     }
 
     @EventHandler
     public void drag(InventoryDragEvent e) {
 
-        if (!(e.getWhoClicked() instanceof Player p)) return;
+        if (!(e.getWhoClicked() instanceof Player p))
+            return;
 
-        if (GUIManager.get(p) != null) {
-            e.setCancelled(true);
+        String id =
+                GUIManager.get(p);
+
+        if (id == null)
+            return;
+
+        //
+        // 🌌 CREATE CONTRACT
+        //
+
+        if (id.equals("create_contract")) {
+
+            //
+            // ✅ AUTORISE SLOT 13
+            //
+
+            if (e.getRawSlots().contains(13)) {
+
+                e.setCancelled(false);
+
+                return;
+            }
         }
+
+        //
+        // 🔒 BLOCK ALL
+        //
+
+        e.setCancelled(true);
     }
 }
