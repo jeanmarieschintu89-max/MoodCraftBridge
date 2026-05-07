@@ -70,7 +70,8 @@ public class Main extends JavaPlugin {
 
         GUIManager.init(this);
 
-        ContractManager.init();
+        // 📜 CONTRATS TEMPORAIREMENT DÉSACTIVÉS
+        // ContractManager.init();
 
         // =========================
         // 📊 CONFIG MARCHÉ
@@ -188,6 +189,8 @@ public class Main extends JavaPlugin {
                 new TransactionHistoryHandler()
         );
 
+        // 📜 CONTRATS TEMPORAIREMENT DÉSACTIVÉS
+        /*
         GUIManager.register(
                 "contracts",
                 new ContractHandler()
@@ -202,6 +205,7 @@ public class Main extends JavaPlugin {
                 "create_contract",
                 new CreateContractHandler()
         );
+        */
 
         // =========================
         // 📜 COMMANDES
@@ -316,10 +320,6 @@ public class Main extends JavaPlugin {
         // 🔁 TASKS
         // =========================
 
-        //
-        // 🔥 ATTEND QUICKSHOP
-        //
-
         Bukkit.getScheduler().runTaskLater(
 
                 this,
@@ -369,7 +369,7 @@ public class Main extends JavaPlugin {
         );
 
         getLogger().info(
-                "📜 Contrats: OK"
+                "📜 Contrats: OFF"
         );
 
         getLogger().info(
@@ -392,7 +392,8 @@ public class Main extends JavaPlugin {
 
         MarketStorage.save();
 
-        ContractManager.save();
+        // 📜 CONTRATS TEMPORAIREMENT DÉSACTIVÉS
+        // ContractManager.save();
     }
 
     // =========================
