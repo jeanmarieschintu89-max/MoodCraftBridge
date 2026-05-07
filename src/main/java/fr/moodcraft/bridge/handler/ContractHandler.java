@@ -37,64 +37,10 @@ public class ContractHandler implements GUIHandler {
         switch (slot) {
 
             //
-            // 🌍 CONTRATS PUBLICS
-            //
-
-            case 11 -> {
-
-                p.playSound(
-
-                        p.getLocation(),
-
-                        Sound.BLOCK_NOTE_BLOCK_CHIME,
-
-                        1f,
-
-                        1.1f
-                );
-
-                p.sendMessage(
-                        "§8✦ §7Chargement des contrats publics..."
-                );
-
-                ContractGUI.open(p);
-            }
-
-            //
-            // 📦 MES CONTRATS
-            //
-
-            case 13 -> {
-
-                p.playSound(
-
-                        p.getLocation(),
-
-                        Sound.BLOCK_CHEST_OPEN,
-
-                        1f,
-
-                        1f
-                );
-
-                p.sendMessage(
-                        "§8✦ §7Chargement de tes contrats..."
-                );
-
-                //
-                // 🚧 FUTUR GUI
-                //
-
-                p.sendMessage(
-                        "§cSystème bientôt disponible."
-                );
-            }
-
-            //
             // ➕ CREATE
             //
 
-            case 15 -> {
+            case 31 -> {
 
                 p.playSound(
 
@@ -118,7 +64,7 @@ public class ContractHandler implements GUIHandler {
             // 🔙 RETOUR
             //
 
-            case 31 -> {
+            case 35 -> {
 
                 p.playSound(
 
