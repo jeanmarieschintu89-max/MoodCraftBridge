@@ -31,7 +31,7 @@ public class TransactionHistoryGUI {
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§d✦ §0Historique bancaire"
+                        "§d✦ §0Historique bancaire §8• §7Page " + page
                 );
 
         //
