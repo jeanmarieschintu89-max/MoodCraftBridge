@@ -1,10 +1,8 @@
-
 package fr.moodcraft.bridge.handler;
 
 import fr.moodcraft.bridge.Main;
 
 import fr.moodcraft.bridge.gui.BankGUI;
-import fr.moodcraft.bridge.gui.ContractGUI;
 import fr.moodcraft.bridge.gui.PriceGUI;
 import fr.moodcraft.bridge.gui.ProfileGUI;
 import fr.moodcraft.bridge.gui.TeleportGUI;
@@ -103,6 +101,7 @@ public class MainMenuHandler implements GUIHandler {
 
             //
             // 📜 CONTRATS
+            // 🔥 TEMPORAIREMENT DÉSACTIVÉ
             //
 
             case 16 -> {
@@ -113,13 +112,45 @@ public class MainMenuHandler implements GUIHandler {
                         1f
                 );
 
+                p.sendMessage("");
+
                 p.sendMessage(
-                        "§8✦ §7Connexion au réseau contrats..."
+                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
                 );
 
-                openNext(
-                        p,
-                        () -> ContractGUI.open(p)
+                p.sendMessage(
+                        "§6✦ §fRéseau Contrats"
+                );
+
+                p.sendMessage("");
+
+                p.sendMessage(
+                        "§cLe système de contrats"
+                );
+
+                p.sendMessage(
+                        "§cest temporairement indisponible."
+                );
+
+                p.sendMessage("");
+
+                p.sendMessage(
+                        "§7Migration en cours..."
+                );
+
+                p.sendMessage("");
+
+                p.sendMessage(
+                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                );
+
+                p.sendMessage("");
+
+                p.playSound(
+                        p.getLocation(),
+                        Sound.BLOCK_ANVIL_LAND,
+                        0.7f,
+                        1.4f
                 );
             }
 
