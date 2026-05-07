@@ -15,8 +15,15 @@ public class ContractCreationManager {
     private static final Map<UUID, Material>
             items = new HashMap<>();
 
+    //
+    // 🔢 AMOUNT
+    //
+
+    private static final Map<UUID, Integer>
+            amounts = new HashMap<>();
+
     // =========================
-    // 📦 SET ITEM
+    // 📦 ITEM
     // =========================
 
     public static void setItem(
@@ -30,15 +37,36 @@ public class ContractCreationManager {
         );
     }
 
-    // =========================
-    // 📦 GET ITEM
-    // =========================
-
     public static Material getItem(
             UUID uuid
     ) {
 
         return items.get(uuid);
+    }
+
+    // =========================
+    // 🔢 AMOUNT
+    // =========================
+
+    public static void setAmount(
+            UUID uuid,
+            int amount
+    ) {
+
+        amounts.put(
+                uuid,
+                amount
+        );
+    }
+
+    public static int getAmount(
+            UUID uuid
+    ) {
+
+        return amounts.getOrDefault(
+                uuid,
+                0
+        );
     }
 
     // =========================
@@ -50,5 +78,7 @@ public class ContractCreationManager {
     ) {
 
         items.remove(uuid);
+
+        amounts.remove(uuid);
     }
 }
