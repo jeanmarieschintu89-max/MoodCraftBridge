@@ -1,7 +1,8 @@
-
 package fr.moodcraft.bridge;
 
 import fr.moodcraft.bridge.command.FreezeCommand;
+import fr.moodcraft.bridge.command.SubventionCommand;
+
 import fr.moodcraft.bridge.listener.FreezeListener;
 
 import fr.moodcraft.bridge.bank.*;
@@ -196,6 +197,7 @@ public class Main extends JavaPlugin {
                 "public_contracts",
                 new PublicContractsHandler()
         );
+
         GUIManager.register(
                 "create_contract",
                 new CreateContractHandler()
@@ -283,6 +285,15 @@ public class Main extends JavaPlugin {
         );
 
         //
+        // 🏛️ SUBVENTIONS
+        //
+
+        registerCommand(
+                "subvention",
+                new SubventionCommand()
+        );
+
+        //
         // 🧠 RÉPUTATION
         //
 
@@ -359,6 +370,10 @@ public class Main extends JavaPlugin {
 
         getLogger().info(
                 "📜 Contrats: OK"
+        );
+
+        getLogger().info(
+                "🏛️ Subventions: OK"
         );
 
         getLogger().info(
