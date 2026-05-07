@@ -194,6 +194,10 @@ public class Main extends JavaPlugin {
                 "public_contracts",
                 new PublicContractsHandler()
         );
+        GUIManager.register(
+                "create_contract",
+                new CreateContractHandler()
+        );
 
         // =========================
         // 📜 COMMANDES
