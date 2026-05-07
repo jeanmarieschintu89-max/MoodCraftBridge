@@ -69,6 +69,8 @@ public class Main extends JavaPlugin {
 
         GUIManager.init(this);
 
+        ContractManager.init();
+
         // =========================
         // 📊 CONFIG MARCHÉ
         // =========================
@@ -374,6 +376,8 @@ public class Main extends JavaPlugin {
         BankStorage.save();
 
         MarketStorage.save();
+
+        ContractManager.save();
     }
 
     // =========================
