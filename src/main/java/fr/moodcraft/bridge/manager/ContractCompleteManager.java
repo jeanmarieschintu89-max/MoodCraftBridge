@@ -1,7 +1,5 @@
 package fr.moodcraft.bridge.manager;
 
-import fr.moodcraft.bridge.bank.TransactionManager;
-
 import fr.moodcraft.bridge.contract.Contract;
 
 import fr.moodcraft.bridge.util.SafeGUI;
@@ -167,19 +165,6 @@ public class ContractCompleteManager {
         VaultHook.add(
                 p,
                 reward
-        );
-
-        //
-        // 📜 HISTORY
-        //
-
-        TransactionManager.add(
-
-                p.getUniqueId(),
-
-                "[CONTRACT] +"
-                        + SafeGUI.money(reward)
-                        + "€"
         );
 
         //
