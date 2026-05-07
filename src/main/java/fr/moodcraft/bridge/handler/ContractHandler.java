@@ -1,13 +1,19 @@
 package fr.moodcraft.bridge.handler;
 
+import fr.moodcraft.bridge.Main;
+
+import fr.moodcraft.bridge.contract.Contract;
+
+import fr.moodcraft.bridge.gui.ContractCreateGUI;
 import fr.moodcraft.bridge.gui.ContractGUI;
 import fr.moodcraft.bridge.gui.MainMenuGUI;
-import fr.moodcraft.bridge.contract.Contract;
 
 import fr.moodcraft.bridge.manager.ContractCompleteManager;
 import fr.moodcraft.bridge.manager.ContractManager;
 
 import fr.moodcraft.bridge.util.ActionLock;
+
+import org.bukkit.Bukkit;
 
 import org.bukkit.Sound;
 
@@ -51,13 +57,7 @@ public class ContractHandler implements GUIHandler {
                         "§8✦ §7Chargement des contrats publics..."
                 );
 
-                //
-                // 🚧 FUTUR GUI
-                //
-
-                p.sendMessage(
-                        "§cSystème en développement."
-                );
+                ContractGUI.open(p);
             }
 
             //
@@ -86,7 +86,7 @@ public class ContractHandler implements GUIHandler {
                 //
 
                 p.sendMessage(
-                        "§cSystème en développement."
+                        "§cSystème bientôt disponible."
                 );
             }
 
@@ -111,13 +111,7 @@ public class ContractHandler implements GUIHandler {
                         "§8✦ §7Initialisation du contrat..."
                 );
 
-                //
-                // 🚧 FUTUR GUI
-                //
-
-                p.sendMessage(
-                        "§cCréation bientôt disponible."
-                );
+                ContractCreateGUI.open(p);
             }
 
             //
@@ -138,6 +132,34 @@ public class ContractHandler implements GUIHandler {
                 );
 
                 MainMenuGUI.open(p);
+            }
+
+            //
+            // 📜 CONTRATS PUBLICS
+            //
+
+            default -> {
+
+                Contract contract =
+                        ContractManager.getBySlot(slot);
+
+                if (contract == null) {
+                    return;
+                }
+
+                ContractCompleteManager.complete(
+                        p,
+                        contract
+                );
+
+                Bukkit.getScheduler().runTaskLater(
+
+                        Main.getInstance(),
+
+                        () -> ContractGUI.open(p),
+
+                        2L
+                );
             }
         }
     }
