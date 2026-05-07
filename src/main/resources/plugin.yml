@@ -84,6 +84,9 @@ commands:
   toprep:
     description: Voir le classement réputation
     usage: /toprep
+  
+  subvention:
+    permission: moodcraft.admin
 
 permissions:
 
