@@ -1,4 +1,3 @@
-
 package fr.moodcraft.bridge.gui;
 
 import fr.moodcraft.bridge.bank.BankStorage;
@@ -183,34 +182,34 @@ public class MainMenuGUI {
         );
 
         //
-        // 🌍 TÉLÉPORTATION
+        // 📜 CONTRATS
         //
 
-        SafeGUI.safeSet(inv, 15,
+        SafeGUI.safeSet(inv, 16,
 
                 SafeGUI.item(
 
-                        Material.COMPASS,
+                        Material.WRITABLE_BOOK,
 
-                        "§b✦ Téléportation",
+                        "§6✦ Contrats",
 
                         "§8━━━━━━━━━━━━━━━━",
 
-                        "§7Navigation rapide",
+                        "§7Marché de commandes",
 
-                        "§7dans l'univers MoodCraft.",
-
-                        "",
-
-                        "§8• Spawn",
-
-                        "§8• Ville",
-
-                        "§8• Ressources",
+                        "§7entre joueurs.",
 
                         "",
 
-                        "§e▶ Voyager"
+                        "§8• Contrats publics",
+
+                        "§8• Récompenses",
+
+                        "§8• Livraison d'items",
+
+                        "",
+
+                        "§e▶ Ouvrir"
                 )
         );
 
@@ -275,6 +274,38 @@ public class MainMenuGUI {
                         "",
 
                         "§e▶ Ouvrir"
+                )
+        );
+
+        //
+        // 🌍 TÉLÉPORTATION
+        //
+
+        SafeGUI.safeSet(inv, 24,
+
+                SafeGUI.item(
+
+                        Material.COMPASS,
+
+                        "§b✦ Téléportation",
+
+                        "§8━━━━━━━━━━━━━━━━",
+
+                        "§7Navigation rapide",
+
+                        "§7dans l'univers MoodCraft.",
+
+                        "",
+
+                        "§8• Spawn",
+
+                        "§8• Ville",
+
+                        "§8• Ressources",
+
+                        "",
+
+                        "§e▶ Voyager"
                 )
         );
 
