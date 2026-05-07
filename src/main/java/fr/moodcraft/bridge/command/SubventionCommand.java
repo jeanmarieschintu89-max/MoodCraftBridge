@@ -134,9 +134,33 @@ public class SubventionCommand
 
         } catch (Exception ex) {
 
+            p.sendMessage("");
+
             p.sendMessage(
-                    "§cMontant invalide."
+                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             );
+
+            p.sendMessage(
+                    "§c✦ §fMontant invalide"
+            );
+
+            p.sendMessage("");
+
+            p.sendMessage(
+                    "§7Le terminal économique"
+            );
+
+            p.sendMessage(
+                    "§7refuse cette transaction."
+            );
+
+            p.sendMessage("");
+
+            p.sendMessage(
+                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            );
+
+            p.sendMessage("");
 
             return true;
         }
@@ -147,9 +171,33 @@ public class SubventionCommand
 
         if (amount <= 0) {
 
+            p.sendMessage("");
+
             p.sendMessage(
-                    "§cMontant invalide."
+                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             );
+
+            p.sendMessage(
+                    "§c✦ §fMontant invalide"
+            );
+
+            p.sendMessage("");
+
+            p.sendMessage(
+                    "§7La subvention doit être"
+            );
+
+            p.sendMessage(
+                    "§7supérieure à zéro."
+            );
+
+            p.sendMessage("");
+
+            p.sendMessage(
+                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            );
+
+            p.sendMessage("");
 
             return true;
         }
@@ -205,11 +253,15 @@ public class SubventionCommand
         Bukkit.broadcastMessage("");
 
         Bukkit.broadcastMessage(
-                "§7Le gouvernement économique annonce"
+                "§7Une opération financière exceptionnelle"
         );
 
         Bukkit.broadcastMessage(
-                "§7une nouvelle subvention territoriale."
+                "§7vient d’être validée par le conseil"
+        );
+
+        Bukkit.broadcastMessage(
+                "§7économique national."
         );
 
         Bukkit.broadcastMessage("");
@@ -217,21 +269,21 @@ public class SubventionCommand
         Bukkit.broadcastMessage(
                 "§e"
                         + town
-                        + " §7reçoit une aide exceptionnelle"
+                        + " §7bénéficie désormais"
         );
 
         Bukkit.broadcastMessage(
-                "§7afin de soutenir son expansion"
+                "§7d’une injection de capitaux destinée"
         );
 
         Bukkit.broadcastMessage(
-                "§7économique et urbaine."
+                "§7à accélérer son développement."
         );
 
         Bukkit.broadcastMessage("");
 
         Bukkit.broadcastMessage(
-                "§a✔ Fonds transférés: §e"
+                "§a✔ Fonds débloqués: §e"
                         + String.format(
                         "%,.0f",
                         amount
