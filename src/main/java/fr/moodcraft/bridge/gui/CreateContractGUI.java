@@ -50,25 +50,27 @@ public class CreateContractGUI {
 
                                 Material.WRITABLE_BOOK,
 
-                                "§6✦ Création de Contrat",
+                                "§6✦ Terminal Contrats MoodCraft",
 
                                 "§8━━━━━━━━━━━━━━━━",
 
-                                "§7Dépose un item",
+                                "§7Le réseau économique MoodCraft",
 
-                                "§7dans l'emplacement central.",
+                                "§7permet aux joueurs de publier",
+
+                                "§7des demandes de ressources.",
 
                                 "",
 
-                                "§8• Tous les items vanilla",
-
-                                "§8• Récompense personnalisée",
+                                "§8• Paiement automatisé",
 
                                 "§8• Livraison sécurisée",
 
+                                "§8• Réputation économique",
+
                                 "",
 
-                                "§e▶ MoodCraft Contracts"
+                                "§e▶ Réseau économique"
                         )
                 )
         );
@@ -79,33 +81,74 @@ public class CreateContractGUI {
 
         SafeGUI.safeSet(inv, 13,
 
+                SafeGUI.glow(
+
+                        SafeGUI.item(
+
+                                Material.CHEST,
+
+                                "§e✦ Dépôt Ressource",
+
+                                "§8━━━━━━━━━━━━━━━━",
+
+                                "§7Dépose une ressource",
+
+                                "§7dans l'emplacement central.",
+
+                                "",
+
+                                "§7Exemples compatibles :",
+
+                                "§8• Minerais",
+
+                                "§8• Farming",
+
+                                "§8• Redstone",
+
+                                "§8• Ressources Nether",
+
+                                "",
+
+                                "§e▶ Déposer une ressource"
+                        )
+                )
+        );
+
+        //
+        // 📘 EXPLICATION
+        //
+
+        SafeGUI.safeSet(inv, 20,
+
                 SafeGUI.item(
 
-                        Material.CHEST,
+                        Material.PAPER,
 
-                        "§e✦ Déposer un Item",
+                        "§b✦ Fonctionnement du Réseau",
 
                         "§8━━━━━━━━━━━━━━━━",
 
-                        "§7Place un item ici",
+                        "§71. Déposer une ressource",
 
-                        "§7pour créer un contrat.",
+                        "§72. Définir une quantité",
 
-                        "",
-
-                        "§8Exemples:",
-
-                        "§8• Minerais",
-
-                        "§8• Blocs",
-
-                        "§8• Farming",
-
-                        "§8• Redstone",
+                        "§73. Choisir une récompense",
 
                         "",
 
-                        "§e▶ Déposer"
+                        "§7Le contrat sera publié",
+
+                        "§7sur le réseau MoodCraft.",
+
+                        "",
+
+                        "§7Les joueurs pourront livrer",
+
+                        "§7automatiquement les ressources.",
+
+                        "",
+
+                        "§e▶ Système automatisé"
                 )
         );
 
@@ -121,18 +164,58 @@ public class CreateContractGUI {
 
                                 Material.EMERALD,
 
-                                "§a✦ Continuer",
+                                "§a✦ Publier le Contrat",
 
                                 "§8━━━━━━━━━━━━━━━━",
 
-                                "§7Valider l'item",
+                                "§7Validation du contrat",
 
-                                "§7et continuer.",
+                                "§7et publication réseau.",
+
+                                "",
+
+                                "§8• Analyse automatique",
+
+                                "§8• Vérification sécurisée",
 
                                 "",
 
                                 "§e▶ Continuer"
                         )
+                )
+        );
+
+        //
+        // 🌍 INFOS ÉCO
+        //
+
+        SafeGUI.safeSet(inv, 24,
+
+                SafeGUI.item(
+
+                        Material.BEACON,
+
+                        "§6✦ Réseau Économique",
+
+                        "§8━━━━━━━━━━━━━━━━",
+
+                        "§7Les contrats influencent",
+
+                        "§7l'économie globale du serveur.",
+
+                        "",
+
+                        "§8• Commerce joueur",
+
+                        "§8• Logistique",
+
+                        "§8• Réputation",
+
+                        "§8• Production",
+
+                        "",
+
+                        "§e▶ MoodCraft Economy"
                 )
         );
 
