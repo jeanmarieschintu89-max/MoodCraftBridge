@@ -181,6 +181,10 @@ public class Main extends JavaPlugin {
         GUIManager.register(
                 "transaction_history",
                 new TransactionHistoryHandler()
+
+        GUIManager.register(
+                "contracts",
+                new ContractHandler()
         );
 
         // =========================
