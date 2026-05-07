@@ -2,6 +2,8 @@ package fr.moodcraft.bridge.manager;
 
 import fr.moodcraft.bridge.contract.Contract;
 
+import org.bukkit.Material;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +18,13 @@ public class ContractManager {
     private static final Map<String, Contract>
             contracts = new HashMap<>();
 
+    //
+    // 🧠 SLOT MAP
+    //
+
+    private static final Map<Integer, Contract>
+            slotMap = new HashMap<>();
+
     // =========================
     // ➕ CREATE
     // =========================
@@ -24,7 +33,7 @@ public class ContractManager {
 
             UUID owner,
 
-            org.bukkit.Material item,
+            Material item,
 
             int amount,
 
@@ -84,5 +93,40 @@ public class ContractManager {
     public static void remove(String id) {
 
         contracts.remove(id);
+    }
+
+    // =========================
+    // 📦 SET SLOT
+    // =========================
+
+    public static void setSlot(
+            int slot,
+            Contract contract
+    ) {
+
+        slotMap.put(
+                slot,
+                contract
+        );
+    }
+
+    // =========================
+    // 🔍 GET SLOT
+    // =========================
+
+    public static Contract getBySlot(
+            int slot
+    ) {
+
+        return slotMap.get(slot);
+    }
+
+    // =========================
+    // 🧹 CLEAR SLOTS
+    // =========================
+
+    public static void clearSlots() {
+
+        slotMap.clear();
     }
 }
