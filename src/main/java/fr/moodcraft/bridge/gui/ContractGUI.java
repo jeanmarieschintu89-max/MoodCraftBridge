@@ -1,5 +1,8 @@
 package fr.moodcraft.bridge.gui;
 
+import fr.moodcraft.bridge.contract.Contract;
+
+import fr.moodcraft.bridge.manager.ContractManager;
 import fr.moodcraft.bridge.manager.GUIManager;
 
 import fr.moodcraft.bridge.util.SafeGUI;
@@ -77,74 +80,77 @@ public class ContractGUI {
         // 🌍 CONTRATS PUBLICS
         //
 
-        SafeGUI.safeSet(inv, 11,
+        ContractManager.clearSlots();
 
-                SafeGUI.glow(
+        int[] slots = {
 
-                        SafeGUI.item(
+                10,11,12,13,14,15,16,
 
-                                Material.BOOK,
+                19,20,21,22,23,24,25
+        };
 
-                                "§e✦ Contrats Publics",
+        int index = 0;
 
-                                "§8━━━━━━━━━━━━━━━━",
+        for (Contract contract :
 
-                                "§7Consulter les contrats",
+                ContractManager.getAll()) {
 
-                                "§7disponibles sur le serveur.",
+            if (index >= slots.length)
+                break;
 
-                                "",
+            int slot =
+                    slots[index];
 
-                                "§8• Missions ouvertes",
+            ContractManager.setSlot(
+                    slot,
+                    contract
+            );
 
-                                "§8• Récompenses",
+            SafeGUI.safeSet(inv, slot,
 
-                                "§8• Réputation",
+                    SafeGUI.item(
 
-                                "",
+                            contract.getMaterial(),
 
-                                "§e▶ Explorer"
-                        )
-                )
-        );
+                            "§6✦ Contrat #"
+                                    + contract.getId(),
 
-        //
-        // 📦 MES CONTRATS
-        //
+                            "§8━━━━━━━━━━━━━━━━",
 
-        SafeGUI.safeSet(inv, 13,
+                            "§7Objet: §f"
+                                    + contract.getMaterial().name(),
 
-                SafeGUI.item(
+                            "§7Quantité: §e"
+                                    + contract.getAmount(),
 
-                        Material.CHEST,
+                            "",
 
-                        "§b✦ Mes Contrats",
+                            "§7Récompense: §a"
+                                    + SafeGUI.money(
+                                            contract.getReward()
+                                    )
+                                    + "€",
 
-                        "§8━━━━━━━━━━━━━━━━",
+                            "",
 
-                        "§7Voir tes contrats",
+                            "§8• Paiement sécurisé",
 
-                        "§7actifs et terminés.",
+                            "§8• Livraison instantanée",
 
-                        "",
+                            "",
 
-                        "§8• En cours",
+                            "§e▶ Cliquer pour livrer"
+                    )
+            );
 
-                        "§8• Terminés",
-
-                        "§8• Historique",
-
-                        "",
-
-                        "§e▶ Consulter"
-                )
-        );
+            index++;
+        }
 
         //
         // ➕ CREATE
         //
 
-        SafeGUI.safeSet(inv, 15,
+        SafeGUI.safeSet(inv, 31,
 
                 SafeGUI.item(
 
@@ -174,7 +180,7 @@ public class ContractGUI {
         // 🔙 RETOUR
         //
 
-        SafeGUI.safeSet(inv, 31,
+        SafeGUI.safeSet(inv, 35,
 
                 SafeGUI.item(
 
