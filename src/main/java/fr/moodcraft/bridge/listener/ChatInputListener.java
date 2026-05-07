@@ -9,6 +9,10 @@ import fr.moodcraft.bridge.manager.AmountInputManager;
 import fr.moodcraft.bridge.manager.InputManager;
 import fr.moodcraft.bridge.util.SafeGUI;
 import fr.moodcraft.bridge.util.VaultHook;
+import fr.moodcraft.bridge.contract.Contract;
+
+import fr.moodcraft.bridge.manager.ContractCreationManager;
+import fr.moodcraft.bridge.manager.ContractManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
