@@ -31,10 +31,10 @@ public class TransferConfirmHandler implements GUIHandler {
         switch (slot) {
 
             //
-            // 🔙 RETOUR
+            // ❌ ANNULER
             //
 
-            case 3 -> {
+            case 11 -> {
 
                 p.playSound(
 
@@ -54,7 +54,7 @@ public class TransferConfirmHandler implements GUIHandler {
             // ✅ CONFIRMATION
             //
 
-            case 5 -> {
+            case 15 -> {
 
                 //
                 // 🔒 ANTI DOUBLE CLIC
