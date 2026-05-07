@@ -444,6 +444,7 @@ public class ChatInputListener implements Listener {
                                 return;
                             }
 
+
                             if (target.equals(
                                     p.getUniqueId()
                             )) {
@@ -513,6 +514,257 @@ public class ChatInputListener implements Listener {
                         }
                     }
             );
+
+//
+// 📦 CONTRACT AMOUNT
+//
+
+if (context.equals("contract_amount")) {
+
+    int amount;
+
+    try {
+
+        amount =
+                Integer.parseInt(input);
+
+    } catch (Exception ex) {
+
+        error(
+                p,
+                "Quantité invalide"
+        );
+
+        InputManager.clear(p);
+
+        return;
+    }
+
+    if (amount <= 0) {
+
+        error(
+                p,
+                "Quantité invalide"
+        );
+
+        InputManager.clear(p);
+
+        return;
+    }
+
+    ContractCreationManager.setAmount(
+            p.getUniqueId(),
+            amount
+    );
+
+    InputManager.wait(
+            p,
+            "contract_reward"
+    );
+
+    p.sendMessage("");
+
+    p.sendMessage(
+            "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    );
+
+    p.sendMessage(
+            "§6✦ §fCréation de Contrat"
+    );
+
+    p.sendMessage("");
+
+    p.sendMessage(
+            "§7Quantité enregistrée:"
+    );
+
+    p.sendMessage(
+            "§e" + amount
+    );
+
+    p.sendMessage("");
+
+    p.sendMessage(
+            "§7Entre maintenant"
+    );
+
+    p.sendMessage(
+            "§7la récompense du contrat."
+    );
+
+    p.sendMessage("");
+
+    p.sendMessage(
+            "§8Exemple: §e45000"
+    );
+
+    p.sendMessage("");
+
+    p.sendMessage(
+            "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    );
+
+    p.sendMessage("");
+
+    p.playSound(
+
+            p.getLocation(),
+
+            Sound.BLOCK_NOTE_BLOCK_PLING,
+
+            1f,
+
+            1.15f
+    );
+
+    return;
+}
+
+//
+// 💰 CONTRACT REWARD
+//
+
+if (context.equals("contract_reward")) {
+
+    double reward;
+
+    try {
+
+        reward =
+                Double.parseDouble(
+                        input.replace(",", ".")
+                );
+
+    } catch (Exception ex) {
+
+        error(
+                p,
+                "Récompense invalide"
+        );
+
+        InputManager.clear(p);
+
+        return;
+    }
+
+    if (reward <= 0) {
+
+        error(
+                p,
+                "Récompense invalide"
+        );
+
+        InputManager.clear(p);
+
+        return;
+    }
+
+    var material =
+            ContractCreationManager.getItem(
+                    p.getUniqueId()
+            );
+
+    int amount =
+            ContractCreationManager.getAmount(
+                    p.getUniqueId()
+            );
+
+    if (material == null
+            || amount <= 0) {
+
+        error(
+                p,
+                "Création invalide"
+        );
+
+        ContractCreationManager.clear(
+                p.getUniqueId()
+        );
+
+        InputManager.clear(p);
+
+        return;
+    }
+
+    Contract contract =
+            ContractManager.create(
+
+                    p.getUniqueId(),
+
+                    material,
+
+                    amount,
+
+                    reward
+            );
+
+    ContractCreationManager.clear(
+            p.getUniqueId()
+    );
+
+    InputManager.clear(p);
+
+    p.sendMessage("");
+
+    p.sendMessage(
+            "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    );
+
+    p.sendMessage(
+            "§6✦ §fContrat créé"
+    );
+
+    p.sendMessage("");
+
+    p.sendMessage(
+            "§7ID: §e#"
+                    + contract.getId()
+    );
+
+    p.sendMessage(
+            "§7Objet: §f"
+                    + material.name()
+    );
+
+    p.sendMessage(
+            "§7Quantité: §e"
+                    + amount
+    );
+
+    p.sendMessage(
+            "§7Récompense: §a"
+                    + SafeGUI.money(reward)
+                    + "€"
+    );
+
+    p.sendMessage("");
+
+    p.sendMessage(
+            "§8Le contrat est maintenant"
+    );
+
+    p.sendMessage(
+            "§8visible publiquement."
+    );
+
+    p.sendMessage("");
+
+    p.sendMessage(
+            "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    );
+
+    p.sendMessage("");
+
+    p.playSound(
+
+            p.getLocation(),
+
+            Sound.ENTITY_PLAYER_LEVELUP,
+
+            1f,
+
+            1.1f
+    );
 
             return;
         }
