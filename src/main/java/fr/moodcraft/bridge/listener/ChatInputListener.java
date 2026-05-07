@@ -1,21 +1,26 @@
 package fr.moodcraft.bridge.listener;
 
 import fr.moodcraft.bridge.Main;
+
 import fr.moodcraft.bridge.bank.BankStorage;
 import fr.moodcraft.bridge.bank.IbanManager;
 import fr.moodcraft.bridge.bank.TransactionManager;
-import fr.moodcraft.bridge.gui.BankGUI;
-import fr.moodcraft.bridge.manager.AmountInputManager;
-import fr.moodcraft.bridge.manager.InputManager;
-import fr.moodcraft.bridge.util.SafeGUI;
-import fr.moodcraft.bridge.util.VaultHook;
+
 import fr.moodcraft.bridge.contract.Contract;
 
+import fr.moodcraft.bridge.gui.BankGUI;
+
+import fr.moodcraft.bridge.manager.AmountInputManager;
 import fr.moodcraft.bridge.manager.ContractCreationManager;
 import fr.moodcraft.bridge.manager.ContractManager;
+import fr.moodcraft.bridge.manager.InputManager;
+
+import fr.moodcraft.bridge.util.SafeGUI;
+import fr.moodcraft.bridge.util.VaultHook;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+
 import org.bukkit.entity.Player;
 
 import org.bukkit.event.EventHandler;
@@ -231,9 +236,7 @@ public class ChatInputListener implements Listener {
                                 }
 
                                 Player target =
-                                        Bukkit.getPlayer(targetUUID);
-
-                                //
+                                        Bukkit.getPlayer(targetUUID);//
                                 // 💸 RETRAIT BANQUE
                                 //
 
@@ -444,7 +447,6 @@ public class ChatInputListener implements Listener {
                                 return;
                             }
 
-
                             if (target.equals(
                                     p.getUniqueId()
                             )) {
@@ -455,9 +457,7 @@ public class ChatInputListener implements Listener {
                                 );
 
                                 return;
-                            }
-
-                            InputManager.setData(
+                            }InputManager.setData(
                                     p,
                                     input
                             );
@@ -511,260 +511,265 @@ public class ChatInputListener implements Listener {
                                     1f,
                                     1.2f
                             );
+
+                            return;
+                        }
+
+                        //
+                        // 📦 CONTRACT AMOUNT
+                        //
+
+                        if (context.equals("contract_amount")) {
+
+                            int amount;
+
+                            try {
+
+                                amount =
+                                        Integer.parseInt(input);
+
+                            } catch (Exception ex) {
+
+                                error(
+                                        p,
+                                        "Quantité invalide"
+                                );
+
+                                InputManager.clear(p);
+
+                                return;
+                            }
+
+                            if (amount <= 0) {
+
+                                error(
+                                        p,
+                                        "Quantité invalide"
+                                );
+
+                                InputManager.clear(p);
+
+                                return;
+                            }
+
+                            ContractCreationManager.setAmount(
+                                    p.getUniqueId(),
+                                    amount
+                            );
+
+                            InputManager.wait(
+                                    p,
+                                    "contract_reward"
+                            );
+
+                            p.sendMessage("");
+
+                            p.sendMessage(
+                                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                            );
+
+                            p.sendMessage(
+                                    "§6✦ §fCréation de Contrat"
+                            );
+
+                            p.sendMessage("");
+
+                            p.sendMessage(
+                                    "§7Quantité enregistrée:"
+                            );
+
+                            p.sendMessage(
+                                    "§e" + amount
+                            );
+
+                            p.sendMessage("");
+
+                            p.sendMessage(
+                                    "§7Entre maintenant"
+                            );
+
+                            p.sendMessage(
+                                    "§7la récompense du contrat."
+                            );
+
+                            p.sendMessage("");
+
+                            p.sendMessage(
+                                    "§8Exemple: §e45000"
+                            );
+
+                            p.sendMessage("");
+
+                            p.sendMessage(
+                                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                            );
+
+                            p.sendMessage("");
+
+                            p.playSound(
+
+                                    p.getLocation(),
+
+                                    Sound.BLOCK_NOTE_BLOCK_PLING,
+
+                                    1f,
+
+                                    1.15f
+                            );
+
+                            return;
+                        }
+
+                        //
+                        // 💰 CONTRACT REWARD
+                        //
+
+                        if (context.equals("contract_reward")) {
+
+                            double reward;
+
+                            try {
+
+                                reward =
+                                        Double.parseDouble(
+                                                input.replace(",", ".")
+                                        );
+
+                            } catch (Exception ex) {
+
+                                error(
+                                        p,
+                                        "Récompense invalide"
+                                );
+
+                                InputManager.clear(p);
+
+                                return;
+                            }
+
+                            if (reward <= 0) {
+
+                                error(
+                                        p,
+                                        "Récompense invalide"
+                                );
+
+                                InputManager.clear(p);
+
+                                return;
+                            }
+
+                            var material =
+                                    ContractCreationManager.getItem(
+                                            p.getUniqueId()
+                                    );
+
+                            int amount =
+                                    ContractCreationManager.getAmount(
+                                            p.getUniqueId()
+                                    );
+
+                            if (material == null
+                                    || amount <= 0) {
+
+                                error(
+                                        p,
+                                        "Création invalide"
+                                );
+
+                                ContractCreationManager.clear(
+                                        p.getUniqueId()
+                                );
+
+                                InputManager.clear(p);
+
+                                return;
+                            }
+
+                            Contract contract =
+                                    ContractManager.create(
+
+                                            p.getUniqueId(),
+
+                                            material,
+
+                                            amount,
+
+                                            reward
+                                    );
+
+                            ContractCreationManager.clear(
+                                    p.getUniqueId()
+                            );
+
+                            InputManager.clear(p);
+
+                            p.sendMessage("");
+
+                            p.sendMessage(
+                                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                            );
+
+                            p.sendMessage(
+                                    "§6✦ §fContrat créé"
+                            );
+
+                            p.sendMessage("");
+
+                            p.sendMessage(
+                                    "§7ID: §e#"
+                                            + contract.getId()
+                            );
+
+                            p.sendMessage(
+                                    "§7Objet: §f"
+                                            + material.name()
+                            );
+
+                            p.sendMessage(
+                                    "§7Quantité: §e"
+                                            + amount
+                            );
+
+                            p.sendMessage(
+                                    "§7Récompense: §a"
+                                            + SafeGUI.money(reward)
+                                            + "€"
+                            );
+
+                            p.sendMessage("");
+
+                            p.sendMessage(
+                                    "§8Le contrat est maintenant"
+                            );
+
+                            p.sendMessage(
+                                    "§8visible publiquement."
+                            );
+
+                            p.sendMessage("");
+
+                            p.sendMessage(
+                                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                            );
+
+                            p.sendMessage("");
+
+                            p.playSound(
+
+                                    p.getLocation(),
+
+                                    Sound.ENTITY_PLAYER_LEVELUP,
+
+                                    1f,
+
+                                    1.1f
+                            );
+
+                            return;
                         }
                     }
             );
-
-//
-// 📦 CONTRACT AMOUNT
-//
-
-if (context.equals("contract_amount")) {
-
-    int amount;
-
-    try {
-
-        amount =
-                Integer.parseInt(input);
-
-    } catch (Exception ex) {
-
-        error(
-                p,
-                "Quantité invalide"
-        );
-
-        InputManager.clear(p);
-
-        return;
-    }
-
-    if (amount <= 0) {
-
-        error(
-                p,
-                "Quantité invalide"
-        );
-
-        InputManager.clear(p);
-
-        return;
-    }
-
-    ContractCreationManager.setAmount(
-            p.getUniqueId(),
-            amount
-    );
-
-    InputManager.wait(
-            p,
-            "contract_reward"
-    );
-
-    p.sendMessage("");
-
-    p.sendMessage(
-            "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    );
-
-    p.sendMessage(
-            "§6✦ §fCréation de Contrat"
-    );
-
-    p.sendMessage("");
-
-    p.sendMessage(
-            "§7Quantité enregistrée:"
-    );
-
-    p.sendMessage(
-            "§e" + amount
-    );
-
-    p.sendMessage("");
-
-    p.sendMessage(
-            "§7Entre maintenant"
-    );
-
-    p.sendMessage(
-            "§7la récompense du contrat."
-    );
-
-    p.sendMessage("");
-
-    p.sendMessage(
-            "§8Exemple: §e45000"
-    );
-
-    p.sendMessage("");
-
-    p.sendMessage(
-            "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    );
-
-    p.sendMessage("");
-
-    p.playSound(
-
-            p.getLocation(),
-
-            Sound.BLOCK_NOTE_BLOCK_PLING,
-
-            1f,
-
-            1.15f
-    );
-
-    return;
-}
-
-//
-// 💰 CONTRACT REWARD
-//
-
-if (context.equals("contract_reward")) {
-
-    double reward;
-
-    try {
-
-        reward =
-                Double.parseDouble(
-                        input.replace(",", ".")
-                );
-
-    } catch (Exception ex) {
-
-        error(
-                p,
-                "Récompense invalide"
-        );
-
-        InputManager.clear(p);
-
-        return;
-    }
-
-    if (reward <= 0) {
-
-        error(
-                p,
-                "Récompense invalide"
-        );
-
-        InputManager.clear(p);
-
-        return;
-    }
-
-    var material =
-            ContractCreationManager.getItem(
-                    p.getUniqueId()
-            );
-
-    int amount =
-            ContractCreationManager.getAmount(
-                    p.getUniqueId()
-            );
-
-    if (material == null
-            || amount <= 0) {
-
-        error(
-                p,
-                "Création invalide"
-        );
-
-        ContractCreationManager.clear(
-                p.getUniqueId()
-        );
-
-        InputManager.clear(p);
-
-        return;
-    }
-
-    Contract contract =
-            ContractManager.create(
-
-                    p.getUniqueId(),
-
-                    material,
-
-                    amount,
-
-                    reward
-            );
-
-    ContractCreationManager.clear(
-            p.getUniqueId()
-    );
-
-    InputManager.clear(p);
-
-    p.sendMessage("");
-
-    p.sendMessage(
-            "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    );
-
-    p.sendMessage(
-            "§6✦ §fContrat créé"
-    );
-
-    p.sendMessage("");
-
-    p.sendMessage(
-            "§7ID: §e#"
-                    + contract.getId()
-    );
-
-    p.sendMessage(
-            "§7Objet: §f"
-                    + material.name()
-    );
-
-    p.sendMessage(
-            "§7Quantité: §e"
-                    + amount
-    );
-
-    p.sendMessage(
-            "§7Récompense: §a"
-                    + SafeGUI.money(reward)
-                    + "€"
-    );
-
-    p.sendMessage("");
-
-    p.sendMessage(
-            "§8Le contrat est maintenant"
-    );
-
-    p.sendMessage(
-            "§8visible publiquement."
-    );
-
-    p.sendMessage("");
-
-    p.sendMessage(
-            "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    );
-
-    p.sendMessage("");
-
-    p.playSound(
-
-            p.getLocation(),
-
-            Sound.ENTITY_PLAYER_LEVELUP,
-
-            1f,
-
-            1.1f
-    );
 
             return;
         }
