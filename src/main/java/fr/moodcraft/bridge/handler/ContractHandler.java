@@ -4,7 +4,7 @@ import fr.moodcraft.bridge.Main;
 
 import fr.moodcraft.bridge.contract.Contract;
 
-import fr.moodcraft.bridge.gui.ContractCreateGUI;
+fr.moodcraft.bridge.gui.CreateContractGUI
 import fr.moodcraft.bridge.gui.ContractGUI;
 import fr.moodcraft.bridge.gui.MainMenuGUI;
 
