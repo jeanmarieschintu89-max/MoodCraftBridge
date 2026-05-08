@@ -182,34 +182,39 @@ public class MainMenuGUI {
         );
 
         //
-        // 📜 CONTRATS
+        // 🏛 PROJETS URBAINS
         //
 
         SafeGUI.safeSet(inv, 16,
 
-                SafeGUI.item(
+                SafeGUI.glow(
 
-                        Material.WRITABLE_BOOK,
+                        SafeGUI.item(
 
-                        "§6✦ Contrats",
+                                Material.WRITABLE_BOOK,
 
-                        "§8━━━━━━━━━━━━━━━━",
+                                "§6✦ Projets Urbains",
 
-                        "§7Marché de commandes",
+                                "§8━━━━━━━━━━━━━━━━",
 
-                        "§7entre joueurs.",
+                                "§7Nouveauté municipale",
 
-                        "",
+                                "§7et financement national.",
 
-                        "§8• Contrats publics",
+                                "",
 
-                        "§8• Récompenses",
+                                "§8• Déposer un projet",
 
-                        "§8• Livraison d'items",
+                                "§8• Voter pour les villes",
 
-                        "",
+                                "§8• Notation nationale",
 
-                        "§e▶ Ouvrir"
+                                "§8• Subventions urbaines",
+
+                                "",
+
+                                "§e▶ Ouvrir /projet"
+                        )
                 )
         );
 
