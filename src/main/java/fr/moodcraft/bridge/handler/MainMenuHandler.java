@@ -100,57 +100,32 @@ public class MainMenuHandler implements GUIHandler {
             }
 
             //
-            // 📜 CONTRATS
-            // 🔥 TEMPORAIREMENT DÉSACTIVÉ
+            // 🏛 PROJETS URBAINS
             //
 
             case 16 -> {
 
                 feedback(
                         p,
-                        Sound.BLOCK_NOTE_BLOCK_CHIME,
+                        Sound.BLOCK_BEACON_ACTIVATE,
                         1f
                 );
 
                 p.sendMessage("");
-
                 p.sendMessage(
-                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                        "§8----- §6Commission Urbaine §8-----"
                 );
-
                 p.sendMessage(
-                        "§6✦ §fRéseau Contrats"
+                        "§fOuverture des projets urbains."
                 );
-
+                p.sendMessage(
+                        "§7Dépôts, votes, notes et financements."
+                );
                 p.sendMessage("");
 
-                p.sendMessage(
-                        "§cLe système de contrats"
-                );
-
-                p.sendMessage(
-                        "§cest temporairement indisponible."
-                );
-
-                p.sendMessage("");
-
-                p.sendMessage(
-                        "§7Migration en cours..."
-                );
-
-                p.sendMessage("");
-
-                p.sendMessage(
-                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                );
-
-                p.sendMessage("");
-
-                p.playSound(
-                        p.getLocation(),
-                        Sound.BLOCK_ANVIL_LAND,
-                        0.7f,
-                        1.4f
+                openNext(
+                        p,
+                        () -> p.performCommand("projet")
                 );
             }
 
