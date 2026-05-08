@@ -44,29 +44,40 @@ public class PriceGUI {
             );
 
             //
-            // 🔙 MENU
+            // 📈 INFOS MARCHÉ
             //
 
             SafeGUI.safeSet(inv, 4,
 
-                    SafeGUI.glow(
+                    SafeGUI.item(
 
-                            SafeGUI.item(
+                            Material.BOOK,
 
-                                    Material.NETHER_STAR,
+                            "§6✦ Informations Marché",
 
-                                    "§b✦ Menu Principal",
+                            "§8━━━━━━━━━━━━━━━━",
 
-                                    "§8━━━━━━━━━━━━━━━━",
+                            "§7Les prix évoluent selon:",
 
-                                    "§7Retour au centre",
+                            "",
 
-                                    "§7de gestion MoodCraft.",
+                            "§8• Offre & demande",
 
-                                    "",
+                            "§8• Activité joueurs",
 
-                                    "§e▶ Revenir"
-                            )
+                            "§8• Rareté ressources",
+
+                            "§8• Volume économique",
+
+                            "",
+
+                            "§7Le marché est synchronisé",
+
+                            "§7avec les shops MoodCraft.",
+
+                            "",
+
+                            "§e▶ Économie dynamique"
                     )
             );
 
@@ -151,40 +162,26 @@ public class PriceGUI {
             );
 
             //
-            // 📈 INFOS MARCHÉ
+            // 🔙 RETOUR
             //
 
             SafeGUI.safeSet(inv, 31,
 
                     SafeGUI.item(
 
-                            Material.BOOK,
+                            Material.BARRIER,
 
-                            "§6✦ Informations Marché",
+                            "§c✦ Fermer le Marché",
 
                             "§8━━━━━━━━━━━━━━━━",
 
-                            "§7Les prix évoluent selon:",
+                            "§7Retour au centre",
+
+                            "§7de gestion MoodCraft.",
 
                             "",
 
-                            "§8• Offre & demande",
-
-                            "§8• Activité joueurs",
-
-                            "§8• Rareté ressources",
-
-                            "§8• Volume économique",
-
-                            "",
-
-                            "§7Le marché est synchronisé",
-
-                            "§7avec les shops MoodCraft.",
-
-                            "",
-
-                            "§e▶ Économie dynamique"
+                            "§c▶ Quitter"
                     )
             );
 
