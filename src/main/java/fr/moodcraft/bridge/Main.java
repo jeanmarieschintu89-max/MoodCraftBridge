@@ -119,6 +119,8 @@ public class Main extends JavaPlugin {
                 new GlobalGUIListener(),
 
                 new FreezeListener(),
+    
+                new LootGenerateProtectionListener(),
 
                 // 🏰 Protection économie loot
                 new LootBalanceListener()
