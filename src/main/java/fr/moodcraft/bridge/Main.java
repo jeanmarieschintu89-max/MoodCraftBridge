@@ -122,8 +122,6 @@ public class Main extends JavaPlugin {
     
                 new LootGenerateProtectionListener(),
 
-                new VaultItemSpawnListener(),
-
                 // 🏰 Protection économie loot
                 new LootBalanceListener()
         );
