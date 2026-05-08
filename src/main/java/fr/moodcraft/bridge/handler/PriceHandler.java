@@ -1,6 +1,6 @@
 package fr.moodcraft.bridge.handler;
 
-import fr.moodcraft.bridge.manager.TransactionManager;
+import fr.moodcraft.bridge.bank.TransactionManager;
 
 import fr.moodcraft.bridge.gui.MainMenuGUI;
 
