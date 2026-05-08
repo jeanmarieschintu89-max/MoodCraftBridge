@@ -1,6 +1,6 @@
 package fr.moodcraft.bridge.handler;
 
-import fr.moodcraft.bridge.bank.TransactionManager;
+import fr.moodcraft.bridge.manager.TransactionManager;
 
 import fr.moodcraft.bridge.gui.MainMenuGUI;
 
@@ -31,7 +31,9 @@ public class PriceHandler implements GUIHandler {
             // 🔙 RETOUR
             //
 
-            case 4 -> {
+            case 31 -> {
+
+                p.closeInventory();
 
                 p.playSound(
 
@@ -243,7 +245,7 @@ public class PriceHandler implements GUIHandler {
         String trend =
                 MarketState.trend.getOrDefault(
                         id,
-                        "§7Stable"
+                        "§7▬ Stable"
                 );
 
         //
@@ -301,7 +303,7 @@ public class PriceHandler implements GUIHandler {
         );
 
         p.sendMessage(
-                "§6✦ §fTransaction Marché"
+                "§6✦ Transaction Marché"
         );
 
         p.sendMessage("");
@@ -320,7 +322,7 @@ public class PriceHandler implements GUIHandler {
         p.sendMessage("");
 
         p.sendMessage(
-                "§7Cours du marché:"
+                "§7Cours actuel:"
         );
 
         p.sendMessage(
@@ -332,7 +334,7 @@ public class PriceHandler implements GUIHandler {
         p.sendMessage("");
 
         p.sendMessage(
-                "§7Tendance économique:"
+                "§7Tendance du marché:"
         );
 
         p.sendMessage(
@@ -342,7 +344,7 @@ public class PriceHandler implements GUIHandler {
         p.sendMessage("");
 
         p.sendMessage(
-                "§7Montant brut:"
+                "§7Valeur brute:"
         );
 
         p.sendMessage(
@@ -387,12 +389,18 @@ public class PriceHandler implements GUIHandler {
                     "§6✦ Vente majeure détectée"
             );
 
+            p.sendMessage("");
+
             p.sendMessage(
-                    "§7Le marché a enregistré"
+                    "§7Les échanges commerciaux"
             );
 
             p.sendMessage(
-                    "§7une forte activité économique."
+                    "§7du marché MoodCraft"
+            );
+
+            p.sendMessage(
+                    "§7connaissent une forte activité."
             );
 
             p.sendMessage("");
