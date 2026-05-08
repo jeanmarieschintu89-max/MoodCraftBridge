@@ -4,6 +4,7 @@ import fr.moodcraft.bridge.command.FreezeCommand;
 import fr.moodcraft.bridge.command.SubventionCommand;
 
 import fr.moodcraft.bridge.listener.FreezeListener;
+import fr.moodcraft.bridge.listener.LootBalanceListener;
 
 import fr.moodcraft.bridge.bank.*;
 
@@ -117,7 +118,10 @@ public class Main extends JavaPlugin {
 
                 new GlobalGUIListener(),
 
-                new FreezeListener()
+                new FreezeListener(),
+
+                // 🏰 Protection économie loot
+                new LootBalanceListener()
         );
 
         // =========================
@@ -366,6 +370,10 @@ public class Main extends JavaPlugin {
 
         getLogger().info(
                 "🧠 Réputation: OK"
+        );
+
+        getLogger().info(
+                "🏰 Loot Balance: OK"
         );
 
         getLogger().info(
