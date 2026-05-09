@@ -8,7 +8,6 @@ import fr.moodcraft.bridge.util.SafeGUI;
 import fr.moodcraft.bridge.util.VaultHook;
 
 import org.bukkit.Bukkit;
-
 import org.bukkit.Material;
 
 import org.bukkit.entity.Player;
@@ -23,21 +22,14 @@ public class BankGUI {
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§6✦ §0Banque MoodCraft"
+                        "§8✦ §6Banque"
                 );
 
-        //
-        // 🖤 BORDURES
-        //
-
-        SafeGUI.fillBorders(
+        SafeGUI.fill(
                 inv,
-                Material.BLACK_STAINED_GLASS_PANE
+                Material.BLACK_STAINED_GLASS_PANE,
+                " "
         );
-
-        //
-        // 💰 SOLDES
-        //
 
         double bank =
                 BankStorage.get(
@@ -53,219 +45,111 @@ public class BankGUI {
 
         } catch (Exception ignored) {}
 
-        //
-        // 💰 ARGENT
-        //
+        double total =
+                bank + cash;
 
-        SafeGUI.safeSet(
-
-                inv,
-
-                4,
-
+        SafeGUI.safeSet(inv, 4,
                 SafeGUI.glow(
-
                         SafeGUI.item(
-
-                                Material.GOLD_INGOT,
-
-                                "§6✦ §fCompte bancaire",
-
-                                "§8━━━━━━━━━━━━━━━━",
+                                Material.GOLD_BLOCK,
+                                "§6✦ Banque MoodCraft",
+                                "§8----- §6Compte §8-----",
+                                "§7Consulte tes fonds.",
                                 "",
-                                "§7Liquide:",
-                                "§a" + SafeGUI.money(cash) + "€",
-                                "",
-                                "§7Banque:",
-                                "§6" + SafeGUI.money(bank) + "€",
-                                "",
-                                "§8MoodCraft Financial System"
+                                "§8• §7Liquide: §a"
+                                        + SafeGUI.money(cash)
+                                        + "€",
+                                "§8• §7Banque: §6"
+                                        + SafeGUI.money(bank)
+                                        + "€",
+                                "§8• §7Total: §e"
+                                        + SafeGUI.money(total)
+                                        + "€"
                         )
                 )
         );
 
-        //
-        // 📥 DEPOT
-        //
-
-        SafeGUI.safeSet(
-
-                inv,
-
-                10,
-
-                SafeGUI.item(
-
-                        Material.CHEST,
-
-                        "§a✦ §fDéposer",
-
-                        "§8━━━━━━━━━━━━━━━━",
-                        "",
-                        "§7Déposer de l'argent",
-                        "§7sur ton compte bancaire.",
-                        "",
-                        "§e▶ Cliquer"
+        SafeGUI.safeSet(inv, 10,
+                SafeGUI.glow(
+                        SafeGUI.item(
+                                Material.CHEST,
+                                "§a✦ Déposer",
+                                "§7Ajoute de l'argent au compte.",
+                                "",
+                                "§e▶ Ouvrir"
+                        )
                 )
         );
 
-        //
-        // 📤 RETRAIT
-        //
-
-        SafeGUI.safeSet(
-
-                inv,
-
-                12,
-
+        SafeGUI.safeSet(inv, 12,
                 SafeGUI.item(
-
                         Material.HOPPER,
-
-                        "§c✦ §fRetirer",
-
-                        "§8━━━━━━━━━━━━━━━━",
+                        "§c✦ Retirer",
+                        "§7Récupère de l'argent liquide.",
                         "",
-                        "§7Retirer de l'argent",
-                        "§7depuis la banque.",
-                        "",
-                        "§e▶ Cliquer"
+                        "§e▶ Ouvrir"
                 )
         );
 
-        //
-        // 💸 VIREMENT
-        //
-
-        SafeGUI.safeSet(
-
-                inv,
-
-                14,
-
-                SafeGUI.item(
-
-                        Material.WRITABLE_BOOK,
-
-                        "§e✦ §fVirement",
-
-                        "§8━━━━━━━━━━━━━━━━",
-                        "",
-                        "§7Envoyer de l'argent",
-                        "§7à un autre joueur.",
-                        "",
-                        "§e▶ Cliquer"
+        SafeGUI.safeSet(inv, 14,
+                SafeGUI.glow(
+                        SafeGUI.item(
+                                Material.PAPER,
+                                "§e✦ Virement",
+                                "§7Envoie de l'argent à un joueur.",
+                                "",
+                                "§e▶ Ouvrir"
+                        )
                 )
         );
 
-        //
-        // 🏦 IBAN
-        //
-
-        SafeGUI.safeSet(
-
-                inv,
-
-                16,
-
+        SafeGUI.safeSet(inv, 16,
                 SafeGUI.item(
+                        Material.NAME_TAG,
+                        "§b✦ IBAN",
+                        "§7Consulte ton identité bancaire.",
+                        "",
+                        "§e▶ Ouvrir"
+                )
+        );
 
+        SafeGUI.safeSet(inv, 21,
+                SafeGUI.item(
                         Material.BOOK,
-
-                        "§b✦ §fIBAN",
-
-                        "§8━━━━━━━━━━━━━━━━",
+                        "§d✦ Historique",
+                        "§7Retrouve tes transactions.",
                         "",
-                        "§7Consulter ton",
-                        "§7RIB bancaire.",
+                        "§8• §7Dépôts",
+                        "§8• §7Retraits",
+                        "§8• §7Virements",
                         "",
-                        "§e▶ Cliquer"
+                        "§e▶ Ouvrir"
                 )
         );
 
-        //
-        // 📜 HISTORIQUE
-        //
-
-        SafeGUI.safeSet(
-
-                inv,
-
-                20,
-
+        SafeGUI.safeSet(inv, 23,
                 SafeGUI.item(
-
-                        Material.KNOWLEDGE_BOOK,
-
-                        "§d✦ §fHistorique",
-
-                        "§8━━━━━━━━━━━━━━━━",
-                        "",
-                        "§7Consulter toutes",
-                        "§7tes transactions.",
-                        "",
-                        "§8• Dépôts",
-                        "§8• Retraits",
-                        "§8• Virements",
-                        "§8• Marché",
-                        "",
-                        "§e▶ Cliquer"
-                )
-        );
-
-        //
-        // 📈 ACTIVITÉ
-        //
-
-        SafeGUI.safeSet(
-
-                inv,
-
-                24,
-
-                SafeGUI.item(
-
                         Material.AMETHYST_SHARD,
-
-                        "§5✦ §fActivité",
-
-                        "§8━━━━━━━━━━━━━━━━",
+                        "§5✦ Activité",
+                        "§7Statistiques économiques.",
                         "",
-                        "§7Statistiques",
-                        "§7économiques avancées.",
+                        "§8• §7Profit",
+                        "§8• §7Volume",
+                        "§8• §7Marché",
                         "",
-                        "§8• Profit",
-                        "§8• Volume",
-                        "§8• Trading",
-                        "",
-                        "§e▶ Bientôt"
+                        "§8▶ Bientôt"
                 )
         );
 
-        //
-        // 🔙 RETOUR
-        //
-
-        SafeGUI.safeSet(
-
-                inv,
-
-                31,
-
+        SafeGUI.safeSet(inv, 31,
                 SafeGUI.item(
-
                         Material.BARRIER,
-
-                        "§c✦ §fRetour",
-
-                        "§7Retour au menu principal."
+                        "§c✦ Retour",
+                        "§7Retour au menu principal.",
+                        "",
+                        "§c▶ Retour"
                 )
         );
-
-        //
-        // 🚀 OPEN
-        //
 
         GUIManager.open(
                 p,
