@@ -95,6 +95,16 @@ public class MainMenuGUI {
 
             meta.setOwningPlayer(p);
 
+            if (p.getName() != null) {
+
+                meta.setOwnerProfile(
+                        Bukkit.createPlayerProfile(
+                                p.getUniqueId(),
+                                p.getName()
+                        )
+                );
+            }
+
             meta.setDisplayName(
                     "§6✦ §f" + p.getName()
             );
