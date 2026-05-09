@@ -7,8 +7,6 @@ import org.bukkit.event.Listener;
 
 import org.bukkit.event.world.LootGenerateEvent;
 
-import org.bukkit.inventory.ItemStack;
-
 public class LootGenerateProtectionListener
         implements Listener {
 
@@ -56,6 +54,7 @@ public class LootGenerateProtectionListener
                     || m == Material.GOLD_INGOT
                     || m == Material.GOLD_BLOCK
                     || m == Material.RAW_GOLD
+                    || m == Material.RAW_GOLD_BLOCK
                     || m == Material.GOLD_ORE
                     || m == Material.DEEPSLATE_GOLD_ORE
                     || m == Material.NETHER_GOLD_ORE
@@ -64,6 +63,7 @@ public class LootGenerateProtectionListener
                     || m == Material.IRON_INGOT
                     || m == Material.IRON_BLOCK
                     || m == Material.RAW_IRON
+                    || m == Material.RAW_IRON_BLOCK
                     || m == Material.IRON_ORE
                     || m == Material.DEEPSLATE_IRON_ORE
 
@@ -71,6 +71,7 @@ public class LootGenerateProtectionListener
                     || m == Material.COPPER_INGOT
                     || m == Material.COPPER_BLOCK
                     || m == Material.RAW_COPPER
+                    || m == Material.RAW_COPPER_BLOCK
                     || m == Material.COPPER_ORE
                     || m == Material.DEEPSLATE_COPPER_ORE
 
@@ -95,6 +96,7 @@ public class LootGenerateProtectionListener
                     // 🟣 AMÉTHYSTE
                     || m == Material.AMETHYST_SHARD
                     || m == Material.AMETHYST_BLOCK
+                    || m == Material.BUDDING_AMETHYST
 
                     // ✨ QUARTZ
                     || m == Material.QUARTZ
