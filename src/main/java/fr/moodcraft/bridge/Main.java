@@ -4,7 +4,6 @@ import fr.moodcraft.bridge.command.FreezeCommand;
 import fr.moodcraft.bridge.command.SubventionCommand;
 
 import fr.moodcraft.bridge.listener.FreezeListener;
-import fr.moodcraft.bridge.listener.LootBalanceListener;
 import fr.moodcraft.bridge.listener.LootGenerateProtectionListener;
 
 import fr.moodcraft.bridge.bank.*;
@@ -93,8 +92,6 @@ public class Main extends JavaPlugin {
                 new FreezeListener(),
 
                 new LootGenerateProtectionListener(),
-
-                new LootBalanceListener()
         );
 
         GUIManager.register(
