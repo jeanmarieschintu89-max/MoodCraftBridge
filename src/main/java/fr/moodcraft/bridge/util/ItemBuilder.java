@@ -12,28 +12,42 @@ public class ItemBuilder {
 
     public static ItemStack of(Material mat, String name, String... lore) {
 
-        if (mat == null) mat = Material.BARRIER;
+        if (mat == null)
+            mat = Material.BARRIER;
 
-        ItemStack item = new ItemStack(mat);
-        ItemMeta meta = item.getItemMeta();
+        ItemStack item =
+                new ItemStack(mat);
 
-        if (meta == null) return item;
+        ItemMeta meta =
+                item.getItemMeta();
 
-        meta.setDisplayName("§r" + clean(name));
+        if (meta == null)
+            return item;
 
-        if (lore != null && lore.length > 0) {
+        meta.setDisplayName(
+                "§r" + clean(name)
+        );
 
-            List<String> safeLore = new ArrayList<>();
+        if (lore != null
+                && lore.length > 0) {
+
+            List<String> safeLore =
+                    new ArrayList<>();
 
             for (String line : lore) {
 
-                if (line == null) continue;
+                if (line == null)
+                    continue;
 
-                String cleaned = "§7" + clean(line);
+                String cleaned =
+                        "§7" + clean(line);
 
                 if (cleaned.trim().isEmpty()) {
+
                     safeLore.add(" ");
+
                 } else {
+
                     safeLore.add(cleaned);
                 }
             }
@@ -46,21 +60,19 @@ public class ItemBuilder {
                 ItemFlag.HIDE_ENCHANTS,
                 ItemFlag.HIDE_UNBREAKABLE,
                 ItemFlag.HIDE_DESTROYS,
-                ItemFlag.HIDE_ITEM_SPECIFICS
                 ItemFlag.HIDE_PLACED_ON,
                 ItemFlag.HIDE_ADDITIONAL_TOOLTIP
         );
 
         item.setItemMeta(meta);
+
         return item;
     }
 
-    // =========================
-    // 🔧 CLEAN BEDROCK
-    // =========================
     private static String clean(String text) {
 
-        if (text == null) return "";
+        if (text == null)
+            return "";
 
         return text
                 .replace("é", "e")
