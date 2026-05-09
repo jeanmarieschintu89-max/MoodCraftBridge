@@ -7,9 +7,7 @@ import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 
 import fr.moodcraft.bridge.bank.BankStorage;
-
 import fr.moodcraft.bridge.manager.GUIManager;
-
 import fr.moodcraft.bridge.util.SafeGUI;
 import fr.moodcraft.bridge.util.VaultHook;
 
@@ -34,11 +32,12 @@ public class MainMenuGUI {
 
     public static void open(Player p) {
 
-        Inventory inv = Bukkit.createInventory(
-                null,
-                36,
-                "§8✦ §6MoodCraft"
-        );
+        Inventory inv =
+                Bukkit.createInventory(
+                        null,
+                        36,
+                        "§8✦ §6MoodCraft"
+                );
 
         double bank =
                 BankStorage.get(
@@ -113,7 +112,7 @@ public class MainMenuGUI {
                 " "
         );
 
-        ItemStack shield =
+        ItemStack identity =
                 null;
 
         String source =
@@ -121,235 +120,204 @@ public class MainMenuGUI {
 
         if (hasTown) {
 
-            shield =
+            identity =
                     MoodTownFlagAPI.getTownShieldItem(
                             townName
                     );
 
-            if (shield != null) {
+            if (identity != null) {
 
                 source =
                         "town";
             }
         }
 
-        if (shield == null
+        if (identity == null
                 && hasNation) {
 
-            shield =
+            identity =
                     MoodTownFlagAPI.getNationShieldItem(
                             nationName
                     );
 
-            if (shield != null) {
+            if (identity != null) {
 
                 source =
                         "nation";
             }
         }
 
-        if (shield == null) {
+        if (identity == null) {
 
-            shield =
+            identity =
                     new ItemStack(
                             Material.PLAYER_HEAD
                     );
 
-            if (shield.getItemMeta()
+            if (identity.getItemMeta()
                     instanceof SkullMeta skullMeta) {
 
                 skullMeta.setOwningPlayer(p);
 
-                shield.setItemMeta(
+                identity.setItemMeta(
                         skullMeta
                 );
             }
         }
 
-        List<String> shieldLore =
+        List<String> identityLore =
                 new ArrayList<>();
 
-        shieldLore.add("§8━━━━━━━━━━━━━━━━");
-        shieldLore.add("§7Profil territorial MoodCraft");
-        shieldLore.add("");
-        shieldLore.add("§7Ville: §e" + townName);
-        shieldLore.add("§7Nation: §6" + nationName);
-        shieldLore.add("");
+        identityLore.add("§8----- §6Identité §8-----");
+        identityLore.add("§7Ville: §b" + townName);
+        identityLore.add("§7Nation: §6" + nationName);
+        identityLore.add("");
 
         if (source.equalsIgnoreCase("town")) {
 
-            shieldLore.add("§a✔ Blason municipal affiché");
+            identityLore.add("§a✔ Blason de ville");
 
         } else if (source.equalsIgnoreCase("nation")) {
 
-            shieldLore.add("§a✔ Blason national affiché");
+            identityLore.add("§a✔ Blason de nation");
 
         } else {
 
-            shieldLore.add("§7Aucun blason officiel.");
-            shieldLore.add("§7Affichage du profil joueur.");
+            identityLore.add("§7Aucun blason défini");
+            identityLore.add("§7Profil joueur affiché");
         }
 
-        shieldLore.add("");
-        shieldLore.add("§7Liquide: §a" + SafeGUI.money(cash) + "€");
-        shieldLore.add("§7Banque: §6" + SafeGUI.money(bank) + "€");
-        shieldLore.add("§7Patrimoine: §e" + SafeGUI.money(total) + "€");
-        shieldLore.add("");
-        shieldLore.add("§8• Profil");
-        shieldLore.add("§8• Identité territoriale");
-        shieldLore.add("§8• Registre héraldique");
-        shieldLore.add("");
-        shieldLore.add("§e▶ Consulter le profil");
+        identityLore.add("");
+        identityLore.add("§7Liquide: §a" + SafeGUI.money(cash) + "€");
+        identityLore.add("§7Banque: §6" + SafeGUI.money(bank) + "€");
+        identityLore.add("§7Total: §e" + SafeGUI.money(total) + "€");
+        identityLore.add("");
+        identityLore.add("§e▶ Voir le profil");
 
-        ItemMeta shieldMeta =
-                shield.getItemMeta();
+        ItemMeta identityMeta =
+                identity.getItemMeta();
 
-        if (shieldMeta != null) {
+        if (identityMeta != null) {
 
-            shieldMeta.setDisplayName(
+            identityMeta.setDisplayName(
                     source.equalsIgnoreCase("player")
-                            ? "§6✦ Profil Joueur"
-                            : "§6✦ Registre Territorial"
+                            ? "§6✦ Ton Profil"
+                            : "§6✦ Ton Blason"
             );
 
-            shieldMeta.setLore(
-                    shieldLore
+            identityMeta.setLore(
+                    identityLore
             );
 
-            shieldMeta.addItemFlags(
-                    ItemFlag.HIDE_ATTRIBUTES,
-                    ItemFlag.HIDE_ENCHANTS,
-                    ItemFlag.HIDE_UNBREAKABLE,
-                    ItemFlag.HIDE_DESTROYS,
-                    ItemFlag.HIDE_PLACED_ON,
-                    ItemFlag.HIDE_ITEM_SPECIFICS,
-                    ItemFlag.HIDE_ADDITIONAL_TOOLTIP
-            );
+            hide(identityMeta);
 
-            shield.setItemMeta(
-                    shieldMeta
+            identity.setItemMeta(
+                    identityMeta
             );
         }
 
         inv.setItem(
                 4,
-                shield
+                identity
         );
 
-        SafeGUI.safeSet(inv, 11,
+        SafeGUI.safeSet(inv, 10,
                 SafeGUI.glow(
-                        SafeGUI.item(
+                        button(
                                 Material.GOLD_INGOT,
                                 "§6✦ Banque",
-                                "§8━━━━━━━━━━━━━━━━",
-                                "§7Gestion bancaire",
-                                "§7et transactions sécurisées.",
+                                "§7Gère ton argent.",
                                 "",
-                                "§7Solde bancaire: §6"
+                                "§8• §7Solde: §6"
                                         + SafeGUI.money(bank)
                                         + "€",
+                                "§8• §7Liquide: §a"
+                                        + SafeGUI.money(cash)
+                                        + "€",
                                 "",
-                                "§8• Dépôt",
-                                "§8• Retrait",
-                                "§8• Virements",
-                                "§8• Historique",
-                                "",
-                                "§e▶ Accéder"
+                                "§e▶ Ouvrir"
                         )
                 )
         );
 
-        SafeGUI.safeSet(inv, 13,
-                SafeGUI.item(
-                        Material.CHEST_MINECART,
-                        "§e✦ Marché Boursier",
-                        "§8━━━━━━━━━━━━━━━━",
-                        "§7Économie dynamique",
-                        "§7pilotée par les joueurs.",
+        SafeGUI.safeSet(inv, 12,
+                button(
+                        Material.EMERALD,
+                        "§e✦ Marché",
+                        "§7Suis les prix du serveur.",
                         "",
-                        "§8• Prix variables",
-                        "§8• Rareté",
-                        "§8• Offre & demande",
+                        "§8• §7Prix dynamiques",
+                        "§8• §7Offre et demande",
                         "",
                         "§e▶ Ouvrir"
+                )
+        );
+
+        SafeGUI.safeSet(inv, 14,
+                SafeGUI.glow(
+                        button(
+                                Material.WRITABLE_BOOK,
+                                "§b✦ Projets",
+                                "§7Participe à l'urbanisme.",
+                                "",
+                                "§8• §7Déposer",
+                                "§8• §7Voter",
+                                "§8• §7Classement",
+                                "",
+                                "§e▶ Ouvrir"
+                        )
                 )
         );
 
         SafeGUI.safeSet(inv, 16,
-                SafeGUI.glow(
-                        SafeGUI.item(
-                                Material.WRITABLE_BOOK,
-                                "§6✦ Projets Urbains",
-                                "§8━━━━━━━━━━━━━━━━",
-                                "§7Nouveauté municipale",
-                                "§7et financement national.",
-                                "",
-                                "§8• Déposer un projet",
-                                "§8• Voter pour les villes",
-                                "§8• Notation nationale",
-                                "§8• Subventions urbaines",
-                                "",
-                                "§e▶ Ouvrir /projet"
-                        )
-                )
-        );
-
-        SafeGUI.safeSet(inv, 20,
-                SafeGUI.item(
-                        Material.BRICKS,
-                        "§a✦ Ville",
-                        "§8━━━━━━━━━━━━━━━━",
-                        "§7Gestion territoriale",
-                        "§7et développement urbain.",
-                        "",
-                        "§8• Town",
-                        "§8• Claims",
-                        "§8• Économie locale",
-                        "",
-                        "§e▶ Gérer"
-                )
-        );
-
-        SafeGUI.safeSet(inv, 22,
-                SafeGUI.item(
-                        Material.DIAMOND_PICKAXE,
-                        "§d✦ Métiers",
-                        "§8━━━━━━━━━━━━━━━━",
-                        "§7Système de progression",
-                        "§7et activités économiques.",
-                        "",
-                        "§8• Progression",
-                        "§8• Récompenses",
-                        "§8• Spécialisations",
-                        "",
-                        "§e▶ Ouvrir"
-                )
-        );
-
-        SafeGUI.safeSet(inv, 24,
-                SafeGUI.item(
+                button(
                         Material.COMPASS,
                         "§b✦ Téléportation",
-                        "§8━━━━━━━━━━━━━━━━",
-                        "§7Navigation rapide",
-                        "§7dans l'univers MoodCraft.",
+                        "§7Voyage rapidement.",
                         "",
-                        "§8• Spawn",
-                        "§8• Ville",
-                        "§8• Ressources",
+                        "§8• §7Spawn",
+                        "§8• §7Ville",
+                        "§8• §7Ressources",
                         "",
                         "§e▶ Voyager"
                 )
         );
 
+        SafeGUI.safeSet(inv, 21,
+                button(
+                        Material.MAP,
+                        "§a✦ Ville",
+                        "§7Gère ton territoire.",
+                        "",
+                        "§8• §7Claims",
+                        "§8• §7Town",
+                        "§8• §7Nation",
+                        "",
+                        "§e▶ Gérer"
+                )
+        );
+
+        SafeGUI.safeSet(inv, 23,
+                button(
+                        Material.EXPERIENCE_BOTTLE,
+                        "§d✦ Métiers",
+                        "§7Progresse et gagne plus.",
+                        "",
+                        "§8• §7Niveaux",
+                        "§8• §7Récompenses",
+                        "§8• §7Spécialisations",
+                        "",
+                        "§e▶ Ouvrir"
+                )
+        );
+
         SafeGUI.safeSet(inv, 31,
-                SafeGUI.item(
+                button(
                         Material.BARRIER,
                         "§c✦ Fermer",
-                        "§8━━━━━━━━━━━━━━━━",
-                        "§7Fermer le menu MoodCraft.",
+                        "§7Quitter le menu.",
                         "",
-                        "§e▶ Quitter"
+                        "§c▶ Fermer"
                 )
         );
 
@@ -358,5 +326,58 @@ public class MainMenuGUI {
                 "main_menu",
                 inv
         );
+    }
+
+    private static ItemStack button(
+            Material material,
+            String name,
+            String... lore
+    ) {
+
+        ItemStack item =
+                SafeGUI.item(
+                        material,
+                        name,
+                        lore
+                );
+
+        ItemMeta meta =
+                item.getItemMeta();
+
+        if (meta != null) {
+
+            hide(meta);
+
+            item.setItemMeta(
+                    meta
+            );
+        }
+
+        return item;
+    }
+
+    private static void hide(
+            ItemMeta meta
+    ) {
+
+        meta.addItemFlags(
+                ItemFlag.HIDE_ATTRIBUTES,
+                ItemFlag.HIDE_ENCHANTS,
+                ItemFlag.HIDE_UNBREAKABLE,
+                ItemFlag.HIDE_DESTROYS,
+                ItemFlag.HIDE_PLACED_ON,
+                ItemFlag.HIDE_ADDITIONAL_TOOLTIP
+        );
+
+        try {
+
+            ItemFlag flag =
+                    ItemFlag.valueOf(
+                            "HIDE_ITEM_SPECIFICS"
+                    );
+
+            meta.addItemFlags(flag);
+
+        } catch (IllegalArgumentException ignored) {}
     }
 }
