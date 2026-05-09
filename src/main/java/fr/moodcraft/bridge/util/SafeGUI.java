@@ -16,10 +16,6 @@ public class SafeGUI {
     private static final DecimalFormat MONEY_FORMAT =
             new DecimalFormat("#,##0.00");
 
-    //
-    // 🎯 ITEM
-    //
-
     public static ItemStack item(Material mat,
                                  String name,
                                  String... lore) {
@@ -50,10 +46,6 @@ public class SafeGUI {
 
         return it;
     }
-
-    //
-    // 🔥 ITEMSTACK
-    //
 
     public static ItemStack item(ItemStack base,
                                  String name,
@@ -89,10 +81,6 @@ public class SafeGUI {
         return it;
     }
 
-    //
-    // 🧠 LORE
-    //
-
     private static List<String> formatLore(String... lore) {
 
         List<String> fixed =
@@ -103,7 +91,6 @@ public class SafeGUI {
             for (String line : lore) {
 
                 fixed.add(
-
                         line == null
                                 ? ""
                                 : "§7" + line
@@ -114,27 +101,17 @@ public class SafeGUI {
         return fixed;
     }
 
-    //
-    // 🔒 FLAGS
-    //
-
     private static void hideAll(ItemMeta meta) {
 
         meta.addItemFlags(
-
                 ItemFlag.HIDE_ATTRIBUTES,
                 ItemFlag.HIDE_ENCHANTS,
                 ItemFlag.HIDE_UNBREAKABLE,
                 ItemFlag.HIDE_DESTROYS,
                 ItemFlag.HIDE_PLACED_ON,
-                ItemFlag.HIDE_ITEM_SPECIFICS
                 ItemFlag.HIDE_ADDITIONAL_TOOLTIP
         );
     }
-
-    //
-    // ✨ GLOW
-    //
 
     public static ItemStack glow(ItemStack item) {
 
@@ -151,26 +128,17 @@ public class SafeGUI {
             return clone;
 
         meta.addEnchant(
-
                 Enchantment.UNBREAKING,
-
                 1,
-
                 true
         );
 
-        meta.addItemFlags(
-                ItemFlag.HIDE_ENCHANTS
-        );
+        hideAll(meta);
 
         clone.setItemMeta(meta);
 
         return clone;
     }
-
-    //
-    // ❌ REMOVE GLOW
-    //
 
     public static ItemStack removeGlow(ItemStack item) {
 
@@ -195,10 +163,6 @@ public class SafeGUI {
         return clone;
     }
 
-    //
-    // 🛡 SAFE SET
-    //
-
     public static void safeSet(Inventory inv,
                                int slot,
                                ItemStack item) {
@@ -209,9 +173,7 @@ public class SafeGUI {
         try {
 
             inv.setItem(
-
                     slot,
-
                     item == null
                             ? new ItemStack(Material.BARRIER)
                             : item
@@ -220,17 +182,11 @@ public class SafeGUI {
         } catch (Exception e) {
 
             inv.setItem(
-
                     slot,
-
                     new ItemStack(Material.BARRIER)
             );
         }
     }
-
-    //
-    // 🧱 BORDURES
-    //
 
     public static void fillBorders(Inventory inv,
                                    Material mat) {
@@ -259,10 +215,6 @@ public class SafeGUI {
         }
     }
 
-    //
-    // 🔲 FILL INVENTORY
-    //
-
     public static void fill(Inventory inv,
                             Material mat,
                             String name) {
@@ -284,10 +236,6 @@ public class SafeGUI {
             }
         }
     }
-
-    //
-    // 💰 MONEY
-    //
 
     public static String money(double v) {
 
