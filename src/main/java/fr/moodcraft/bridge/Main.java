@@ -91,7 +91,7 @@ public class Main extends JavaPlugin {
 
                 new FreezeListener(),
 
-                new LootGenerateProtectionListener(),
+                new LootGenerateProtectionListener()
         );
 
         GUIManager.register(
