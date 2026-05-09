@@ -10,7 +10,6 @@ import fr.moodcraft.bridge.gui.TeleportGUI;
 import fr.moodcraft.bridge.util.ActionLock;
 
 import org.bukkit.Bukkit;
-
 import org.bukkit.Sound;
 
 import org.bukkit.entity.Player;
@@ -18,12 +17,10 @@ import org.bukkit.entity.Player;
 public class MainMenuHandler implements GUIHandler {
 
     @Override
-    public void onClick(Player p,
-                        int slot) {
-
-        //
-        // 🔒 ANTI SPAM
-        //
+    public void onClick(
+            Player p,
+            int slot
+    ) {
 
         if (ActionLock.isLocked(
                 p.getUniqueId(),
@@ -32,22 +29,18 @@ public class MainMenuHandler implements GUIHandler {
 
         switch (slot) {
 
-            //
-            // 🎌 PROFIL / TERRITOIRE
-            //
-
             case 4 -> {
 
-                feedback(
+                premiumClick(
                         p,
                         Sound.BLOCK_AMETHYST_BLOCK_CHIME,
-                        1.15f
+                        1.25f,
+                        Sound.UI_BUTTON_CLICK,
+                        1.6f
                 );
 
                 openNext(
-
                         p,
-
                         () -> ProfileGUI.open(
                                 p,
                                 p.getUniqueId()
@@ -55,20 +48,18 @@ public class MainMenuHandler implements GUIHandler {
                 );
             }
 
-            //
-            // 🏦 BANQUE
-            //
+            case 10 -> {
 
-            case 11 -> {
-
-                feedback(
+                premiumClick(
                         p,
-                        Sound.BLOCK_NOTE_BLOCK_BELL,
-                        1f
+                        Sound.BLOCK_NOTE_BLOCK_CHIME,
+                        1.2f,
+                        Sound.BLOCK_ENDER_CHEST_OPEN,
+                        1.4f
                 );
 
                 p.sendMessage(
-                        "§8✦ §7Connexion au réseau bancaire..."
+                        "§8✦ §6Banque §8• §7Ouverture..."
                 );
 
                 openNext(
@@ -77,20 +68,18 @@ public class MainMenuHandler implements GUIHandler {
                 );
             }
 
-            //
-            // 📊 BOURSE
-            //
+            case 12 -> {
 
-            case 13 -> {
-
-                feedback(
+                premiumClick(
                         p,
+                        Sound.BLOCK_AMETHYST_BLOCK_CHIME,
+                        1.35f,
                         Sound.BLOCK_BEACON_AMBIENT,
-                        0.9f
+                        1.2f
                 );
 
                 p.sendMessage(
-                        "§8✦ §7Synchronisation du marché..."
+                        "§8✦ §eMarché §8• §7Actualisation..."
                 );
 
                 openNext(
@@ -99,29 +88,19 @@ public class MainMenuHandler implements GUIHandler {
                 );
             }
 
-            //
-            // 🏛 PROJETS URBAINS
-            //
+            case 14 -> {
 
-            case 16 -> {
-
-                feedback(
+                premiumClick(
                         p,
                         Sound.BLOCK_BEACON_ACTIVATE,
-                        1f
+                        1.15f,
+                        Sound.ITEM_BOOK_PAGE_TURN,
+                        1.2f
                 );
 
-                p.sendMessage("");
                 p.sendMessage(
-                        "§8----- §6Commission Urbaine §8-----"
+                        "§8✦ §bProjets §8• §7Ouverture..."
                 );
-                p.sendMessage(
-                        "§fOuverture des projets urbains."
-                );
-                p.sendMessage(
-                        "§7Dépôts, votes, notes et financements."
-                );
-                p.sendMessage("");
 
                 openNext(
                         p,
@@ -129,60 +108,18 @@ public class MainMenuHandler implements GUIHandler {
                 );
             }
 
-            //
-            // 🏙️ VILLE
-            //
+            case 16 -> {
 
-            case 20 -> {
-
-                feedback(
-                        p,
-                        Sound.BLOCK_CHAIN_PLACE,
-                        0.95f
-                );
-
-                p.sendMessage(
-                        "§8✦ §7Ouverture du système territorial..."
-                );
-
-                openNext(
-                        p,
-                        () -> p.performCommand("townmenu")
-                );
-            }
-
-            //
-            // ⛏️ MÉTIERS
-            //
-
-            case 22 -> {
-
-                feedback(
-                        p,
-                        Sound.ENTITY_VILLAGER_WORK_TOOLSMITH,
-                        1f
-                );
-
-                p.sendMessage(
-                        "§8✦ §7Chargement des métiers..."
-                );
-
-                openNext(
-                        p,
-                        () -> p.performCommand("jobs join")
-                );
-            }
-
-            //
-            // 🌍 TÉLÉPORTATION
-            //
-
-            case 24 -> {
-
-                feedback(
+                premiumClick(
                         p,
                         Sound.ITEM_CHORUS_FRUIT_TELEPORT,
-                        1f
+                        1.25f,
+                        Sound.BLOCK_PORTAL_AMBIENT,
+                        1.6f
+                );
+
+                p.sendMessage(
+                        "§8✦ §bTéléportation §8• §7Choisis ta destination."
                 );
 
                 openNext(
@@ -191,67 +128,98 @@ public class MainMenuHandler implements GUIHandler {
                 );
             }
 
-            //
-            // ❌ FERMER
-            //
+            case 21 -> {
+
+                premiumClick(
+                        p,
+                        Sound.BLOCK_CHAIN_PLACE,
+                        1.1f,
+                        Sound.BLOCK_STONE_BUTTON_CLICK_ON,
+                        1.5f
+                );
+
+                p.sendMessage(
+                        "§8✦ §aVille §8• §7Ouverture..."
+                );
+
+                openNext(
+                        p,
+                        () -> p.performCommand("townmenu")
+                );
+            }
+
+            case 23 -> {
+
+                premiumClick(
+                        p,
+                        Sound.ENTITY_VILLAGER_WORK_TOOLSMITH,
+                        1.05f,
+                        Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
+                        1.4f
+                );
+
+                p.sendMessage(
+                        "§8✦ §dMétiers §8• §7Chargement..."
+                );
+
+                openNext(
+                        p,
+                        () -> p.performCommand("jobs join")
+                );
+            }
 
             case 31 -> {
 
-                p.playSound(
-
-                        p.getLocation(),
-
+                premiumClick(
+                        p,
                         Sound.UI_BUTTON_CLICK,
-
-                        1f,
-
-                        0.7f
+                        0.75f,
+                        Sound.BLOCK_CHEST_CLOSE,
+                        1.2f
                 );
 
                 p.closeInventory();
 
                 p.sendMessage(
-                        "§8✦ §7Interface MoodCraft fermée."
+                        "§8✦ §7Menu fermé."
                 );
             }
         }
     }
 
-    //
-    // 🔊 FEEDBACK
-    //
-
-    private void feedback(Player p,
-                          Sound sound,
-                          float pitch) {
+    private void premiumClick(
+            Player p,
+            Sound main,
+            float mainPitch,
+            Sound second,
+            float secondPitch
+    ) {
 
         p.playSound(
-
                 p.getLocation(),
+                main,
+                0.75f,
+                mainPitch
+        );
 
-                sound,
-
-                1f,
-
-                pitch
+        p.playSound(
+                p.getLocation(),
+                second,
+                0.35f,
+                secondPitch
         );
     }
 
-    //
-    // 🔄 OPEN SAFE
-    //
-
-    private void openNext(Player p,
-                          Runnable action) {
+    private void openNext(
+            Player p,
+            Runnable action
+    ) {
 
         p.closeInventory();
 
         Bukkit.getScheduler().runTaskLater(
-
                 Main.getInstance(),
-
                 action,
-
                 1L
         );
     }
