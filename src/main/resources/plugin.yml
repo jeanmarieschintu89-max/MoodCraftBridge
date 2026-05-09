@@ -17,6 +17,7 @@ softdepend:
   - floodgate
   - Geyser-Spigot
   - MoodTownFlag
+  - Towny
 
 commands:
 
