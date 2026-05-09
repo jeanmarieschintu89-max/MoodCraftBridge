@@ -1,4 +1,3 @@
-
 package fr.moodcraft.bridge.gui;
 
 import fr.moodcraft.bridge.bank.BankStorage;
@@ -9,6 +8,8 @@ import fr.moodcraft.bridge.manager.GUIManager;
 import fr.moodcraft.bridge.manager.ReputationManager;
 
 import fr.moodcraft.bridge.util.SafeGUI;
+
+import fr.moodcraft.flag.api.MoodTownFlagAPI;
 
 import org.bukkit.Bukkit;
 
@@ -41,10 +42,6 @@ public class ProfileGUI {
                 "§8✦ §6Profil MoodCraft"
         );
 
-        //
-        // 🌌 FOND
-        //
-
         SafeGUI.fill(
 
                 inv,
@@ -53,10 +50,6 @@ public class ProfileGUI {
 
                 " "
         );
-
-        //
-        // 👤 INFOS
-        //
 
         String name =
                 Bukkit.getOfflinePlayer(targetUUID)
@@ -70,10 +63,6 @@ public class ProfileGUI {
                         targetUUID.toString()
                 );
 
-        //
-        // 🧠 RÉPUTATION
-        //
-
         int rep =
                 ReputationManager.get(
                         targetUUID.toString()
@@ -81,10 +70,6 @@ public class ProfileGUI {
 
         String rank =
                 ReputationManager.getRank(rep);
-
-        //
-        // 🛠️ MÉTIERS
-        //
 
         List<String> jobsLore =
                 new ArrayList<>();
@@ -114,14 +99,32 @@ public class ProfileGUI {
             );
         }
 
-        //
-        // 🎌 IDENTITÉ TERRITORIALE
-        //
+        var resident =
+                com.palmergames.bukkit.towny.TownyAPI
+                        .getInstance()
+                        .getResident(targetUUID);
 
         ItemStack flag =
-                new ItemStack(
-                        Material.WHITE_BANNER
-                );
+                null;
+
+        if (resident != null
+                && resident.hasTown()
+                && resident.getTownOrNull() != null) {
+
+            flag =
+                    MoodTownFlagAPI.getTownFlagItem(
+                            resident.getTownOrNull()
+                                    .getName()
+                    );
+        }
+
+        if (flag == null) {
+
+            flag =
+                    new ItemStack(
+                            Material.WHITE_BANNER
+                    );
+        }
 
         List<String> territoryLore =
                 new ArrayList<>();
@@ -137,7 +140,6 @@ public class ProfileGUI {
         );
 
         territoryLore.add("");
-
         territoryLore.add(
                 "§7Réputation: §a"
                         + rep
@@ -149,21 +151,12 @@ public class ProfileGUI {
         );
 
         territoryLore.add("");
-
-        territoryLore.add(
-                "§d✦ Métiers"
-        );
-
+        territoryLore.add("§d✦ Métiers");
         territoryLore.add("§8────────────");
 
         territoryLore.addAll(jobsLore);
 
         territoryLore.add("");
-
-        var resident =
-                com.palmergames.bukkit.towny.TownyAPI
-                        .getInstance()
-                        .getResident(targetUUID);
 
         if (resident != null
                 && resident.hasTown()) {
@@ -196,18 +189,9 @@ public class ProfileGUI {
         }
 
         territoryLore.add("");
-
-        territoryLore.add(
-                "§8• Activité économique"
-        );
-
-        territoryLore.add(
-                "§8• Profil commercial"
-        );
-
-        territoryLore.add(
-                "§8• Statistiques serveur"
-        );
+        territoryLore.add("§8• Activité économique");
+        territoryLore.add("§8• Profil commercial");
+        territoryLore.add("§8• Statistiques serveur");
 
         ItemMeta flagMeta =
                 flag.getItemMeta();
@@ -232,10 +216,6 @@ public class ProfileGUI {
                 13,
                 SafeGUI.glow(flag)
         );
-
-        //
-        // 🏦 INFOS ÉCO
-        //
 
         SafeGUI.safeSet(inv, 21,
 
@@ -274,10 +254,6 @@ public class ProfileGUI {
                 )
         );
 
-        //
-        // 📜 RÉPUTATION
-        //
-
         SafeGUI.safeSet(inv, 23,
 
                 SafeGUI.item(
@@ -313,10 +289,6 @@ public class ProfileGUI {
                         "§e▶ Système social"
                 )
         );
-
-        //
-        // 🔙 RETOUR
-        //
 
         SafeGUI.safeSet(inv, 31,
 
