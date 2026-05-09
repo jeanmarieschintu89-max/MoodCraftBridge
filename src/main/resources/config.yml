@@ -1,16 +1,20 @@
 base:
-  netherite: 32000
-  emerald: 15000
-  diamond: 2800
-  gold: 120
-  iron: 80
-  copper: 12
-  redstone: 20
-  lapis: 20
-  coal: 8
-  quartz: 25
-  glowstone: 15
-  amethyst: 6
+
+  netherite: 16000
+  emerald: 7000
+  diamond: 2000
+
+  gold: 70
+  iron: 45
+  copper: 8
+
+  redstone: 10
+  lapis: 10
+  coal: 4
+
+  quartz: 14
+  glowstone: 8
+  amethyst: 4
 
 #
 # ⚖ Influence générale du minerai
