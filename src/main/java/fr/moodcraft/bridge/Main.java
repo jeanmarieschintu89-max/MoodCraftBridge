@@ -97,7 +97,6 @@ public class Main extends JavaPlugin {
 
                 new LootBalanceListener(),
 
-                new VaultLootBlockListener()
         );
 
         GUIManager.register(
