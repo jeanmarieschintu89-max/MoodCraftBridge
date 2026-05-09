@@ -5,6 +5,8 @@ import fr.moodcraft.bridge.command.SubventionCommand;
 
 import fr.moodcraft.bridge.listener.FreezeListener;
 import fr.moodcraft.bridge.listener.LootBalanceListener;
+import fr.moodcraft.bridge.listener.LootGenerateProtectionListener;
+import fr.moodcraft.bridge.listener.VaultLootBlockListener;
 
 import fr.moodcraft.bridge.bank.*;
 
@@ -32,19 +34,11 @@ import java.util.Map;
 
 public class Main extends JavaPlugin {
 
-    //
-    // 🌍 INSTANCE
-    //
-
     private static Main instance;
 
     public static Main getInstance() {
         return instance;
     }
-
-    //
-    // 🚀 ENABLE
-    //
 
     @Override
     public void onEnable() {
@@ -53,30 +47,13 @@ public class Main extends JavaPlugin {
 
         saveDefaultConfig();
 
-        // =========================
-        // 📦 INIT DATA
-        // =========================
-
         BankStorage.init();
-
         MarketStorage.init();
-
         ReputationManager.init();
-
         IbanManager.init();
-
         TransactionManager.init();
-
         ReputationHistoryManager.init();
-
         GUIManager.init(this);
-
-        // 📜 CONTRATS TEMPORAIREMENT DÉSACTIVÉS
-        // ContractManager.init();
-
-        // =========================
-        // 📊 CONFIG MARCHÉ
-        // =========================
 
         loadBase();
 
@@ -100,10 +77,6 @@ public class Main extends JavaPlugin {
                 MarketState.weight
         );
 
-        // =========================
-        // 🎧 LISTENERS
-        // =========================
-
         registerEvents(
 
                 new ChatInputListener(),
@@ -119,16 +92,13 @@ public class Main extends JavaPlugin {
                 new GlobalGUIListener(),
 
                 new FreezeListener(),
-    
+
                 new LootGenerateProtectionListener(),
 
-                // 🏰 Protection économie loot
-                new LootBalanceListener()
-        );
+                new LootBalanceListener(),
 
-        // =========================
-        // 🧠 GUI HANDLERS
-        // =========================
+                new VaultLootBlockListener()
+        );
 
         GUIManager.register(
                 "main_menu",
@@ -195,28 +165,6 @@ public class Main extends JavaPlugin {
                 new TransactionHistoryHandler()
         );
 
-        // 📜 CONTRATS TEMPORAIREMENT DÉSACTIVÉS
-        /*
-        GUIManager.register(
-                "contracts",
-                new ContractHandler()
-        );
-
-        GUIManager.register(
-                "public_contracts",
-                new PublicContractsHandler()
-        );
-
-        GUIManager.register(
-                "create_contract",
-                new CreateContractHandler()
-        );
-        */
-
-        // =========================
-        // 📜 COMMANDES
-        // =========================
-
         registerCommand(
                 "menu",
                 new MenuCommand()
@@ -226,10 +174,6 @@ public class Main extends JavaPlugin {
                 "freeze",
                 new FreezeCommand()
         );
-
-        //
-        // 🏦 BANQUE
-        //
 
         registerCommand(
                 "banque",
@@ -256,10 +200,6 @@ public class Main extends JavaPlugin {
                 new BanqueCommand()
         );
 
-        //
-        // 📊 MARCHÉ
-        //
-
         registerCommand(
                 "prix",
                 new PrixCommand()
@@ -274,10 +214,6 @@ public class Main extends JavaPlugin {
                 "trend",
                 new GetTrendCommand()
         );
-
-        //
-        // ⚙️ ADMIN ECO
-        //
 
         registerCommand(
                 "ecoreload",
@@ -294,18 +230,10 @@ public class Main extends JavaPlugin {
                 new EcoTestCommand()
         );
 
-        //
-        // 🏛️ SUBVENTIONS
-        //
-
         registerCommand(
                 "subvention",
                 new SubventionCommand()
         );
-
-        //
-        // 🧠 RÉPUTATION
-        //
 
         registerCommand(
                 "reputation",
@@ -322,33 +250,18 @@ public class Main extends JavaPlugin {
                 new ReputationCommand()
         );
 
-        // =========================
-        // 🔁 TASKS
-        // =========================
-
         Bukkit.getScheduler().runTaskLater(
-
                 this,
-
                 ShopIndex::rebuild,
-
                 40L
         );
 
         Bukkit.getScheduler().runTaskTimer(
-
                 this,
-
                 MarketEngine::tick,
-
                 20L,
-
                 20L * 45
         );
-
-        // =========================
-        // 🚀 LOG
-        // =========================
 
         getLogger().info(
                 "================================="
@@ -379,6 +292,10 @@ public class Main extends JavaPlugin {
         );
 
         getLogger().info(
+                "🏰 Vault Loot Block: OK"
+        );
+
+        getLogger().info(
                 "📜 Contrats: OFF"
         );
 
@@ -391,24 +308,13 @@ public class Main extends JavaPlugin {
         );
     }
 
-    //
-    // 🔻 DISABLE
-    //
-
     @Override
     public void onDisable() {
 
         BankStorage.save();
 
         MarketStorage.save();
-
-        // 📜 CONTRATS TEMPORAIREMENT DÉSACTIVÉS
-        // ContractManager.save();
     }
-
-    // =========================
-    // 🎧 EVENTS
-    // =========================
 
     private void registerEvents(
             Listener... listeners
@@ -424,14 +330,8 @@ public class Main extends JavaPlugin {
         }
     }
 
-    // =========================
-    // 📜 COMMANDES
-    // =========================
-
     private void registerCommand(
-
             String name,
-
             org.bukkit.command.CommandExecutor executor
     ) {
 
@@ -442,10 +342,6 @@ public class Main extends JavaPlugin {
         }
     }
 
-    // =========================
-    // 📊 BASE
-    // =========================
-
     private void loadBase() {
 
         if (getConfig()
@@ -455,13 +351,11 @@ public class Main extends JavaPlugin {
         }
 
         for (String key :
-
                 getConfig()
                         .getConfigurationSection("base")
                         .getKeys(false)) {
 
             double value =
-
                     getConfig().getDouble(
                             "base." + key
                     );
@@ -491,14 +385,8 @@ public class Main extends JavaPlugin {
         }
     }
 
-    // =========================
-    // 📊 LOAD SECTION
-    // =========================
-
     private void loadSection(
-
             String path,
-
             Map<String, Double> map
     ) {
 
@@ -509,15 +397,12 @@ public class Main extends JavaPlugin {
         }
 
         for (String key :
-
                 getConfig()
                         .getConfigurationSection(path)
                         .getKeys(false)) {
 
             map.put(
-
                     key,
-
                     getConfig().getDouble(
                             path + "." + key
                     )
