@@ -1,4 +1,3 @@
-
 package fr.moodcraft.bridge.gui;
 
 import com.palmergames.bukkit.towny.TownyAPI;
@@ -115,10 +114,6 @@ public class MainMenuGUI {
                 " "
         );
 
-        //
-        // 🎌 PROFIL / REGISTRE TERRITORIAL
-        //
-
         ItemStack flag =
                 null;
 
@@ -178,7 +173,6 @@ public class MainMenuGUI {
         flagLore.add("§8━━━━━━━━━━━━━━━━");
         flagLore.add("§7Profil territorial MoodCraft");
         flagLore.add("");
-
         flagLore.add("§7Ville: §e" + townName);
         flagLore.add("§7Nation: §6" + nationName);
         flagLore.add("");
@@ -229,9 +223,7 @@ public class MainMenuGUI {
                     ItemFlag.HIDE_UNBREAKABLE,
                     ItemFlag.HIDE_DESTROYS,
                     ItemFlag.HIDE_PLACED_ON,
-                    ItemFlag.HIDE_ITEM_SPECIFICS,
                     ItemFlag.HIDE_ADDITIONAL_TOOLTIP
-);
             );
 
             flag.setItemMeta(
