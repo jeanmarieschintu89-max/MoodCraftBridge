@@ -1,3 +1,4 @@
+
 package fr.moodcraft.bridge.gui;
 
 import fr.moodcraft.bridge.bank.BankStorage;
@@ -16,7 +17,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,89 +115,122 @@ public class ProfileGUI {
         }
 
         //
-        // 👤 LORE PROFIL
+        // 🎌 IDENTITÉ TERRITORIALE
         //
 
-        List<String> lore =
+        ItemStack flag =
+                new ItemStack(
+                        Material.WHITE_BANNER
+                );
+
+        List<String> territoryLore =
                 new ArrayList<>();
 
-        lore.add("§8━━━━━━━━━━━━━━━━");
-        lore.add("§7Profil économique MoodCraft");
-        lore.add("");
+        territoryLore.add("§8━━━━━━━━━━━━━━━━");
+        territoryLore.add("§7Profil économique MoodCraft");
+        territoryLore.add("");
 
-        lore.add(
+        territoryLore.add(
                 "§7Banque: §6"
                         + SafeGUI.money(bank)
                         + "€"
         );
 
-        lore.add("");
+        territoryLore.add("");
 
-        lore.add(
+        territoryLore.add(
                 "§7Réputation: §a"
                         + rep
         );
 
-        lore.add(
+        territoryLore.add(
                 "§7Rang: "
                         + rank
         );
 
-        lore.add("");
+        territoryLore.add("");
 
-        lore.add(
+        territoryLore.add(
                 "§d✦ Métiers"
         );
 
-        lore.add("§8────────────");
+        territoryLore.add("§8────────────");
 
-        lore.addAll(jobsLore);
+        territoryLore.addAll(jobsLore);
 
-        lore.add("");
+        territoryLore.add("");
 
-        lore.add(
+        var resident =
+                com.palmergames.bukkit.towny.TownyAPI
+                        .getInstance()
+                        .getResident(targetUUID);
+
+        if (resident != null
+                && resident.hasTown()) {
+
+            var town =
+                    resident.getTownOrNull();
+
+            if (town != null) {
+
+                territoryLore.add(
+                        "§7Ville: §e"
+                                + town.getName()
+                );
+            }
+        }
+
+        if (resident != null
+                && resident.hasNation()) {
+
+            var nation =
+                    resident.getNationOrNull();
+
+            if (nation != null) {
+
+                territoryLore.add(
+                        "§7Nation: §6"
+                                + nation.getName()
+                );
+            }
+        }
+
+        territoryLore.add("");
+
+        territoryLore.add(
                 "§8• Activité économique"
         );
 
-        lore.add(
+        territoryLore.add(
                 "§8• Profil commercial"
         );
 
-        lore.add(
+        territoryLore.add(
                 "§8• Statistiques serveur"
         );
 
-        //
-        // 🧑 TÊTE
-        //
+        ItemMeta flagMeta =
+                flag.getItemMeta();
 
-        ItemStack head =
-                new ItemStack(
-                        Material.PLAYER_HEAD
-                );
+        if (flagMeta != null) {
 
-        if (head.getItemMeta()
-                instanceof SkullMeta meta) {
-
-            meta.setOwningPlayer(
-                    Bukkit.getOfflinePlayer(
-                            targetUUID
-                    )
-            );
-
-            meta.setDisplayName(
+            flagMeta.setDisplayName(
                     "§6✦ §f" + name
             );
 
-            meta.setLore(lore);
+            flagMeta.setLore(
+                    territoryLore
+            );
 
-            head.setItemMeta(meta);
+            flag.setItemMeta(
+                    flagMeta
+            );
         }
 
         SafeGUI.safeSet(
                 inv,
                 13,
-                SafeGUI.glow(head)
+                SafeGUI.glow(flag)
         );
 
         //
