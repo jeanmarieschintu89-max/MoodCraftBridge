@@ -1,3 +1,4 @@
+
 package fr.moodcraft.bridge.gui;
 
 import com.palmergames.bukkit.towny.TownyAPI;
@@ -22,6 +23,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import org.bukkit.inventory.meta.ItemMeta;
@@ -219,6 +221,12 @@ public class MainMenuGUI {
 
             flagMeta.setLore(
                     flagLore
+            );
+
+            flagMeta.addItemFlags(
+                    ItemFlag.HIDE_ADDITIONAL_TOOLTIP,
+                    ItemFlag.HIDE_ATTRIBUTES,
+                    ItemFlag.HIDE_ENCHANTS
             );
 
             flag.setItemMeta(
