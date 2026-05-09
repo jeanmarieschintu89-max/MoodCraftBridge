@@ -3,12 +3,22 @@ package fr.moodcraft.bridge.listener;
 import fr.moodcraft.bridge.Main;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
+
+import org.bukkit.block.Block;
+import org.bukkit.block.Container;
+
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -21,16 +31,19 @@ public class LootBalanceListener
             InventoryOpenEvent event
     ) {
 
+        String title =
+                event.getView()
+                        .getTitle();
+
+        if (isPluginMenu(title)) {
+            return;
+        }
+
         Inventory inv =
                 event.getInventory();
 
-        String type =
-                inv.getType()
-                        .name()
-                        .toLowerCase();
-
-        if (!type.contains("chest")
-                && !type.contains("barrel")) {
+        if (!(inv.getHolder()
+                instanceof Container)) {
             return;
         }
 
@@ -40,6 +53,96 @@ public class LootBalanceListener
                         () -> cleanInventory(inv),
                         2L
                 );
+    }
+
+    @EventHandler
+    public void onVaultUse(
+            PlayerInteractEvent event
+    ) {
+
+        if (event.getAction()
+                != Action.RIGHT_CLICK_BLOCK) {
+            return;
+        }
+
+        Block block =
+                event.getClickedBlock();
+
+        if (block == null) {
+            return;
+        }
+
+        if (block.getType()
+                != Material.VAULT) {
+            return;
+        }
+
+        scheduleVaultClean(
+                block.getLocation()
+                        .add(0.5, 0.5, 0.5)
+        );
+    }
+
+    private void scheduleVaultClean(
+            Location center
+    ) {
+
+        long[] delays = {
+                1L,
+                3L,
+                6L,
+                10L,
+                20L
+        };
+
+        for (long delay : delays) {
+
+            Bukkit.getScheduler()
+                    .runTaskLater(
+                            Main.getInstance(),
+                            () -> cleanDroppedItems(center),
+                            delay
+                    );
+        }
+    }
+
+    private void cleanDroppedItems(
+            Location center
+    ) {
+
+        World world =
+                center.getWorld();
+
+        if (world == null) {
+            return;
+        }
+
+        for (Entity entity :
+                world.getNearbyEntities(
+                        center,
+                        5,
+                        5,
+                        5
+                )) {
+
+            if (!(entity instanceof Item item)) {
+                continue;
+            }
+
+            ItemStack stack =
+                    item.getItemStack();
+
+            if (stack == null) {
+                continue;
+            }
+
+            if (isBlocked(
+                    stack.getType()
+            )) {
+
+                item.remove();
+            }
+        }
     }
 
     private void cleanInventory(
@@ -57,11 +160,28 @@ public class LootBalanceListener
                 continue;
             }
 
-            if (isBlocked(item.getType())) {
+            if (isBlocked(
+                    item.getType()
+            )) {
 
                 inv.setItem(i, null);
             }
         }
+    }
+
+    private boolean isPluginMenu(
+            String title
+    ) {
+
+        return title.contains("Menu")
+                || title.contains("Banque")
+                || title.contains("Bourse")
+                || title.contains("Minerais")
+                || title.contains("Virement")
+                || title.contains("Contrat")
+                || title.contains("Historique")
+                || title.contains("Profil")
+                || title.contains("Téléportation");
     }
 
     private boolean isBlocked(
