@@ -13,8 +13,6 @@ import fr.moodcraft.bridge.manager.GUIManager;
 import fr.moodcraft.bridge.util.SafeGUI;
 import fr.moodcraft.bridge.util.VaultHook;
 
-import fr.moodcraft.flag.api.MoodTownFlagAPI;
-
 import org.bukkit.Bukkit;
 
 import org.bukkit.Material;
@@ -42,10 +40,6 @@ public class MainMenuGUI {
                 "§8✦ §6MoodCraft"
         );
 
-        //
-        // 💰 ARGENT
-        //
-
         double bank =
                 BankStorage.get(
                         p.getUniqueId().toString()
@@ -62,10 +56,6 @@ public class MainMenuGUI {
 
         double total =
                 bank + cash;
-
-        //
-        // 🏛 TOWNY
-        //
 
         String townName =
                 "Aucune ville";
@@ -111,10 +101,6 @@ public class MainMenuGUI {
             }
         }
 
-        //
-        // 🌌 FOND
-        //
-
         SafeGUI.fill(
 
                 inv,
@@ -125,29 +111,15 @@ public class MainMenuGUI {
         );
 
         //
-        // 🎌 REGISTRE TERRITORIAL
+        // 🎌 PROFIL / REGISTRE TERRITORIAL
         //
 
         ItemStack flag =
-                null;
-
-        if (hasTown) {
-
-            flag =
-                    MoodTownFlagAPI.getTownFlagItem(
-                            townName
-                    );
-        }
-
-        if (flag == null) {
-
-            flag =
-                    new ItemStack(
-                            hasTown
-                                    ? Material.WHITE_BANNER
-                                    : Material.BARRIER
-                    );
-        }
+                new ItemStack(
+                        hasTown
+                                ? Material.WHITE_BANNER
+                                : Material.BARRIER
+                );
 
         List<String> flagLore =
                 new ArrayList<>();
@@ -156,29 +128,30 @@ public class MainMenuGUI {
 
         if (hasTown) {
 
-            flagLore.add("§7Identité territoriale MoodCraft");
+            flagLore.add("§7Profil territorial MoodCraft");
             flagLore.add("");
             flagLore.add("§7Ville: §e" + townName);
             flagLore.add("§7Nation: §6" + nationName);
             flagLore.add("");
-            flagLore.add("§8• Drapeau municipal");
+            flagLore.add("§8• Profil");
+            flagLore.add("§8• Identité territoriale");
             flagLore.add("§8• Registre héraldique");
-            flagLore.add("§8• Identité officielle");
             flagLore.add("");
-            flagLore.add("§e▶ Consulter");
+            flagLore.add("§e▶ Consulter le profil");
 
         } else {
 
-            flagLore.add("§7Aucune identité territoriale.");
+            flagLore.add("§7Profil économique MoodCraft");
             flagLore.add("");
             flagLore.add("§cAucune ville enregistrée.");
             flagLore.add("§7Rejoignez une ville pour");
-            flagLore.add("§7obtenir un drapeau officiel.");
+            flagLore.add("§7obtenir une identité officielle.");
             flagLore.add("");
-            flagLore.add("§8• Ville requise");
-            flagLore.add("§8• Nation optionnelle");
+            flagLore.add("§7Liquide: §a" + SafeGUI.money(cash) + "€");
+            flagLore.add("§7Banque: §6" + SafeGUI.money(bank) + "€");
+            flagLore.add("§7Patrimoine: §e" + SafeGUI.money(total) + "€");
             flagLore.add("");
-            flagLore.add("§c▶ Indisponible");
+            flagLore.add("§e▶ Consulter le profil");
         }
 
         ItemMeta flagMeta =
@@ -189,7 +162,7 @@ public class MainMenuGUI {
             flagMeta.setDisplayName(
                     hasTown
                             ? "§6✦ Registre Territorial"
-                            : "§c✦ Aucun Territoire"
+                            : "§c✦ Profil Sans Ville"
             );
 
             flagMeta.setLore(
@@ -205,10 +178,6 @@ public class MainMenuGUI {
                 4,
                 flag
         );
-
-        //
-        // 🏦 BANQUE
-        //
 
         SafeGUI.safeSet(inv, 11,
 
@@ -249,10 +218,6 @@ public class MainMenuGUI {
                 )
         );
 
-        //
-        // 📈 BOURSE
-        //
-
         SafeGUI.safeSet(inv, 13,
 
                 SafeGUI.item(
@@ -280,10 +245,6 @@ public class MainMenuGUI {
                         "§e▶ Ouvrir"
                 )
         );
-
-        //
-        // 🏛 PROJETS URBAINS
-        //
 
         SafeGUI.safeSet(inv, 16,
 
@@ -318,10 +279,6 @@ public class MainMenuGUI {
                 )
         );
 
-        //
-        // 🏛️ VILLE
-        //
-
         SafeGUI.safeSet(inv, 20,
 
                 SafeGUI.item(
@@ -349,10 +306,6 @@ public class MainMenuGUI {
                         "§e▶ Gérer"
                 )
         );
-
-        //
-        // ⛏️ MÉTIERS
-        //
 
         SafeGUI.safeSet(inv, 22,
 
@@ -382,10 +335,6 @@ public class MainMenuGUI {
                 )
         );
 
-        //
-        // 🌍 TÉLÉPORTATION
-        //
-
         SafeGUI.safeSet(inv, 24,
 
                 SafeGUI.item(
@@ -414,10 +363,6 @@ public class MainMenuGUI {
                 )
         );
 
-        //
-        // ❌ FERMER
-        //
-
         SafeGUI.safeSet(inv, 31,
 
                 SafeGUI.item(
@@ -444,3 +389,5 @@ public class MainMenuGUI {
 
                 inv
         );
+    }
+}
