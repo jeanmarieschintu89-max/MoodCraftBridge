@@ -13,6 +13,8 @@ import fr.moodcraft.bridge.manager.GUIManager;
 import fr.moodcraft.bridge.util.SafeGUI;
 import fr.moodcraft.bridge.util.VaultHook;
 
+import fr.moodcraft.flag.api.MoodTownFlagAPI;
+
 import org.bukkit.Bukkit;
 
 import org.bukkit.Material;
@@ -115,11 +117,25 @@ public class MainMenuGUI {
         //
 
         ItemStack flag =
-                new ItemStack(
-                        hasTown
-                                ? Material.WHITE_BANNER
-                                : Material.BARRIER
-                );
+                null;
+
+        if (hasTown) {
+
+            flag =
+                    MoodTownFlagAPI.getTownFlagItem(
+                            townName
+                    );
+        }
+
+        if (flag == null) {
+
+            flag =
+                    new ItemStack(
+                            hasTown
+                                    ? Material.WHITE_BANNER
+                                    : Material.BARRIER
+                    );
+        }
 
         List<String> flagLore =
                 new ArrayList<>();
