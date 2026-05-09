@@ -236,9 +236,14 @@ public class ProfileGUI {
             );
 
             flagMeta.addItemFlags(
-                    ItemFlag.HIDE_ADDITIONAL_TOOLTIP,
-                    ItemFlag.HIDE_ATTRIBUTES,
-                    ItemFlag.HIDE_ENCHANTS
+        ItemFlag.HIDE_ATTRIBUTES,
+        ItemFlag.HIDE_ENCHANTS,
+        ItemFlag.HIDE_UNBREAKABLE,
+        ItemFlag.HIDE_DESTROYS,
+        ItemFlag.HIDE_PLACED_ON,
+        ItemFlag.HIDE_ITEM_SPECIFICS,
+        ItemFlag.HIDE_ADDITIONAL_TOOLTIP
+);
             );
 
             flag.setItemMeta(
