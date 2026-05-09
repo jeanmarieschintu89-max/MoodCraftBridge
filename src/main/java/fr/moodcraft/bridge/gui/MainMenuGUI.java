@@ -16,7 +16,6 @@ import fr.moodcraft.bridge.util.VaultHook;
 import fr.moodcraft.flag.api.MoodTownFlagAPI;
 
 import org.bukkit.Bukkit;
-
 import org.bukkit.Material;
 
 import org.bukkit.entity.Player;
@@ -223,6 +222,7 @@ public class MainMenuGUI {
                     ItemFlag.HIDE_UNBREAKABLE,
                     ItemFlag.HIDE_DESTROYS,
                     ItemFlag.HIDE_PLACED_ON,
+                    ItemFlag.HIDE_ITEM_SPECIFICS,
                     ItemFlag.HIDE_ADDITIONAL_TOOLTIP
             );
 
