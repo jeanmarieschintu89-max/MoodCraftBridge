@@ -1,11 +1,19 @@
 package fr.moodcraft.bridge.gui;
 
+import com.palmergames.bukkit.towny.TownyAPI;
+
+import com.palmergames.bukkit.towny.object.Nation;
+import com.palmergames.bukkit.towny.object.Resident;
+import com.palmergames.bukkit.towny.object.Town;
+
 import fr.moodcraft.bridge.bank.BankStorage;
 
 import fr.moodcraft.bridge.manager.GUIManager;
 
 import fr.moodcraft.bridge.util.SafeGUI;
 import fr.moodcraft.bridge.util.VaultHook;
+
+import fr.moodcraft.flag.api.MoodTownFlagAPI;
 
 import org.bukkit.Bukkit;
 
@@ -16,7 +24,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +64,54 @@ public class MainMenuGUI {
                 bank + cash;
 
         //
+        // 🏛 TOWNY
+        //
+
+        String townName =
+                "Aucune ville";
+
+        String nationName =
+                "Aucune nation";
+
+        boolean hasTown =
+                false;
+
+        Resident resident =
+                TownyAPI.getInstance()
+                        .getResident(
+                                p.getUniqueId()
+                        );
+
+        if (resident != null
+                && resident.hasTown()) {
+
+            Town town =
+                    resident.getTownOrNull();
+
+            if (town != null) {
+
+                hasTown =
+                        true;
+
+                townName =
+                        town.getName();
+            }
+        }
+
+        if (resident != null
+                && resident.hasNation()) {
+
+            Nation nation =
+                    resident.getNationOrNull();
+
+            if (nation != null) {
+
+                nationName =
+                        nation.getName();
+            }
+        }
+
+        //
         // 🌌 FOND
         //
 
@@ -69,52 +125,86 @@ public class MainMenuGUI {
         );
 
         //
-        // 👤 PROFIL
+        // 🎌 REGISTRE TERRITORIAL
         //
 
-        List<String> lore =
-                new ArrayList<>();
+        ItemStack flag =
+                null;
 
-        lore.add("§8━━━━━━━━━━━━━━━━");
-        lore.add("§7Profil économique MoodCraft");
-        lore.add("");
-        lore.add("§7Liquide: §a" + SafeGUI.money(cash) + "€");
-        lore.add("§7Banque: §6" + SafeGUI.money(bank) + "€");
-        lore.add("§7Patrimoine: §e" + SafeGUI.money(total) + "€");
-        lore.add("");
-        lore.add("§8• Statistiques");
-        lore.add("§8• Réputation");
-        lore.add("§8• Progression");
-        lore.add("");
-        lore.add("§e▶ Consulter");
+        if (hasTown) {
 
-        ItemStack head =
-                new ItemStack(Material.PLAYER_HEAD);
-
-        if (head.getItemMeta() instanceof SkullMeta meta) {
-
-            meta.setOwningPlayer(p);
-
-            if (p.getName() != null) {
-
-                meta.setOwnerProfile(
-                        Bukkit.createPlayerProfile(
-                                p.getUniqueId(),
-                                p.getName()
-                        )
-                );
-            }
-
-            meta.setDisplayName(
-                    "§6✦ §f" + p.getName()
-            );
-
-            meta.setLore(lore);
-
-            head.setItemMeta(meta);
+            flag =
+                    MoodTownFlagAPI.getTownFlagItem(
+                            townName
+                    );
         }
 
-        inv.setItem(4, head);
+        if (flag == null) {
+
+            flag =
+                    new ItemStack(
+                            hasTown
+                                    ? Material.WHITE_BANNER
+                                    : Material.BARRIER
+                    );
+        }
+
+        List<String> flagLore =
+                new ArrayList<>();
+
+        flagLore.add("§8━━━━━━━━━━━━━━━━");
+
+        if (hasTown) {
+
+            flagLore.add("§7Identité territoriale MoodCraft");
+            flagLore.add("");
+            flagLore.add("§7Ville: §e" + townName);
+            flagLore.add("§7Nation: §6" + nationName);
+            flagLore.add("");
+            flagLore.add("§8• Drapeau municipal");
+            flagLore.add("§8• Registre héraldique");
+            flagLore.add("§8• Identité officielle");
+            flagLore.add("");
+            flagLore.add("§e▶ Consulter");
+
+        } else {
+
+            flagLore.add("§7Aucune identité territoriale.");
+            flagLore.add("");
+            flagLore.add("§cAucune ville enregistrée.");
+            flagLore.add("§7Rejoignez une ville pour");
+            flagLore.add("§7obtenir un drapeau officiel.");
+            flagLore.add("");
+            flagLore.add("§8• Ville requise");
+            flagLore.add("§8• Nation optionnelle");
+            flagLore.add("");
+            flagLore.add("§c▶ Indisponible");
+        }
+
+        ItemMeta flagMeta =
+                flag.getItemMeta();
+
+        if (flagMeta != null) {
+
+            flagMeta.setDisplayName(
+                    hasTown
+                            ? "§6✦ Registre Territorial"
+                            : "§c✦ Aucun Territoire"
+            );
+
+            flagMeta.setLore(
+                    flagLore
+            );
+
+            flag.setItemMeta(
+                    flagMeta
+            );
+        }
+
+        inv.setItem(
+                4,
+                flag
+        );
 
         //
         // 🏦 BANQUE
@@ -354,5 +444,3 @@ public class MainMenuGUI {
 
                 inv
         );
-    }
-}
