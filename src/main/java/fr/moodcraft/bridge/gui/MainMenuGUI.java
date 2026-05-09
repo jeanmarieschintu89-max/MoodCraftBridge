@@ -113,7 +113,7 @@ public class MainMenuGUI {
                 " "
         );
 
-        ItemStack flag =
+        ItemStack shield =
                 null;
 
         String source =
@@ -121,102 +121,102 @@ public class MainMenuGUI {
 
         if (hasTown) {
 
-            flag =
-                    MoodTownFlagAPI.getTownFlagItem(
+            shield =
+                    MoodTownFlagAPI.getTownShieldItem(
                             townName
                     );
 
-            if (flag != null) {
+            if (shield != null) {
 
                 source =
                         "town";
             }
         }
 
-        if (flag == null
+        if (shield == null
                 && hasNation) {
 
-            flag =
-                    MoodTownFlagAPI.getNationFlagItem(
+            shield =
+                    MoodTownFlagAPI.getNationShieldItem(
                             nationName
                     );
 
-            if (flag != null) {
+            if (shield != null) {
 
                 source =
                         "nation";
             }
         }
 
-        if (flag == null) {
+        if (shield == null) {
 
-            flag =
+            shield =
                     new ItemStack(
                             Material.PLAYER_HEAD
                     );
 
-            if (flag.getItemMeta()
+            if (shield.getItemMeta()
                     instanceof SkullMeta skullMeta) {
 
                 skullMeta.setOwningPlayer(p);
 
-                flag.setItemMeta(
+                shield.setItemMeta(
                         skullMeta
                 );
             }
         }
 
-        List<String> flagLore =
+        List<String> shieldLore =
                 new ArrayList<>();
 
-        flagLore.add("§8━━━━━━━━━━━━━━━━");
-        flagLore.add("§7Profil territorial MoodCraft");
-        flagLore.add("");
-        flagLore.add("§7Ville: §e" + townName);
-        flagLore.add("§7Nation: §6" + nationName);
-        flagLore.add("");
+        shieldLore.add("§8━━━━━━━━━━━━━━━━");
+        shieldLore.add("§7Profil territorial MoodCraft");
+        shieldLore.add("");
+        shieldLore.add("§7Ville: §e" + townName);
+        shieldLore.add("§7Nation: §6" + nationName);
+        shieldLore.add("");
 
         if (source.equalsIgnoreCase("town")) {
 
-            flagLore.add("§a✔ Drapeau municipal affiché");
+            shieldLore.add("§a✔ Blason municipal affiché");
 
         } else if (source.equalsIgnoreCase("nation")) {
 
-            flagLore.add("§a✔ Drapeau national affiché");
+            shieldLore.add("§a✔ Blason national affiché");
 
         } else {
 
-            flagLore.add("§7Aucun drapeau officiel.");
-            flagLore.add("§7Affichage du profil joueur.");
+            shieldLore.add("§7Aucun blason officiel.");
+            shieldLore.add("§7Affichage du profil joueur.");
         }
 
-        flagLore.add("");
-        flagLore.add("§7Liquide: §a" + SafeGUI.money(cash) + "€");
-        flagLore.add("§7Banque: §6" + SafeGUI.money(bank) + "€");
-        flagLore.add("§7Patrimoine: §e" + SafeGUI.money(total) + "€");
-        flagLore.add("");
-        flagLore.add("§8• Profil");
-        flagLore.add("§8• Identité territoriale");
-        flagLore.add("§8• Registre héraldique");
-        flagLore.add("");
-        flagLore.add("§e▶ Consulter le profil");
+        shieldLore.add("");
+        shieldLore.add("§7Liquide: §a" + SafeGUI.money(cash) + "€");
+        shieldLore.add("§7Banque: §6" + SafeGUI.money(bank) + "€");
+        shieldLore.add("§7Patrimoine: §e" + SafeGUI.money(total) + "€");
+        shieldLore.add("");
+        shieldLore.add("§8• Profil");
+        shieldLore.add("§8• Identité territoriale");
+        shieldLore.add("§8• Registre héraldique");
+        shieldLore.add("");
+        shieldLore.add("§e▶ Consulter le profil");
 
-        ItemMeta flagMeta =
-                flag.getItemMeta();
+        ItemMeta shieldMeta =
+                shield.getItemMeta();
 
-        if (flagMeta != null) {
+        if (shieldMeta != null) {
 
-            flagMeta.setDisplayName(
+            shieldMeta.setDisplayName(
                     source.equalsIgnoreCase("player")
                             ? "§6✦ Profil Joueur"
                             : "§6✦ Registre Territorial"
             );
 
-            flagMeta.setLore(
-                    flagLore
+            shieldMeta.setLore(
+                    shieldLore
             );
 
-            flagMeta.addItemFlags(
+            shieldMeta.addItemFlags(
                     ItemFlag.HIDE_ATTRIBUTES,
                     ItemFlag.HIDE_ENCHANTS,
                     ItemFlag.HIDE_UNBREAKABLE,
@@ -226,14 +226,14 @@ public class MainMenuGUI {
                     ItemFlag.HIDE_ADDITIONAL_TOOLTIP
             );
 
-            flag.setItemMeta(
-                    flagMeta
+            shield.setItemMeta(
+                    shieldMeta
             );
         }
 
         inv.setItem(
                 4,
-                flag
+                shield
         );
 
         SafeGUI.safeSet(inv, 11,
