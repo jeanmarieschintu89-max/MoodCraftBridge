@@ -79,25 +79,25 @@ public class Main extends JavaPlugin {
 
         registerEvents(
 
-                new ChatInputListener(),
+        new ChatInputListener(),
 
-                new MineListener(),
+        new MineListener(),
 
-                new PayListener(),
+        new PayListener(),
 
-                new InventoryGuardListener(),
+        new InventoryGuardListener(),
 
-                new InventoryCloseListener(),
+        new InventoryCloseListener(),
 
-                new GlobalGUIListener(),
+        new GlobalGUIListener(),
 
-                new FreezeListener(),
+        new FreezeListener(),
 
-                new LootGenerateProtectionListener(),
+        new LootGenerateProtectionListener(),
 
-                new LootBalanceListener(),
-
-        );
+        // 🏰 Protection économie loot
+        new LootBalanceListener()
+);
 
         GUIManager.register(
                 "main_menu",
