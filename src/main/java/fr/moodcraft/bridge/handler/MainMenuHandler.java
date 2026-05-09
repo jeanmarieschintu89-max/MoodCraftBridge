@@ -4,10 +4,11 @@ import fr.moodcraft.bridge.Main;
 
 import fr.moodcraft.bridge.gui.BankGUI;
 import fr.moodcraft.bridge.gui.PriceGUI;
-import fr.moodcraft.bridge.gui.ProfileGUI;
 import fr.moodcraft.bridge.gui.TeleportGUI;
 
 import fr.moodcraft.bridge.util.ActionLock;
+
+import fr.moodcraft.flag.api.MoodTownFlagAPI;
 
 import org.bukkit.Bukkit;
 
@@ -33,7 +34,7 @@ public class MainMenuHandler implements GUIHandler {
         switch (slot) {
 
             //
-            // 👤 PROFIL
+            // 🎌 REGISTRE TERRITORIAL
             //
 
             case 4 -> {
@@ -45,13 +46,8 @@ public class MainMenuHandler implements GUIHandler {
                 );
 
                 openNext(
-
                         p,
-
-                        () -> ProfileGUI.open(
-                                p,
-                                p.getUniqueId()
-                        )
+                        () -> MoodTownFlagAPI.openMenu(p)
                 );
             }
 
