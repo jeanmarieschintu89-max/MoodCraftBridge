@@ -6,7 +6,6 @@ import fr.moodcraft.bridge.command.SubventionCommand;
 import fr.moodcraft.bridge.listener.FreezeListener;
 import fr.moodcraft.bridge.listener.LootBalanceListener;
 import fr.moodcraft.bridge.listener.LootGenerateProtectionListener;
-import fr.moodcraft.bridge.listener.VaultLootBlockListener;
 
 import fr.moodcraft.bridge.bank.*;
 
@@ -79,25 +78,24 @@ public class Main extends JavaPlugin {
 
         registerEvents(
 
-        new ChatInputListener(),
+                new ChatInputListener(),
 
-        new MineListener(),
+                new MineListener(),
 
-        new PayListener(),
+                new PayListener(),
 
-        new InventoryGuardListener(),
+                new InventoryGuardListener(),
 
-        new InventoryCloseListener(),
+                new InventoryCloseListener(),
 
-        new GlobalGUIListener(),
+                new GlobalGUIListener(),
 
-        new FreezeListener(),
+                new FreezeListener(),
 
-        new LootGenerateProtectionListener(),
+                new LootGenerateProtectionListener(),
 
-        // 🏰 Protection économie loot
-        new LootBalanceListener()
-);
+                new LootBalanceListener()
+        );
 
         GUIManager.register(
                 "main_menu",
@@ -288,10 +286,6 @@ public class Main extends JavaPlugin {
 
         getLogger().info(
                 "🏰 Loot Balance: OK"
-        );
-
-        getLogger().info(
-                "🏰 Vault Loot Block: OK"
         );
 
         getLogger().info(
