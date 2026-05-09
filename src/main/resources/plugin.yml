@@ -16,6 +16,7 @@ softdepend:
   - SkinsRestorer
   - floodgate
   - Geyser-Spigot
+  - MoodTownFlag
 
 commands:
 
