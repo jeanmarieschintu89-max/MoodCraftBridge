@@ -131,7 +131,7 @@ public class ProfileGUI {
         if (hasTown) {
 
             flag =
-                    MoodTownFlagAPI.getTownFlagItem(
+                    MoodTownFlagAPI.getTownShieldItem(
                             townName
                     );
 
@@ -146,7 +146,7 @@ public class ProfileGUI {
                 && hasNation) {
 
             flag =
-                    MoodTownFlagAPI.getNationFlagItem(
+                    MoodTownFlagAPI.getNationShieldItem(
                             nationName
                     );
 
@@ -191,15 +191,15 @@ public class ProfileGUI {
 
         if (source.equalsIgnoreCase("town")) {
 
-            territoryLore.add("§a✔ Drapeau municipal affiché");
+            territoryLore.add("§a✔ Blason municipal affiché");
 
         } else if (source.equalsIgnoreCase("nation")) {
 
-            territoryLore.add("§a✔ Drapeau national affiché");
+            territoryLore.add("§a✔ Blason national affiché");
 
         } else {
 
-            territoryLore.add("§7Aucun drapeau officiel.");
+            territoryLore.add("§7Aucun blason officiel.");
             territoryLore.add("§7Affichage du profil joueur.");
         }
 
