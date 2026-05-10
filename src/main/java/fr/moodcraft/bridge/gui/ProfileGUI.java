@@ -29,13 +29,18 @@ public class ProfileGUI {
             UUID targetUUID
     ) {
 
-        Inventory inv = Bukkit.createInventory(
-                null,
-                36,
-                "§8✦ §6Profil MoodCraft"
-        );
+        Inventory inv =
+                Bukkit.createInventory(
+                        null,
+                        36,
+                        "§8✦ §6Profil"
+                );
 
-        SafeGUI.fill(inv, Material.BLACK_STAINED_GLASS_PANE, " ");
+        SafeGUI.fill(
+                inv,
+                Material.BLACK_STAINED_GLASS_PANE,
+                " "
+        );
 
         String name =
                 Bukkit.getOfflinePlayer(targetUUID)
@@ -122,7 +127,7 @@ public class ProfileGUI {
                             .getName();
         }
 
-        ItemStack flag =
+        ItemStack identity =
                 null;
 
         String source =
@@ -130,41 +135,41 @@ public class ProfileGUI {
 
         if (hasTown) {
 
-            flag =
+            identity =
                     MoodTownFlagAPI.getTownShieldItem(
                             townName
                     );
 
-            if (flag != null) {
+            if (identity != null) {
 
                 source =
                         "town";
             }
         }
 
-        if (flag == null
+        if (identity == null
                 && hasNation) {
 
-            flag =
+            identity =
                     MoodTownFlagAPI.getNationShieldItem(
                             nationName
                     );
 
-            if (flag != null) {
+            if (identity != null) {
 
                 source =
                         "nation";
             }
         }
 
-        if (flag == null) {
+        if (identity == null) {
 
-            flag =
+            identity =
                     new ItemStack(
                             Material.PLAYER_HEAD
                     );
 
-            if (flag.getItemMeta()
+            if (identity.getItemMeta()
                     instanceof SkullMeta skullMeta) {
 
                 skullMeta.setOwningPlayer(
@@ -173,142 +178,109 @@ public class ProfileGUI {
                         )
                 );
 
-                flag.setItemMeta(
+                identity.setItemMeta(
                         skullMeta
                 );
             }
         }
 
-        List<String> territoryLore =
+        List<String> identityLore =
                 new ArrayList<>();
 
-        territoryLore.add("§8━━━━━━━━━━━━━━━━");
-        territoryLore.add("§7Profil économique MoodCraft");
-        territoryLore.add("");
-        territoryLore.add("§7Ville: §e" + townName);
-        territoryLore.add("§7Nation: §6" + nationName);
-        territoryLore.add("");
+        identityLore.add("§8----- §6Identité §8-----");
+        identityLore.add("§7Joueur: §f" + name);
+        identityLore.add("§7Ville: §b" + townName);
+        identityLore.add("§7Nation: §6" + nationName);
+        identityLore.add("");
 
         if (source.equalsIgnoreCase("town")) {
 
-            territoryLore.add("§a✔ Blason municipal affiché");
+            identityLore.add("§a✔ Blason de ville");
 
         } else if (source.equalsIgnoreCase("nation")) {
 
-            territoryLore.add("§a✔ Blason national affiché");
+            identityLore.add("§a✔ Blason de nation");
 
         } else {
 
-            territoryLore.add("§7Aucun blason officiel.");
-            territoryLore.add("§7Affichage du profil joueur.");
+            identityLore.add("§7Aucun blason défini");
+            identityLore.add("§7Profil joueur affiché");
         }
 
-        territoryLore.add("");
-        territoryLore.add(
-                "§7Banque: §6"
-                        + SafeGUI.money(bank)
-                        + "€"
-        );
+        identityLore.add("");
+        identityLore.add("§7Banque: §6" + SafeGUI.money(bank) + "€");
+        identityLore.add("§7Réputation: §a" + rep);
+        identityLore.add("§7Rang: " + rank);
+        identityLore.add("");
+        identityLore.add("§d✦ Métiers");
 
-        territoryLore.add("");
-        territoryLore.add("§7Réputation: §a" + rep);
-        territoryLore.add("§7Rang: " + rank);
-        territoryLore.add("");
-        territoryLore.add("§d✦ Métiers");
-        territoryLore.add("§8────────────");
-        territoryLore.addAll(jobsLore);
-        territoryLore.add("");
-        territoryLore.add("§8• Activité économique");
-        territoryLore.add("§8• Profil commercial");
-        territoryLore.add("§8• Statistiques serveur");
+        for (String line : jobsLore) {
 
-        ItemMeta flagMeta =
-                flag.getItemMeta();
+            identityLore.add("§8• " + line);
+        }
 
-        if (flagMeta != null) {
+        ItemMeta identityMeta =
+                identity.getItemMeta();
 
-            flagMeta.setDisplayName(
-                    "§6✦ §f" + name
+        if (identityMeta != null) {
+
+            identityMeta.setDisplayName(
+                    "§6✦ " + name
             );
 
-            flagMeta.setLore(
-                    territoryLore
+            identityMeta.setLore(
+                    identityLore
             );
 
-            flagMeta.addItemFlags(
-                    ItemFlag.HIDE_ATTRIBUTES,
-                    ItemFlag.HIDE_ENCHANTS,
-                    ItemFlag.HIDE_UNBREAKABLE,
-                    ItemFlag.HIDE_DESTROYS,
-                    ItemFlag.HIDE_PLACED_ON,
-                    ItemFlag.HIDE_ITEM_SPECIFICS,
-                    ItemFlag.HIDE_ADDITIONAL_TOOLTIP
-            );
+            hide(identityMeta);
 
-            flag.setItemMeta(
-                    flagMeta
+            identity.setItemMeta(
+                    identityMeta
             );
         }
 
         SafeGUI.safeSet(
                 inv,
                 13,
-                SafeGUI.glow(flag)
+                SafeGUI.glow(identity)
         );
 
         SafeGUI.safeSet(inv, 21,
-
-                SafeGUI.item(
+                button(
                         Material.GOLD_INGOT,
-                        "§6✦ Activité Économique",
-                        "§8━━━━━━━━━━━━━━━━",
-                        "§7Analyse financière",
-                        "§7du joueur.",
+                        "§6✦ Économie",
+                        "§7Résumé bancaire du joueur.",
                         "",
-                        "§7Fortune bancaire: §6"
+                        "§8• §7Banque: §6"
                                 + SafeGUI.money(bank)
                                 + "€",
-                        "",
-                        "§7Indice réputation: §a"
+                        "§8• §7Réputation: §a"
                                 + rep,
                         "",
-                        "§7Classe sociale:",
-                        rank,
-                        "",
-                        "§e▶ Données économiques"
+                        "§e▶ Détails"
                 )
         );
 
         SafeGUI.safeSet(inv, 23,
-
-                SafeGUI.item(
+                button(
                         Material.BOOK,
-                        "§d✦ Réputation MoodCraft",
-                        "§8━━━━━━━━━━━━━━━━",
-                        "§7Le système de réputation",
-                        "§7définit l'influence sociale.",
+                        "§d✦ Réputation",
+                        "§7Influence sociale MoodCraft.",
                         "",
-                        "§8• Commerce",
-                        "§8• Contrats",
-                        "§8• Prestige",
-                        "§8• Confiance",
-                        "",
-                        "§7Statut actuel:",
+                        "§8• §7Rang actuel:",
                         rank,
                         "",
-                        "§e▶ Système social"
+                        "§e▶ Consulter"
                 )
         );
 
         SafeGUI.safeSet(inv, 31,
-
-                SafeGUI.item(
+                button(
                         Material.ARROW,
                         "§c✦ Retour",
-                        "§8━━━━━━━━━━━━━━━━",
                         "§7Retour au menu précédent.",
                         "",
-                        "§e▶ Revenir"
+                        "§c▶ Retour"
                 )
         );
 
@@ -316,6 +288,49 @@ public class ProfileGUI {
                 viewer,
                 "profile_gui",
                 inv
+        );
+    }
+
+    private static ItemStack button(
+            Material material,
+            String name,
+            String... lore
+    ) {
+
+        ItemStack item =
+                SafeGUI.item(
+                        material,
+                        name,
+                        lore
+                );
+
+        ItemMeta meta =
+                item.getItemMeta();
+
+        if (meta != null) {
+
+            hide(meta);
+
+            item.setItemMeta(
+                    meta
+            );
+        }
+
+        return item;
+    }
+
+    private static void hide(
+            ItemMeta meta
+    ) {
+
+        meta.addItemFlags(
+                ItemFlag.HIDE_ATTRIBUTES,
+                ItemFlag.HIDE_ENCHANTS,
+                ItemFlag.HIDE_UNBREAKABLE,
+                ItemFlag.HIDE_DESTROYS,
+                ItemFlag.HIDE_PLACED_ON,
+                ItemFlag.HIDE_ITEM_SPECIFICS,
+                ItemFlag.HIDE_ADDITIONAL_TOOLTIP
         );
     }
 }
