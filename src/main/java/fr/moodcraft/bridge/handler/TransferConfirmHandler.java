@@ -13,7 +13,6 @@ import fr.moodcraft.bridge.util.ActionLock;
 import fr.moodcraft.bridge.util.SafeGUI;
 
 import org.bukkit.Bukkit;
-
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 
@@ -30,43 +29,24 @@ public class TransferConfirmHandler implements GUIHandler {
 
         switch (slot) {
 
-            //
-            // ❌ ANNULER
-            //
-
             case 11 -> {
 
-                p.playSound(
-
-                        p.getLocation(),
-
+                premiumClick(
+                        p,
                         Sound.UI_BUTTON_CLICK,
-
-                        1f,
-
-                        0.8f
+                        0.8f,
+                        Sound.BLOCK_CHEST_CLOSE,
+                        1.2f
                 );
 
                 BankGUI.open(p);
             }
 
-            //
-            // ✅ CONFIRMATION
-            //
-
             case 15 -> {
-
-                //
-                // 🔒 ANTI DOUBLE CLIC
-                //
 
                 if (p.hasMetadata(
                         "transfer_processing"
                 )) return;
-
-                //
-                // 🔒 ANTI SPAM
-                //
 
                 if (ActionLock.isLocked(
                         p.getUniqueId(),
@@ -74,9 +54,7 @@ public class TransferConfirmHandler implements GUIHandler {
                 )) return;
 
                 p.setMetadata(
-
                         "transfer_processing",
-
                         new FixedMetadataValue(
                                 Main.getInstance(),
                                 true
@@ -85,19 +63,11 @@ public class TransferConfirmHandler implements GUIHandler {
 
                 try {
 
-                    //
-                    // 📦 DATA
-                    //
-
                     UUID targetUUID =
                             TransferBuilder.getTarget(p);
 
                     double amount =
                             TransferBuilder.getAmount(p);
-
-                    //
-                    // ❌ TARGET NULL
-                    //
 
                     if (targetUUID == null) {
 
@@ -111,10 +81,6 @@ public class TransferConfirmHandler implements GUIHandler {
                         return;
                     }
 
-                    //
-                    // ❌ MONTANT
-                    //
-
                     if (amount <= 0) {
 
                         error(
@@ -124,10 +90,6 @@ public class TransferConfirmHandler implements GUIHandler {
 
                         return;
                     }
-
-                    //
-                    // 👤 TARGET
-                    //
 
                     Player target =
                             Bukkit.getPlayer(targetUUID);
@@ -142,33 +104,21 @@ public class TransferConfirmHandler implements GUIHandler {
                         return;
                     }
 
-                    //
-                    // ❌ SELF
-                    //
-
                     if (target.equals(p)) {
 
                         error(
                                 p,
-                                "Tu ne peux pas te transférer de l'argent."
+                                "Tu ne peux pas t'envoyer un virement."
                         );
 
                         return;
                     }
-
-                    //
-                    // 💳 IDS
-                    //
 
                     String senderId =
                             p.getUniqueId().toString();
 
                     String targetId =
                             target.getUniqueId().toString();
-
-                    //
-                    // 🏦 SOLDE
-                    //
 
                     double senderBank =
                             BankStorage.get(senderId);
@@ -182,10 +132,6 @@ public class TransferConfirmHandler implements GUIHandler {
 
                         return;
                     }
-
-                    //
-                    // 💸 TRANSFERT
-                    //
 
                     boolean success =
                             BankStorage.transfer(
@@ -204,22 +150,11 @@ public class TransferConfirmHandler implements GUIHandler {
                         return;
                     }
 
-                    //
-                    // 📜 HISTORIQUE
-                    //
-
                     TransactionManager.transfer(
-
                             p.getUniqueId(),
-
                             target.getUniqueId(),
-
                             amount
                     );
-
-                    //
-                    // 📊 SOLDES
-                    //
 
                     double senderNew =
                             BankStorage.get(senderId);
@@ -227,206 +162,79 @@ public class TransferConfirmHandler implements GUIHandler {
                     double targetNew =
                             BankStorage.get(targetId);
 
-                    //
-                    // ✨ MESSAGE EXPÉDITEUR
-                    //
-
+                    p.sendMessage("");
+                    p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+                    p.sendMessage("§a✔ Virement envoyé");
+                    p.sendMessage("§7Destinataire: §e" + target.getName());
+                    p.sendMessage("§7Montant: §c-" + SafeGUI.money(amount) + "€");
+                    p.sendMessage("§7Banque: §6" + SafeGUI.money(senderNew) + "€");
                     p.sendMessage("");
 
-                    p.sendMessage(
-                            "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                    );
-
-                    p.sendMessage(
-                            "§6✦ §fVirement effectué"
-                    );
-
-                    p.sendMessage("");
-
-                    p.sendMessage(
-                            "§7Destinataire:"
-                    );
-
-                    p.sendMessage(
-                            "§e" + target.getName()
-                    );
-
-                    p.sendMessage("");
-
-                    p.sendMessage(
-                            "§7Montant transféré:"
-                    );
-
-                    p.sendMessage(
-                            "§c-"
-                                    + SafeGUI.money(amount)
-                                    + "€"
-                    );
-
-                    p.sendMessage("");
-
-                    p.sendMessage(
-                            "§7Nouveau solde bancaire:"
-                    );
-
-                    p.sendMessage(
-                            "§6"
-                                    + SafeGUI.money(senderNew)
-                                    + "€"
-                    );
-
-                    p.sendMessage("");
-
-                    p.sendMessage(
-                            "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                    );
-
-                    p.sendMessage("");
-
-                    //
-                    // ✨ MESSAGE RECEVEUR
-                    //
-
                     target.sendMessage("");
-
-                    target.sendMessage(
-                            "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                    );
-
-                    target.sendMessage(
-                            "§a✦ §fVirement reçu"
-                    );
-
+                    target.sendMessage("§8----- §6Banque MoodCraft §8-----");
+                    target.sendMessage("§a✔ Virement reçu");
+                    target.sendMessage("§7Expéditeur: §e" + p.getName());
+                    target.sendMessage("§7Montant: §a+" + SafeGUI.money(amount) + "€");
+                    target.sendMessage("§7Banque: §6" + SafeGUI.money(targetNew) + "€");
                     target.sendMessage("");
-
-                    target.sendMessage(
-                            "§7Expéditeur:"
-                    );
-
-                    target.sendMessage(
-                            "§e" + p.getName()
-                    );
-
-                    target.sendMessage("");
-
-                    target.sendMessage(
-                            "§7Montant reçu:"
-                    );
-
-                    target.sendMessage(
-                            "§a+"
-                                    + SafeGUI.money(amount)
-                                    + "€"
-                    );
-
-                    target.sendMessage("");
-
-                    target.sendMessage(
-                            "§7Nouveau solde bancaire:"
-                    );
-
-                    target.sendMessage(
-                            "§6"
-                                    + SafeGUI.money(targetNew)
-                                    + "€"
-                    );
-
-                    target.sendMessage("");
-
-                    target.sendMessage(
-                            "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                    );
-
-                    target.sendMessage("");
-
-                    //
-                    // 🔊 SONS
-                    //
 
                     p.playSound(
-
                             p.getLocation(),
-
                             Sound.UI_TOAST_CHALLENGE_COMPLETE,
-
-                            1f,
-
+                            0.8f,
                             1f
                     );
 
+                    p.playSound(
+                            p.getLocation(),
+                            Sound.BLOCK_NOTE_BLOCK_CHIME,
+                            0.5f,
+                            1.4f
+                    );
+
                     target.playSound(
-
                             target.getLocation(),
-
                             Sound.ENTITY_PLAYER_LEVELUP,
-
-                            1f,
-
+                            0.8f,
                             1.15f
                     );
 
-                    //
-                    // ✨ PARTICULES
-                    //
+                    target.playSound(
+                            target.getLocation(),
+                            Sound.BLOCK_AMETHYST_BLOCK_CHIME,
+                            0.5f,
+                            1.4f
+                    );
 
                     target.getWorld().spawnParticle(
-
                             Particle.TOTEM_OF_UNDYING,
-
                             target.getLocation().add(
                                     0,
                                     1,
                                     0
                             ),
-
                             20,
-
                             0.4,
-
                             0.6,
-
                             0.4,
-
                             0.02
                     );
 
-                    //
-                    // 🎬 TITLES
-                    //
-
                     p.sendTitle(
-
                             "§aVirement envoyé",
-
-                            "§f-"
-                                    + SafeGUI.money(amount)
-                                    + "€",
-
+                            "§f-" + SafeGUI.money(amount) + "€",
                             5,
-
                             35,
-
                             10
                     );
 
                     target.sendTitle(
-
                             "§aVirement reçu",
-
-                            "§f+"
-                                    + SafeGUI.money(amount)
-                                    + "€",
-
+                            "§f+" + SafeGUI.money(amount) + "€",
                             5,
-
                             35,
-
                             10
                     );
-
-                    //
-                    // 🧹 CLEAN
-                    //
 
                     TransferBuilder.clear(p);
 
@@ -435,9 +243,7 @@ public class TransferConfirmHandler implements GUIHandler {
                 } finally {
 
                     p.removeMetadata(
-
                             "transfer_processing",
-
                             Main.getInstance()
                     );
                 }
@@ -445,46 +251,45 @@ public class TransferConfirmHandler implements GUIHandler {
         }
     }
 
-    //
-    // ❌ ERROR
-    //
-
-    private void error(Player p,
-                       String msg) {
+    private void error(
+            Player p,
+            String msg
+    ) {
 
         p.sendMessage("");
-
-        p.sendMessage(
-                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        );
-
-        p.sendMessage(
-                "§c✦ Transaction refusée"
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§7" + msg
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        );
-
+        p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+        p.sendMessage("§cTransaction refusée.");
+        p.sendMessage("§7" + msg);
         p.sendMessage("");
 
         p.playSound(
-
                 p.getLocation(),
-
                 Sound.ENTITY_VILLAGER_NO,
-
                 1f,
+                0.85f
+        );
+    }
 
-                0.9f
+    private void premiumClick(
+            Player p,
+            Sound main,
+            float mainPitch,
+            Sound second,
+            float secondPitch
+    ) {
+
+        p.playSound(
+                p.getLocation(),
+                main,
+                0.75f,
+                mainPitch
+        );
+
+        p.playSound(
+                p.getLocation(),
+                second,
+                0.35f,
+                secondPitch
         );
     }
 }
