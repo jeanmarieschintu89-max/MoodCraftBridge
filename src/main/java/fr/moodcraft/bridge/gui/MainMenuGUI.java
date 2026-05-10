@@ -277,7 +277,7 @@ public class MainMenuGUI {
                         "",
                         "§8• §7Spawn",
                         "§8• §7Ville",
-                        "§8• §7Ressources",
+                        "§8• §7Exploration",
                         "",
                         "§e▶ Voyager"
                 )
