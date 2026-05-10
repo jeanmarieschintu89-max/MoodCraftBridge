@@ -10,7 +10,6 @@ import fr.moodcraft.bridge.util.VaultHook;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
-
 import org.bukkit.Material;
 
 import org.bukkit.entity.Player;
@@ -21,18 +20,12 @@ public class DepositGUI {
 
     public static void open(Player p) {
 
-        Inventory inv = Bukkit.createInventory(
-
-                null,
-
-                36,
-
-                "§8✦ §aDépôt Bancaire"
-        );
-
-        //
-        // 💰 ÉCONOMIE
-        //
+        Inventory inv =
+                Bukkit.createInventory(
+                        null,
+                        36,
+                        "§8✦ §aDépôt"
+                );
 
         Economy eco =
                 VaultHook.getEconomy();
@@ -47,250 +40,120 @@ public class DepositGUI {
                         p.getUniqueId().toString()
                 );
 
-        //
-        // 🌌 FOND
-        //
+        double total =
+                cash + bank;
 
         SafeGUI.fill(
-
                 inv,
-
                 Material.BLACK_STAINED_GLASS_PANE,
-
                 " "
         );
 
-        //
-        // 📊 INFOS
-        //
-
         SafeGUI.safeSet(inv, 4,
-
                 SafeGUI.glow(
-
                         SafeGUI.item(
-
-                                Material.GOLD_INGOT,
-
-                                "§6✦ Compte MoodCraft",
-
-                                "§8━━━━━━━━━━━━━━━━",
-
-                                "§7Liquidités: §a"
+                                Material.GOLD_BLOCK,
+                                "§6✦ Compte bancaire",
+                                "§8----- §6Solde §8-----",
+                                "§7Dépose ton argent en banque.",
+                                "",
+                                "§8• §7Liquide: §a"
                                         + SafeGUI.money(cash)
                                         + "€",
-
-                                "§7Banque: §6"
+                                "§8• §7Banque: §6"
                                         + SafeGUI.money(bank)
                                         + "€",
-
-                                "",
-
-                                "§7Patrimoine total: §e"
-                                        + SafeGUI.money(cash + bank)
+                                "§8• §7Total: §e"
+                                        + SafeGUI.money(total)
                                         + "€"
                         )
                 )
         );
 
-        //
-        // 💰 +100
-        //
-
-        SafeGUI.safeSet(inv, 11,
-
+        SafeGUI.safeSet(inv, 10,
                 SafeGUI.item(
-
                         Material.LIME_DYE,
-
-                        "§a✦ Déposer 100€",
-
-                        "§8━━━━━━━━━━━━━━━━",
-
-                        "§7Transfert bancaire rapide.",
-
+                        "§a✦ 100€",
+                        "§7Petit dépôt rapide.",
                         "",
-
-                        "§7Liquidités: §a"
-                                + SafeGUI.money(cash)
-                                + "€",
-
-                        "",
-
                         cash >= 100
-
                                 ? "§a✔ Disponible"
-
                                 : "§c✘ Fonds insuffisants",
-
                         "",
-
                         "§e▶ Déposer"
                 )
         );
 
-        //
-        // 💰 +1000
-        //
-
-        SafeGUI.safeSet(inv, 13,
-
+        SafeGUI.safeSet(inv, 12,
                 SafeGUI.glow(
-
                         SafeGUI.item(
-
                                 Material.EMERALD,
-
-                                "§a✦ Déposer 1 000€",
-
-                                "§8━━━━━━━━━━━━━━━━",
-
-                                "§7Transfert bancaire standard.",
-
+                                "§a✦ 1 000€",
+                                "§7Dépôt standard.",
                                 "",
-
-                                "§7Liquidités: §a"
-                                        + SafeGUI.money(cash)
-                                        + "€",
-
-                                "",
-
                                 cash >= 1000
-
                                         ? "§a✔ Disponible"
-
                                         : "§c✘ Fonds insuffisants",
-
                                 "",
-
                                 "§e▶ Déposer"
                         )
                 )
         );
 
-        //
-        // 💰 +10000
-        //
-
-        SafeGUI.safeSet(inv, 15,
-
+        SafeGUI.safeSet(inv, 14,
                 SafeGUI.item(
-
                         Material.EMERALD_BLOCK,
-
-                        "§6✦ Déposer 10 000€",
-
-                        "§8━━━━━━━━━━━━━━━━",
-
-                        "§7Transfert bancaire important.",
-
+                        "§6✦ 10 000€",
+                        "§7Gros dépôt bancaire.",
                         "",
-
-                        "§7Liquidités: §a"
-                                + SafeGUI.money(cash)
-                                + "€",
-
-                        "",
-
                         cash >= 10000
-
                                 ? "§a✔ Disponible"
-
                                 : "§c✘ Fonds insuffisants",
-
                         "",
-
                         "§e▶ Déposer"
                 )
         );
 
-        //
-        // 🏦 MAX
-        //
-
-        SafeGUI.safeSet(inv, 21,
-
-                SafeGUI.item(
-
-                        Material.CHEST,
-
-                        "§e✦ Tout Déposer",
-
-                        "§8━━━━━━━━━━━━━━━━",
-
-                        "§7Dépose l'intégralité",
-
-                        "§7de tes liquidités.",
-
-                        "",
-
-                        "§7Montant disponible: §a"
-                                + SafeGUI.money(cash)
-                                + "€",
-
-                        "",
-
-                        cash > 0
-
-                                ? "§a✔ Disponible"
-
-                                : "§c✘ Aucun fond",
-
-                        "",
-
-                        "§e▶ Transférer"
+        SafeGUI.safeSet(inv, 16,
+                SafeGUI.glow(
+                        SafeGUI.item(
+                                Material.CHEST,
+                                "§e✦ Tout déposer",
+                                "§7Transfère tout ton liquide.",
+                                "",
+                                "§8• §7Disponible: §a"
+                                        + SafeGUI.money(cash)
+                                        + "€",
+                                "",
+                                cash > 0
+                                        ? "§a✔ Disponible"
+                                        : "§c✘ Aucun fond",
+                                "",
+                                "§e▶ Déposer"
+                        )
                 )
         );
 
-        //
-        // ✍️ PERSONNALISÉ
-        //
-
-        SafeGUI.safeSet(inv, 23,
-
+        SafeGUI.safeSet(inv, 22,
                 SafeGUI.item(
-
                         Material.OAK_SIGN,
-
-                        "§d✦ Montant Personnalisé",
-
-                        "§8━━━━━━━━━━━━━━━━",
-
-                        "§7Saisir un montant",
-
-                        "§7manuel sécurisé.",
-
+                        "§d✦ Montant libre",
+                        "§7Choisis ton propre montant.",
                         "",
-
-                        "§8• Support décimales",
-
-                        "§8• Vérification automatique",
-
+                        "§8• §7Décimales acceptées",
+                        "§8• §7Vérification auto",
                         "",
-
-                        "§e▶ Saisir montant"
+                        "§e▶ Saisir"
                 )
         );
-
-        //
-        // 🔙 RETOUR
-        //
 
         SafeGUI.safeSet(inv, 31,
-
                 SafeGUI.item(
-
                         Material.ARROW,
-
                         "§c✦ Retour",
-
-                        "§8━━━━━━━━━━━━━━━━",
-
                         "§7Retour à la banque.",
-
                         "",
-
-                        "§e▶ Revenir"
+                        "§c▶ Retour"
                 )
         );
 
