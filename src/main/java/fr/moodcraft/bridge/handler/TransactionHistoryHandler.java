@@ -12,31 +12,111 @@ import org.bukkit.entity.Player;
 public class TransactionHistoryHandler implements GUIHandler {
 
     @Override
-    public void onClick(Player p,
-                        int slot) {
-
-        //
-        // 🔒 ANTI SPAM
-        //
+    public void onClick(
+            Player p,
+            int slot
+    ) {
 
         if (ActionLock.isLocked(
                 p.getUniqueId(),
                 200
         )) return;
 
-        //
-        // 📄 TITRE
-        //
-
         String title =
                 p.getOpenInventory()
                         .getTitle();
 
-        //
-        // 📑 PAGE
-        //
+        int page =
+                getPage(title);
 
-        int page = 1;
+        if (slot == 27) {
+
+            if (page <= 1) {
+
+                fail(p);
+
+                p.sendMessage(
+                        "§8✦ §7Première page déjà affichée."
+                );
+
+                return;
+            }
+
+            premiumClick(
+                    p,
+                    Sound.UI_BUTTON_CLICK,
+                    0.9f,
+                    Sound.ITEM_BOOK_PAGE_TURN,
+                    1.1f
+            );
+
+            TransactionHistoryGUI.open(
+                    p,
+                    page - 1
+            );
+
+            return;
+        }
+
+        if (slot == 35) {
+
+            premiumClick(
+                    p,
+                    Sound.UI_BUTTON_CLICK,
+                    1.1f,
+                    Sound.ITEM_BOOK_PAGE_TURN,
+                    1.25f
+            );
+
+            TransactionHistoryGUI.open(
+                    p,
+                    page + 1
+            );
+
+            return;
+        }
+
+        boolean transactionSlot =
+                (slot >= 10 && slot <= 16)
+                        || (slot >= 19 && slot <= 25)
+                        || (slot >= 28 && slot <= 30)
+                        || (slot >= 32 && slot <= 34);
+
+        if (transactionSlot) {
+
+            premiumClick(
+                    p,
+                    Sound.BLOCK_NOTE_BLOCK_CHIME,
+                    1.2f,
+                    Sound.ITEM_BOOK_PAGE_TURN,
+                    1.35f
+            );
+
+            p.sendMessage("");
+            p.sendMessage("§8----- §6Archive bancaire §8-----");
+            p.sendMessage("§7Transaction enregistrée dans l'historique.");
+            p.sendMessage("");
+
+            return;
+        }
+
+        if (slot == 31) {
+
+            premiumClick(
+                    p,
+                    Sound.UI_BUTTON_CLICK,
+                    0.8f,
+                    Sound.BLOCK_CHEST_CLOSE,
+                    1.2f
+            );
+
+            BankGUI.open(p);
+        }
+    }
+
+    private int getPage(
+            String title
+    ) {
 
         try {
 
@@ -47,191 +127,46 @@ public class TransactionHistoryHandler implements GUIHandler {
                                 title.indexOf("Page ") + 5
                         );
 
-                page =
-                        Integer.parseInt(
-                                raw.replaceAll("[^0-9]", "")
-                        );
+                return Integer.parseInt(
+                        raw.replaceAll("[^0-9]", "")
+                );
             }
 
         } catch (Exception ignored) {}
 
-        //
-        // ◀ PAGE PRÉCÉDENTE
-        //
-
-        if (slot == 27) {
-
-            if (page <= 1) {
-
-                p.playSound(
-
-                        p.getLocation(),
-
-                        Sound.ENTITY_VILLAGER_NO,
-
-                        1f,
-
-                        1f
-                );
-
-                p.sendMessage(
-                        "§8✦ §7Tu es déjà sur la première page."
-                );
-
-                return;
-            }
-
-            p.playSound(
-
-                    p.getLocation(),
-
-                    Sound.UI_BUTTON_CLICK,
-
-                    1f,
-
-                    0.9f
-            );
-
-            p.sendMessage(
-                    "§8✦ §7Chargement de l'historique..."
-            );
-
-            TransactionHistoryGUI.open(
-
-                    p,
-
-                    page - 1
-            );
-
-            return;
-        }
-
-        //
-        // ▶ PAGE SUIVANTE
-        //
-
-        if (slot == 35) {
-
-            p.playSound(
-
-                    p.getLocation(),
-
-                    Sound.UI_BUTTON_CLICK,
-
-                    1f,
-
-                    1.1f
-            );
-
-            p.sendMessage(
-                    "§8✦ §7Synchronisation des transactions..."
-            );
-
-            TransactionHistoryGUI.open(
-
-                    p,
-
-                    page + 1
-            );
-
-            return;
-        }
-
-        //
-        // 📜 TRANSACTIONS
-        //
-
-        boolean transactionSlot =
-
-                (slot >= 10 && slot <= 16)
-             || (slot >= 19 && slot <= 25)
-             || (slot >= 28 && slot <= 30)
-             || (slot >= 32 && slot <= 34);
-
-        if (transactionSlot) {
-
-            p.playSound(
-
-                    p.getLocation(),
-
-                    Sound.BLOCK_NOTE_BLOCK_CHIME,
-
-                    1f,
-
-                    1.15f
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage(
-                    "§6✦ §fArchive bancaire MoodCraft"
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§7Cette transaction est"
-            );
-
-            p.sendMessage(
-                    "§7stockée dans l'historique."
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§8• Dépôts"
-            );
-
-            p.sendMessage(
-                    "§8• Retraits"
-            );
-
-            p.sendMessage(
-                    "§8• Virements"
-            );
-
-            p.sendMessage(
-                    "§8• Marché économique"
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage("");
-
-            return;
-        }
-
-        //
-        // 🔙 RETOUR
-        //
-
-        if (slot == 31) {
-
-            p.playSound(
-
-                    p.getLocation(),
-
-                    Sound.UI_BUTTON_CLICK,
-
-                    1f,
-
-                    0.8f
-            );
-
-            p.sendMessage(
-                    "§8✦ §7Retour au centre bancaire..."
-            );
-
-            BankGUI.open(p);
-        }
+        return 1;
+    }
+
+    private void fail(Player p) {
+
+        p.playSound(
+                p.getLocation(),
+                Sound.ENTITY_VILLAGER_NO,
+                1f,
+                0.85f
+        );
+    }
+
+    private void premiumClick(
+            Player p,
+            Sound main,
+            float mainPitch,
+            Sound second,
+            float secondPitch
+    ) {
+
+        p.playSound(
+                p.getLocation(),
+                main,
+                0.75f,
+                mainPitch
+        );
+
+        p.playSound(
+                p.getLocation(),
+                second,
+                0.35f,
+                secondPitch
+        );
     }
 }
