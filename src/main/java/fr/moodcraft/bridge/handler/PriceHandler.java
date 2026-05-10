@@ -12,7 +12,6 @@ import fr.moodcraft.bridge.util.SafeGUI;
 import fr.moodcraft.bridge.util.VaultHook;
 
 import org.bukkit.Material;
-
 import org.bukkit.Sound;
 
 import org.bukkit.entity.Player;
@@ -22,38 +21,29 @@ public class PriceHandler implements GUIHandler {
     private static final double TAX_RATE = 0.20;
 
     @Override
-    public void onClick(Player p,
-                        int slot) {
+    public void onClick(
+            Player p,
+            int slot
+    ) {
 
         switch (slot) {
-
-            //
-            // 🔙 RETOUR
-            //
 
             case 31 -> {
 
                 p.closeInventory();
 
-                p.playSound(
-
-                        p.getLocation(),
-
+                premiumClick(
+                        p,
                         Sound.UI_BUTTON_CLICK,
-
-                        1f,
-
-                        0.9f
+                        0.8f,
+                        Sound.BLOCK_CHEST_CLOSE,
+                        1.2f
                 );
 
                 MainMenuGUI.open(p);
 
                 return;
             }
-
-            //
-            // 💎 LIGNE 1
-            //
 
             case 10 -> sell(
                     p,
@@ -104,10 +94,6 @@ public class PriceHandler implements GUIHandler {
                     "Glowstone"
             );
 
-            //
-            // 💎 LIGNE 2
-            //
-
             case 20 -> sell(
                     p,
                     "quartz",
@@ -145,82 +131,33 @@ public class PriceHandler implements GUIHandler {
         }
     }
 
-    //
-    // 💸 VENTE
-    //
-
-    private void sell(Player p,
-                      String id,
-                      Material mat,
-                      String display) {
-
-        //
-        // 🔒 ANTI SPAM
-        //
+    private void sell(
+            Player p,
+            String id,
+            Material mat,
+            String display
+    ) {
 
         if (ActionLock.isLocked(
                 p.getUniqueId(),
                 500
         )) return;
 
-        //
-        // 📦 COUNT
-        //
-
         int amount =
                 count(p, mat);
-
-        //
-        // ❌ AUCUN ITEM
-        //
 
         if (amount <= 0) {
 
             p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage(
-                    "§c✦ Marché MoodCraft"
-            );
-
+            p.sendMessage("§8----- §6Marché MoodCraft §8-----");
+            p.sendMessage("§cAucune ressource détectée.");
+            p.sendMessage("§7Ressource: §e" + display);
             p.sendMessage("");
 
-            p.sendMessage(
-                    "§7Aucune ressource détectée:"
-            );
-
-            p.sendMessage(
-                    "§e" + display
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage("");
-
-            p.playSound(
-
-                    p.getLocation(),
-
-                    Sound.ENTITY_VILLAGER_NO,
-
-                    1f,
-
-                    0.9f
-            );
+            fail(p);
 
             return;
         }
-
-        //
-        // 💰 PRIX
-        //
 
         double unit =
                 MarketEngine.getPrice(id);
@@ -228,19 +165,11 @@ public class PriceHandler implements GUIHandler {
         double gross =
                 unit * amount;
 
-        //
-        // 🏛 TAXE
-        //
-
         double tax =
                 gross * TAX_RATE;
 
         double total =
                 gross - tax;
-
-        //
-        // 📉 TENDANCE
-        //
 
         String trend =
                 MarketState.trend.getOrDefault(
@@ -248,19 +177,11 @@ public class PriceHandler implements GUIHandler {
                         "§7▬ Stable"
                 );
 
-        //
-        // 💰 ARGENT
-        //
-
         VaultHook.getEconomy()
                 .depositPlayer(
                         p,
                         total
                 );
-
-        //
-        // 📦 REMOVE
-        //
 
         remove(
                 p,
@@ -268,208 +189,70 @@ public class PriceHandler implements GUIHandler {
                 amount
         );
 
-        //
-        // 📊 IMPACT ÉCO
-        //
-
         MarketEngine.recordSell(
                 id,
                 amount
         );
 
-        //
-        // 📜 HISTORIQUE
-        //
-
         TransactionManager.marketSell(
-
                 p.getUniqueId(),
-
                 id,
-
                 total,
-
                 amount
         );
 
-        //
-        // ✨ MESSAGE
-        //
-
         p.sendMessage("");
-
-        p.sendMessage(
-                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        );
-
-        p.sendMessage(
-                "§6✦ Transaction Marché"
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§7Ressource vendue:"
-        );
-
-        p.sendMessage(
-                "§e"
-                        + amount
-                        + "x "
-                        + display
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§7Cours actuel:"
-        );
-
-        p.sendMessage(
-                "§6"
-                        + SafeGUI.money(unit)
-                        + "€ §8/unité"
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§7Tendance du marché:"
-        );
-
-        p.sendMessage(
-                trend
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§7Valeur brute:"
-        );
-
-        p.sendMessage(
-                "§f"
-                        + SafeGUI.money(gross)
-                        + "€"
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§cTaxe économique:"
-        );
-
-        p.sendMessage(
-                "§c-"
-                        + SafeGUI.money(tax)
-                        + "€"
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§aProfit net:"
-        );
-
-        p.sendMessage(
-                "§a+"
-                        + SafeGUI.money(total)
-                        + "€"
-        );
-
-        p.sendMessage("");
-
-        //
-        // 🌟 GROS PROFITS
-        //
+        p.sendMessage("§8----- §6Marché MoodCraft §8-----");
+        p.sendMessage("§a✔ Vente effectuée");
+        p.sendMessage("§7Ressource: §e" + amount + "x " + display);
+        p.sendMessage("§7Prix unité: §6" + SafeGUI.money(unit) + "€");
+        p.sendMessage("§7Tendance: " + trend);
+        p.sendMessage("§7Taxe: §c-" + SafeGUI.money(tax) + "€");
+        p.sendMessage("§7Gain net: §a+" + SafeGUI.money(total) + "€");
 
         if (total >= 50000) {
 
-            p.sendMessage(
-                    "§6✦ Vente majeure détectée"
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§7Les échanges commerciaux"
-            );
-
-            p.sendMessage(
-                    "§7du marché MoodCraft"
-            );
-
-            p.sendMessage(
-                    "§7connaissent une forte activité."
-            );
-
-            p.sendMessage("");
+            p.sendMessage("§6⚠ Vente majeure détectée");
         }
 
-        p.sendMessage(
-                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        );
-
         p.sendMessage("");
-
-        //
-        // 🔊 SOUND
-        //
 
         if (total >= 50000) {
 
-            p.playSound(
-
-                    p.getLocation(),
-
+            premiumClick(
+                    p,
                     Sound.UI_TOAST_CHALLENGE_COMPLETE,
-
                     1f,
-
-                    1f
+                    Sound.BLOCK_BEACON_ACTIVATE,
+                    1.2f
             );
-        }
 
-        else {
+        } else {
 
-            p.playSound(
-
-                    p.getLocation(),
-
+            premiumClick(
+                    p,
                     Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
-
-                    1f,
-
-                    1.15f
+                    1.15f,
+                    Sound.BLOCK_NOTE_BLOCK_CHIME,
+                    1.35f
             );
         }
-
-        //
-        // 🎬 TITLE
-        //
 
         p.sendTitle(
-
                 "§a+"
                         + SafeGUI.money(total)
                         + "€",
-
                 "§fMarché MoodCraft",
-
                 5,
-
                 35,
-
                 10
         );
     }
 
-    //
-    // 📦 COUNT
-    //
-
-    private int count(Player p,
-                      Material mat) {
+    private int count(
+            Player p,
+            Material mat
+    ) {
 
         int total = 0;
 
@@ -486,15 +269,14 @@ public class PriceHandler implements GUIHandler {
         return total;
     }
 
-    //
-    // 🗑 REMOVE
-    //
+    private void remove(
+            Player p,
+            Material mat,
+            int amount
+    ) {
 
-    private void remove(Player p,
-                        Material mat,
-                        int amount) {
-
-        int left = amount;
+        int left =
+                amount;
 
         for (var item :
                 p.getInventory().getContents()) {
@@ -503,10 +285,11 @@ public class PriceHandler implements GUIHandler {
                     || item.getType() != mat)
                 continue;
 
-            int take = Math.min(
-                    item.getAmount(),
-                    left
-            );
+            int take =
+                    Math.min(
+                            item.getAmount(),
+                            left
+                    );
 
             item.setAmount(
                     item.getAmount() - take
@@ -518,4 +301,33 @@ public class PriceHandler implements GUIHandler {
                 break;
         }
     }
-}
+
+    private void fail(Player p) {
+
+        p.playSound(
+                p.getLocation(),
+                Sound.ENTITY_VILLAGER_NO,
+                1f,
+                0.85f
+        );
+    }
+
+    private void premiumClick(
+            Player p,
+            Sound main,
+            float mainPitch,
+            Sound second,
+            float secondPitch
+    ) {
+
+        p.playSound(
+                p.getLocation(),
+                main,
+                0.75f,
+                mainPitch
+        );
+
+        p.playSound(
+                p.getLocation(),
+                second,
+                0.35
