@@ -1,15 +1,16 @@
-
 package fr.moodcraft.bridge.handler;
 
 import fr.moodcraft.bridge.Main;
 
 import fr.moodcraft.bridge.bank.BankStorage;
 
-import fr.moodcraft.bridge.gui.BankGUI;
 import fr.moodcraft.bridge.gui.TransferConfirmGUI;
+import fr.moodcraft.bridge.gui.TargetPlayerGUI;
 
 import fr.moodcraft.bridge.manager.AmountInputManager;
 import fr.moodcraft.bridge.manager.TransferBuilder;
+
+import fr.moodcraft.bridge.util.SafeGUI;
 
 import org.bukkit.Sound;
 
@@ -22,61 +23,42 @@ public class TransferAmountHandler implements GUIHandler {
     @Override
     public void onClick(Player p, int slot) {
 
-        //
-        // 🔙 RETOUR
-        //
+        if (slot == 31) {
 
-        if (slot == 22 || slot == 31) {
-
-            p.playSound(
-
-                    p.getLocation(),
-
+            premiumClick(
+                    p,
                     Sound.UI_BUTTON_CLICK,
-
-                    1f,
-
-                    0.8f
+                    0.8f,
+                    Sound.BLOCK_CHEST_CLOSE,
+                    1.2f
             );
 
-            p.closeInventory();
-
-            BankGUI.open(p);
+            TargetPlayerGUI.open(p);
 
             return;
         }
-
-        //
-        // 💰 MONTANTS
-        //
 
         double amount = switch (slot) {
 
             case 10 -> 100;
 
-            case 11 -> 1000;
+            case 12 -> 1000;
 
-            case 12 -> 10000;
+            case 14 -> 10000;
 
-            case 14 -> 50000;
+            case 16 -> 50000;
 
-            case 15 -> 100000;
+            case 22 -> 100000;
 
             default -> 0;
         };
 
-        //
-        // ✍️ PERSONNALISÉ
-        //
-
-        if (slot == 16 || slot == 23) {
+        if (slot == 23) {
 
             p.closeInventory();
 
             p.setMetadata(
-
                     "input_active",
-
                     new FixedMetadataValue(
                             Main.getInstance(),
                             true
@@ -84,79 +66,34 @@ public class TransferAmountHandler implements GUIHandler {
             );
 
             AmountInputManager.wait(
-
                     p,
-
                     AmountInputManager.Type.PLAYER_TRANSFER
             );
 
             p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage(
-                    "§6✦ §fMontant personnalisé"
-            );
-
+            p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+            p.sendMessage("§7Entre le montant à envoyer.");
+            p.sendMessage("§8Exemple: §e25000");
             p.sendMessage("");
 
-            p.sendMessage(
-                    "§7Entre le montant"
-            );
-
-            p.sendMessage(
-                    "§7dans le chat."
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§8Exemple: §e25000"
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage("");
-
-            p.playSound(
-
-                    p.getLocation(),
-
+            premiumClick(
+                    p,
                     Sound.UI_BUTTON_CLICK,
-
-                    1f,
-
-                    1.1f
+                    1.1f,
+                    Sound.ITEM_BOOK_PAGE_TURN,
+                    1.2f
             );
 
             return;
         }
 
-        //
-        // ❌ INVALID
-        //
-
         if (amount <= 0)
             return;
-
-        //
-        // 💾 SAVE
-        //
 
         TransferBuilder.setAmount(
                 p,
                 amount
         );
-
-        //
-        // 🔎 ACTION
-        //
 
         TransferBuilder.Action action =
                 TransferBuilder.getAction(p);
@@ -164,60 +101,20 @@ public class TransferAmountHandler implements GUIHandler {
         if (action == null) {
 
             p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage(
-                    "§c✦ Erreur bancaire"
-            );
-
+            p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+            p.sendMessage("§cErreur bancaire.");
+            p.sendMessage("§7Action inconnue.");
             p.sendMessage("");
 
-            p.sendMessage(
-                    "§7Action inconnue."
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage("");
-
-            p.playSound(
-
-                    p.getLocation(),
-
-                    Sound.ENTITY_VILLAGER_NO,
-
-                    1f,
-
-                    0.9f
-            );
+            fail(p);
 
             return;
         }
 
-        //
-        // 💳 VIREMENTS
-        //
-
         switch (action) {
-
-            //
-            // 👤 PLAYER
-            // 🏦 IBAN
-            //
 
             case PLAYER_TRANSFER,
                  IBAN_TRANSFER -> {
-
-                //
-                // 💰 CHECK SOLDE
-                //
 
                 double bank =
                         BankStorage.get(
@@ -227,151 +124,92 @@ public class TransferAmountHandler implements GUIHandler {
                 if (bank < amount) {
 
                     p.sendMessage("");
-
-                    p.sendMessage(
-                            "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                    );
-
-                    p.sendMessage(
-                            "§c✦ Fonds insuffisants"
-                    );
-
+                    p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+                    p.sendMessage("§cFonds insuffisants.");
+                    p.sendMessage("§7Banque: §6"
+                            + SafeGUI.money(bank)
+                            + "€");
                     p.sendMessage("");
 
-                    p.sendMessage(
-                            "§7Solde bancaire:"
-                    );
-
-                    p.sendMessage(
-                            "§6"
-                                    + (int) bank
-                                    + "€"
-                    );
-
-                    p.sendMessage("");
-
-                    p.sendMessage(
-                            "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                    );
-
-                    p.sendMessage("");
-
-                    p.playSound(
-
-                            p.getLocation(),
-
-                            Sound.ENTITY_VILLAGER_NO,
-
-                            1f,
-
-                            0.9f
-                    );
+                    fail(p);
 
                     return;
                 }
 
-                //
-                // 🌟 FEEDBACK GROS VIREMENT
-                //
-
                 if (amount >= 50000) {
 
                     p.sendMessage("");
-
-                    p.sendMessage(
-                            "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                    );
-
-                    p.sendMessage(
-                            "§6✦ Transfert important détecté"
-                    );
-
+                    p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+                    p.sendMessage("§6⚠ Transfert important");
+                    p.sendMessage("§7Montant: §e"
+                            + SafeGUI.money(amount)
+                            + "€");
+                    p.sendMessage("§7Confirmation requise.");
                     p.sendMessage("");
 
-                    p.sendMessage(
-                            "§7Montant:"
-                    );
-
-                    p.sendMessage(
-                            "§e"
-                                    + (int) amount
-                                    + "€"
-                    );
-
-                    p.sendMessage("");
-
-                    p.sendMessage(
-                            "§7Validation bancaire requise."
-                    );
-
-                    p.sendMessage("");
-
-                    p.sendMessage(
-                            "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                    );
-
-                    p.sendMessage("");
-
-                    p.playSound(
-
-                            p.getLocation(),
-
+                    premiumClick(
+                            p,
                             Sound.BLOCK_BEACON_AMBIENT,
-
-                            1f,
-
-                            0.9f
-                    );
-                }
-
-                //
-                // 🔊 NORMAL
-                //
-
-                else {
-
-                    p.playSound(
-
-                            p.getLocation(),
-
-                            Sound.UI_BUTTON_CLICK,
-
-                            1f,
-
+                            1.0f,
+                            Sound.BLOCK_AMETHYST_BLOCK_CHIME,
                             1.2f
                     );
-                }
 
-                //
-                // 📂 CONFIRMATION
-                //
+                } else {
+
+                    premiumClick(
+                            p,
+                            Sound.UI_BUTTON_CLICK,
+                            1.25f,
+                            Sound.BLOCK_NOTE_BLOCK_CHIME,
+                            1.3f
+                    );
+                }
 
                 p.closeInventory();
 
                 TransferConfirmGUI.open(p);
             }
 
-            //
-            // ❌ FALLBACK
-            //
-
             default -> {
 
-                p.sendMessage(
-                        "§cAction bancaire invalide."
-                );
+                p.sendMessage("§cAction bancaire invalide.");
 
-                p.playSound(
-
-                        p.getLocation(),
-
-                        Sound.ENTITY_VILLAGER_NO,
-
-                        1f,
-
-                        0.8f
-                );
+                fail(p);
             }
         }
+    }
+
+    private void fail(Player p) {
+
+        p.playSound(
+                p.getLocation(),
+                Sound.ENTITY_VILLAGER_NO,
+                1f,
+                0.85f
+        );
+    }
+
+    private void premiumClick(
+            Player p,
+            Sound main,
+            float mainPitch,
+            Sound second,
+            float secondPitch
+    ) {
+
+        p.playSound(
+                p.getLocation(),
+                main,
+                0.75f,
+                mainPitch
+        );
+
+        p.playSound(
+                p.getLocation(),
+                second,
+                0.35f,
+                secondPitch
+        );
     }
 }
