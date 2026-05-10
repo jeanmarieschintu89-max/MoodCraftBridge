@@ -6,7 +6,6 @@ import fr.moodcraft.bridge.manager.TransferBuilder;
 import fr.moodcraft.bridge.util.SafeGUI;
 
 import org.bukkit.Bukkit;
-
 import org.bukkit.Material;
 
 import org.bukkit.entity.Player;
@@ -19,31 +18,18 @@ public class TransferAmountGUI {
 
     public static void open(Player p) {
 
-        Inventory inv = Bukkit.createInventory(
-
-                null,
-
-                36,
-
-                "§8✦ §aVirement Bancaire"
-        );
-
-        //
-        // 🌌 FOND
-        //
+        Inventory inv =
+                Bukkit.createInventory(
+                        null,
+                        36,
+                        "§8✦ §eMontant"
+                );
 
         SafeGUI.fill(
-
                 inv,
-
                 Material.BLACK_STAINED_GLASS_PANE,
-
                 " "
         );
-
-        //
-        // 🎯 DESTINATAIRE
-        //
 
         UUID targetUUID =
                 TransferBuilder.getTarget(p);
@@ -75,214 +61,104 @@ public class TransferAmountGUI {
             }
         }
 
-        //
-        // 📄 INFO
-        //
-
         SafeGUI.safeSet(inv, 4,
-
                 SafeGUI.glow(
-
                         SafeGUI.item(
-
                                 Material.PAPER,
-
-                                "§6✦ Virement MoodCraft",
-
-                                "§8━━━━━━━━━━━━━━━━",
-
-                                "§7Destinataire:",
-
-                                targetName,
-
+                                "§6✦ Virement bancaire",
+                                "§8----- §6Destinataire §8-----",
+                                "§7Joueur: " + targetName,
                                 "",
-
-                                "§7Sélectionne un montant",
-
-                                "§7à transférer.",
-
+                                "§7Choisis le montant à envoyer.",
                                 "",
-
-                                "§8• Transaction sécurisée",
-
-                                "§8• Historique sauvegardé",
-
-                                "§8• Vérification bancaire"
+                                "§8• §7Sécurisé",
+                                "§8• §7Historique sauvegardé"
                         )
                 )
         );
 
-        //
-        // 💰 MONTANTS
-        //
-
         SafeGUI.safeSet(inv, 10,
-
                 SafeGUI.item(
-
                         Material.GOLD_NUGGET,
-
                         "§a✦ 100€",
-
-                        "§8━━━━━━━━━━━━━━━━",
-
-                        "§7Petit transfert bancaire.",
-
+                        "§7Petit transfert.",
                         "",
-
-                        "§e▶ Envoyer"
-                )
-        );
-
-        SafeGUI.safeSet(inv, 11,
-
-                SafeGUI.item(
-
-                        Material.GOLD_INGOT,
-
-                        "§a✦ 1 000€",
-
-                        "§8━━━━━━━━━━━━━━━━",
-
-                        "§7Virement standard.",
-
-                        "",
-
                         "§e▶ Envoyer"
                 )
         );
 
         SafeGUI.safeSet(inv, 12,
+                SafeGUI.item(
+                        Material.GOLD_INGOT,
+                        "§a✦ 1 000€",
+                        "§7Virement standard.",
+                        "",
+                        "§e▶ Envoyer"
+                )
+        );
 
+        SafeGUI.safeSet(inv, 14,
                 SafeGUI.glow(
-
                         SafeGUI.item(
-
                                 Material.GOLD_BLOCK,
-
                                 "§6✦ 10 000€",
-
-                                "§8━━━━━━━━━━━━━━━━",
-
-                                "§7Transfert économique",
-
-                                "§7important.",
-
+                                "§7Transfert important.",
                                 "",
-
                                 "§e▶ Envoyer"
                         )
                 )
         );
 
-        //
-        // 💎 GROS TRANSFERTS
-        //
-
-        SafeGUI.safeSet(inv, 14,
-
+        SafeGUI.safeSet(inv, 16,
                 SafeGUI.item(
-
                         Material.EMERALD_BLOCK,
-
                         "§2✦ 50 000€",
-
-                        "§8━━━━━━━━━━━━━━━━",
-
                         "§7Virement haute valeur.",
-
                         "",
-
-                        "§8• Analyse anti fraude",
-
+                        "§8• §7Contrôle bancaire",
                         "",
-
                         "§e▶ Envoyer"
                 )
         );
 
-        SafeGUI.safeSet(inv, 15,
-
+        SafeGUI.safeSet(inv, 22,
                 SafeGUI.item(
-
                         Material.DIAMOND_BLOCK,
-
                         "§b✦ 100 000€",
-
-                        "§8━━━━━━━━━━━━━━━━",
-
-                        "§7Transfert bancaire massif.",
-
+                        "§7Transfert premium.",
                         "",
-
-                        "§8• Transaction premium",
-
-                        "§8• Vérification sécurisée",
-
+                        "§8• §7Vérification renforcée",
                         "",
-
                         "§e▶ Envoyer"
                 )
         );
-
-        //
-        // ✍️ PERSONNALISÉ
-        //
 
         SafeGUI.safeSet(inv, 23,
-
                 SafeGUI.item(
-
                         Material.ANVIL,
-
-                        "§d✦ Montant Personnalisé",
-
-                        "§8━━━━━━━━━━━━━━━━",
-
-                        "§7Saisir un montant",
-
-                        "§7manuel dans le chat.",
-
+                        "§d✦ Montant libre",
+                        "§7Choisis ton propre montant.",
                         "",
-
-                        "§8• Support décimales",
-
-                        "§8• Contrôle automatique",
-
+                        "§8• §7Décimales acceptées",
+                        "§8• §7Vérification auto",
                         "",
-
-                        "§e▶ Saisir montant"
+                        "§e▶ Saisir"
                 )
         );
 
-        //
-        // 🔙 RETOUR
-        //
-
         SafeGUI.safeSet(inv, 31,
-
                 SafeGUI.item(
-
                         Material.ARROW,
-
                         "§c✦ Retour",
-
-                        "§8━━━━━━━━━━━━━━━━",
-
-                        "§7Retour au menu précédent.",
-
+                        "§7Retour au choix du joueur.",
                         "",
-
-                        "§e▶ Revenir"
+                        "§c▶ Retour"
                 )
         );
 
         GUIManager.open(
-
                 p,
-
                 "transfer_amount",
-
                 inv
         );
     }
