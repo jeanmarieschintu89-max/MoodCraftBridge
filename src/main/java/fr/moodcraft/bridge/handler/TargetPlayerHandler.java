@@ -10,7 +10,6 @@ import fr.moodcraft.bridge.manager.TransferBuilder;
 import fr.moodcraft.bridge.util.ActionLock;
 
 import org.bukkit.Bukkit;
-
 import org.bukkit.Sound;
 
 import org.bukkit.entity.Player;
@@ -20,35 +19,26 @@ import java.util.UUID;
 public class TargetPlayerHandler implements GUIHandler {
 
     @Override
-    public void onClick(Player p,
-                        int slot) {
-
-        //
-        // 🔒 ANTI SPAM
-        //
+    public void onClick(
+            Player p,
+            int slot
+    ) {
 
         if (ActionLock.isLocked(
                 p.getUniqueId(),
                 250
         )) return;
 
-        //
-        // 🔙 RETOUR
-        //
-
-        if (slot == 49
-                || slot == 45
+        if (slot == 45
+                || slot == 49
                 || slot == 53) {
 
-            p.playSound(
-
-                    p.getLocation(),
-
+            premiumClick(
+                    p,
                     Sound.UI_BUTTON_CLICK,
-
-                    1f,
-
-                    0.8f
+                    0.8f,
+                    Sound.BLOCK_CHEST_CLOSE,
+                    1.2f
             );
 
             TransferTypeGUI.open(p);
@@ -56,56 +46,20 @@ public class TargetPlayerHandler implements GUIHandler {
             return;
         }
 
-        //
-        // 👤 TARGET UUID
-        //
-
         UUID targetUUID =
                 TargetPlayerGUI.getTarget(slot);
 
         if (targetUUID == null) {
 
             p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage(
-                    "§c✦ §fRéseau bancaire"
-            );
-
+            p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+            p.sendMessage("§cAucun joueur sélectionné.");
             p.sendMessage("");
 
-            p.sendMessage(
-                    "§7Aucun joueur sélectionné."
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage("");
-
-            p.playSound(
-
-                    p.getLocation(),
-
-                    Sound.ENTITY_VILLAGER_NO,
-
-                    1f,
-
-                    1f
-            );
+            fail(p);
 
             return;
         }
-
-        //
-        // 👤 PLAYER
-        //
 
         Player target =
                 Bukkit.getPlayer(targetUUID);
@@ -114,98 +68,26 @@ public class TargetPlayerHandler implements GUIHandler {
                 || !target.isOnline()) {
 
             p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage(
-                    "§c✦ §fConnexion impossible"
-            );
-
+            p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+            p.sendMessage("§cCe joueur n'est plus connecté.");
             p.sendMessage("");
 
-            p.sendMessage(
-                    "§7Le joueur n'est plus"
-            );
-
-            p.sendMessage(
-                    "§7connecté au réseau."
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage("");
-
-            p.playSound(
-
-                    p.getLocation(),
-
-                    Sound.ENTITY_VILLAGER_NO,
-
-                    1f,
-
-                    0.9f
-            );
+            fail(p);
 
             return;
         }
-
-        //
-        // ❌ SELF
-        //
 
         if (target.equals(p)) {
 
             p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage(
-                    "§c✦ §fTransaction refusée"
-            );
-
+            p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+            p.sendMessage("§cTu ne peux pas t'envoyer un virement.");
             p.sendMessage("");
 
-            p.sendMessage(
-                    "§7Tu ne peux pas effectuer"
-            );
-
-            p.sendMessage(
-                    "§7un virement vers toi-même."
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage("");
-
-            p.playSound(
-
-                    p.getLocation(),
-
-                    Sound.ENTITY_VILLAGER_NO,
-
-                    1f,
-
-                    0.8f
-            );
+            fail(p);
 
             return;
         }
-
-        //
-        // 📊 RÉPUTATION
-        //
 
         int rep =
                 ReputationManager.get(
@@ -215,90 +97,64 @@ public class TargetPlayerHandler implements GUIHandler {
         String rank =
                 ReputationManager.getRank(rep);
 
-        //
-        // 💾 ACTION
-        //
-
         TransferBuilder.setAction(
-
                 p,
-
                 TransferBuilder.Action.PLAYER_TRANSFER
         );
-
-        //
-        // 🎯 TARGET
-        //
 
         TransferBuilder.setTarget(
                 p,
                 targetUUID
         );
 
-        //
-        // ✨ FEEDBACK
-        //
-
+        p.sendMessage("");
+        p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+        p.sendMessage("§a✔ Destinataire sélectionné");
+        p.sendMessage("§7Joueur: §e" + target.getName());
+        p.sendMessage("§7Réputation: §a" + rep + " §8• " + rank);
         p.sendMessage("");
 
-        p.sendMessage(
-                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        );
-
-        p.sendMessage(
-                "§6✦ §fDestinataire sélectionné"
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§7Joueur: §e"
-                        + target.getName()
-        );
-
-        p.sendMessage(
-                "§7Réputation: §a"
-                        + rep
-        );
-
-        p.sendMessage(
-                "§7Statut: "
-                        + rank
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§7Préparation du transfert..."
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        );
-
-        p.sendMessage("");
-
-        //
-        // 🔊 SOUND
-        //
-
-        p.playSound(
-
-                p.getLocation(),
-
+        premiumClick(
+                p,
                 Sound.BLOCK_NOTE_BLOCK_CHIME,
-
-                1f,
-
-                1.2f
+                1.25f,
+                Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
+                1.4f
         );
-
-        //
-        // 💸 NEXT
-        //
 
         TransferAmountGUI.open(p);
+    }
+
+    private void fail(Player p) {
+
+        p.playSound(
+                p.getLocation(),
+                Sound.ENTITY_VILLAGER_NO,
+                1f,
+                0.85f
+        );
+    }
+
+    private void premiumClick(
+            Player p,
+            Sound main,
+            float mainPitch,
+            Sound second,
+            float secondPitch
+    ) {
+
+        p.playSound(
+                p.getLocation(),
+                main,
+                0.75f,
+                mainPitch
+        );
+
+        p.playSound(
+                p.getLocation(),
+                second,
+                0.35f,
+                secondPitch
+        );
     }
 }
