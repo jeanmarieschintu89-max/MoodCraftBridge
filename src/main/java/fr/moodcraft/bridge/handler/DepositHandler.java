@@ -16,7 +16,6 @@ import fr.moodcraft.bridge.util.VaultHook;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Sound;
-
 import org.bukkit.entity.Player;
 
 public class DepositHandler implements GUIHandler {
@@ -26,67 +25,15 @@ public class DepositHandler implements GUIHandler {
 
         switch (slot) {
 
-            //
-            // 💰 DÉPÔTS RAPIDES
-            //
+            case 10 -> deposit(p, 100);
 
-            case 11 -> {
+            case 12 -> deposit(p, 1000);
 
-                p.playSound(
-                        p.getLocation(),
-                        Sound.UI_BUTTON_CLICK,
-                        1f,
-                        1.05f
-                );
+            case 14 -> deposit(p, 10000);
 
-                deposit(p, 100);
-            }
+            case 16 -> depositAll(p);
 
-            case 13 -> {
-
-                p.playSound(
-                        p.getLocation(),
-                        Sound.UI_BUTTON_CLICK,
-                        1f,
-                        1.1f
-                );
-
-                deposit(p, 1000);
-            }
-
-            case 15 -> {
-
-                p.playSound(
-                        p.getLocation(),
-                        Sound.UI_BUTTON_CLICK,
-                        1f,
-                        1.15f
-                );
-
-                deposit(p, 10000);
-            }
-
-            //
-            // 🏦 TOUT DÉPOSER
-            //
-
-            case 21 -> {
-
-                p.playSound(
-                        p.getLocation(),
-                        Sound.BLOCK_BEACON_ACTIVATE,
-                        1f,
-                        1f
-                );
-
-                depositAll(p);
-            }
-
-            //
-            // ✍️ PERSONNALISÉ
-            //
-
-            case 23 -> {
+            case 22 -> {
 
                 p.closeInventory();
 
@@ -101,64 +48,28 @@ public class DepositHandler implements GUIHandler {
                 );
 
                 p.sendMessage("");
-
-                p.sendMessage(
-                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                );
-
-                p.sendMessage(
-                        "§6✦ §fDépôt Personnalisé"
-                );
-
+                p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+                p.sendMessage("§7Entre le montant à déposer.");
+                p.sendMessage("§8Exemple: §e1250");
                 p.sendMessage("");
 
-                p.sendMessage(
-                        "§7Entre le montant"
-                );
-
-                p.sendMessage(
-                        "§7dans le chat."
-                );
-
-                p.sendMessage("");
-
-                p.sendMessage(
-                        "§8Exemple: §e1250"
-                );
-
-                p.sendMessage(
-                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                );
-
-                p.sendMessage("");
-
-                p.playSound(
-
-                        p.getLocation(),
-
+                premiumClick(
+                        p,
                         Sound.UI_BUTTON_CLICK,
-
-                        1f,
-
+                        1.2f,
+                        Sound.ITEM_BOOK_PAGE_TURN,
                         1.1f
                 );
             }
 
-            //
-            // 🔙 RETOUR
-            //
-
             case 31 -> {
 
-                p.playSound(
-
-                        p.getLocation(),
-
+                premiumClick(
+                        p,
                         Sound.UI_BUTTON_CLICK,
-
-                        1f,
-
-                        0.8f
+                        0.8f,
+                        Sound.BLOCK_CHEST_CLOSE,
+                        1.2f
                 );
 
                 BankGUI.open(p);
@@ -166,15 +77,7 @@ public class DepositHandler implements GUIHandler {
         }
     }
 
-    //
-    // 💰 DÉPÔT
-    //
-
     private void deposit(Player p, double amount) {
-
-        //
-        // 🔒 ANTI SPAM
-        //
 
         if (ActionLock.isLocked(
                 p.getUniqueId(),
@@ -186,194 +89,64 @@ public class DepositHandler implements GUIHandler {
 
         if (eco == null) {
 
-            p.sendMessage(
-                    "§cErreur économie Vault."
-            );
-
+            p.sendMessage("§cErreur économie Vault.");
             return;
         }
 
         double cash =
                 eco.getBalance(p);
 
-        //
-        // ❌ FONDS
-        //
-
         if (cash < amount) {
 
             p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage(
-                    "§c✦ Fonds insuffisants"
-            );
-
+            p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+            p.sendMessage("§cFonds insuffisants.");
+            p.sendMessage("§7Liquide: §a" + SafeGUI.money(cash) + "€");
             p.sendMessage("");
 
-            p.sendMessage(
-                    "§7Liquidités disponibles:"
-            );
-
-            p.sendMessage(
-                    "§a"
-                            + SafeGUI.money(cash)
-                            + "€"
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage("");
-
-            p.playSound(
-
-                    p.getLocation(),
-
-                    Sound.ENTITY_VILLAGER_NO,
-
-                    1f,
-
-                    0.9f
-            );
+            fail(p);
 
             return;
         }
-
-        //
-        // 💸 RETRAIT CASH
-        //
 
         eco.withdrawPlayer(
                 p,
                 amount
         );
 
-        //
-        // 🏦 AJOUT BANQUE
-        //
-
         String id =
                 p.getUniqueId().toString();
 
-        double oldBank =
-                BankStorage.get(id);
-
         double newBank =
-                oldBank + amount;
+                BankStorage.get(id) + amount;
 
         BankStorage.set(
                 id,
                 newBank
         );
 
-        //
-        // 📜 HISTORIQUE
-        //
-
         TransactionManager.deposit(
                 p.getUniqueId(),
                 amount
         );
 
-        //
-        // ✨ MESSAGE
-        //
-
+        p.sendMessage("");
+        p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+        p.sendMessage("§a✔ Dépôt effectué");
+        p.sendMessage("§7Montant: §a+" + SafeGUI.money(amount) + "€");
+        p.sendMessage("§7Banque: §6" + SafeGUI.money(newBank) + "€");
         p.sendMessage("");
 
-        p.sendMessage(
-                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        success(
+                p,
+                "§a+" + SafeGUI.money(amount) + "€",
+                "§fDépôt effectué"
         );
-
-        p.sendMessage(
-                "§6✦ §fDépôt effectué"
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§7Montant transféré:"
-        );
-
-        p.sendMessage(
-                "§a+"
-                        + SafeGUI.money(amount)
-                        + "€"
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§7Nouveau solde bancaire:"
-        );
-
-        p.sendMessage(
-                "§6"
-                        + SafeGUI.money(newBank)
-                        + "€"
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        );
-
-        p.sendMessage("");
-
-        //
-        // 🔊 FEEDBACK
-        //
-
-        p.playSound(
-
-                p.getLocation(),
-
-                Sound.BLOCK_AMETHYST_BLOCK_CHIME,
-
-                1f,
-
-                1.2f
-        );
-
-        p.sendTitle(
-
-                "§a+"
-                        + SafeGUI.money(amount)
-                        + "€",
-
-                "§fDépôt bancaire effectué",
-
-                5,
-
-                35,
-
-                10
-        );
-
-        //
-        // 🔄 REFRESH
-        //
 
         DepositGUI.open(p);
     }
 
-    //
-    // 🏦 TOUT DÉPOSER
-    //
-
     private void depositAll(Player p) {
-
-        //
-        // 🔒 ANTI SPAM
-        //
 
         if (ActionLock.isLocked(
                 p.getUniqueId(),
@@ -385,76 +158,29 @@ public class DepositHandler implements GUIHandler {
 
         if (eco == null) {
 
-            p.sendMessage(
-                    "§cErreur économie Vault."
-            );
-
+            p.sendMessage("§cErreur économie Vault.");
             return;
         }
 
         double cash =
                 eco.getBalance(p);
 
-        //
-        // ❌ RIEN
-        //
-
         if (cash <= 0) {
 
             p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage(
-                    "§c✦ Aucun argent liquide"
-            );
-
+            p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+            p.sendMessage("§cAucun argent liquide à déposer.");
             p.sendMessage("");
 
-            p.sendMessage(
-                    "§7Tu n'as rien"
-            );
-
-            p.sendMessage(
-                    "§7à déposer."
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage("");
-
-            p.playSound(
-
-                    p.getLocation(),
-
-                    Sound.ENTITY_VILLAGER_NO,
-
-                    1f,
-
-                    0.8f
-            );
+            fail(p);
 
             return;
         }
-
-        //
-        // 💸 RETRAIT
-        //
 
         eco.withdrawPlayer(
                 p,
                 cash
         );
-
-        //
-        // 🏦 AJOUT
-        //
 
         String id =
                 p.getUniqueId().toString();
@@ -467,95 +193,80 @@ public class DepositHandler implements GUIHandler {
                 newBank
         );
 
-        //
-        // 📜 HISTORIQUE
-        //
-
         TransactionManager.deposit(
                 p.getUniqueId(),
                 cash
         );
 
-        //
-        // ✨ MESSAGE
-        //
-
+        p.sendMessage("");
+        p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+        p.sendMessage("§a✔ Dépôt total effectué");
+        p.sendMessage("§7Montant: §a+" + SafeGUI.money(cash) + "€");
+        p.sendMessage("§7Banque: §6" + SafeGUI.money(newBank) + "€");
         p.sendMessage("");
 
-        p.sendMessage(
-                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        success(
+                p,
+                "§a+" + SafeGUI.money(cash) + "€",
+                "§fTout a été déposé"
         );
 
-        p.sendMessage(
-                "§6✦ §fDépôt total effectué"
-        );
+        DepositGUI.open(p);
+    }
 
-        p.sendMessage("");
+    private void success(
+            Player p,
+            String title,
+            String subtitle
+    ) {
 
-        p.sendMessage(
-                "§7Montant transféré:"
-        );
-
-        p.sendMessage(
-                "§a+"
-                        + SafeGUI.money(cash)
-                        + "€"
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§7Nouveau solde bancaire:"
-        );
-
-        p.sendMessage(
-                "§6"
-                        + SafeGUI.money(newBank)
-                        + "€"
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        );
-
-        p.sendMessage("");
-
-        //
-        // 🔊 FEEDBACK
-        //
-
-        p.playSound(
-
-                p.getLocation(),
-
-                Sound.BLOCK_BEACON_POWER_SELECT,
-
-                1f,
-
-                1.1f
+        premiumClick(
+                p,
+                Sound.BLOCK_AMETHYST_BLOCK_CHIME,
+                1.25f,
+                Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
+                1.4f
         );
 
         p.sendTitle(
-
-                "§a+"
-                        + SafeGUI.money(cash)
-                        + "€",
-
-                "§fTout a été déposé",
-
+                title,
+                subtitle,
                 5,
-
-                40,
-
+                35,
                 10
         );
+    }
 
-        //
-        // 🔄 REFRESH
-        //
+    private void fail(Player p) {
 
-        DepositGUI.open(p);
+        p.playSound(
+                p.getLocation(),
+                Sound.ENTITY_VILLAGER_NO,
+                1f,
+                0.85f
+        );
+    }
+
+    private void premiumClick(
+            Player p,
+            Sound main,
+            float mainPitch,
+            Sound second,
+            float secondPitch
+    ) {
+
+        p.playSound(
+                p.getLocation(),
+                main,
+                0.75f,
+                mainPitch
+        );
+
+        p.playSound(
+                p.getLocation(),
+                second,
+                0.35f,
+                secondPitch
+        );
     }
 }
