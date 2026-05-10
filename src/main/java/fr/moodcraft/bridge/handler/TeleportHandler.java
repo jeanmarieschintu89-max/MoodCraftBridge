@@ -11,12 +11,10 @@ import org.bukkit.entity.Player;
 public class TeleportHandler implements GUIHandler {
 
     @Override
-    public void onClick(Player p,
-                        int slot) {
-
-        //
-        // 🔒 ANTI SPAM
-        //
+    public void onClick(
+            Player p,
+            int slot
+    ) {
 
         if (ActionLock.isLocked(
                 p.getUniqueId(),
@@ -25,153 +23,84 @@ public class TeleportHandler implements GUIHandler {
 
         switch (slot) {
 
-            //
-            // 🌲 RESSOURCES
-            //
-
             case 10 -> {
 
                 teleport(
-
                         p,
-
-                        "warp ressources",
-
-                        "§a✦ Zone Ressources",
-
-                        "§7Connexion aux zones minières...",
-
-                        Sound.BLOCK_ROOTED_DIRT_BREAK,
-
-                        0.9f
+                        "spawn",
+                        "§e✦ Spawn",
+                        "§7Retour au centre MoodCraft.",
+                        Sound.BLOCK_RESPAWN_ANCHOR_CHARGE,
+                        1.1f,
+                        Sound.BLOCK_NOTE_BLOCK_CHIME,
+                        1.35f
                 );
             }
-
-            //
-            // 🛒 ADMIN SHOP
-            //
 
             case 12 -> {
 
                 teleport(
-
                         p,
-
                         "warp shop",
-
-                        "§6✦ Centre Commercial",
-
-                        "§7Synchronisation des boutiques...",
-
+                        "§6✦ AdminShop",
+                        "§7Ouverture de la boutique.",
                         Sound.BLOCK_NOTE_BLOCK_BELL,
-
-                        1f
+                        1.15f,
+                        Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
+                        1.4f
                 );
             }
-
-            //
-            // 🎮 MINI-JEUX
-            //
 
             case 14 -> {
 
                 teleport(
-
                         p,
-
                         "warp mini-jeux",
-
-                        "§d✦ Arcade MoodCraft",
-
-                        "§7Chargement des activités...",
-
+                        "§d✦ Mini-jeux",
+                        "§7Chargement des activités.",
                         Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM,
-
-                        1.15f
+                        1.15f,
+                        Sound.BLOCK_AMETHYST_BLOCK_CHIME,
+                        1.35f
                 );
             }
-
-            //
-            // 🌍 RTP
-            //
 
             case 16 -> {
 
                 teleport(
-
                         p,
-
                         "tpr",
-
-                        "§5✦ Exploration Libre",
-
-                        "§7Recherche d'une zone sauvage...",
-
+                        "§5✦ Exploration",
+                        "§7Recherche d'une zone sauvage.",
                         Sound.ITEM_CHORUS_FRUIT_TELEPORT,
-
-                        1f
+                        1.15f,
+                        Sound.BLOCK_PORTAL_AMBIENT,
+                        1.6f
                 );
             }
 
-            //
-            // 🏠 SPAWN
-            //
-
-            case 20 -> {
+            case 22 -> {
 
                 teleport(
-
                         p,
-
-                        "spawn",
-
-                        "§e✦ Spawn Central",
-
-                        "§7Retour au centre principal...",
-
-                        Sound.BLOCK_RESPAWN_ANCHOR_CHARGE,
-
-                        1f
-                );
-            }
-
-            //
-            // 🏙️ VILLE
-            //
-
-            case 24 -> {
-
-                teleport(
-
-                        p,
-
                         "t spawn",
-
                         "§a✦ Ville",
-
-                        "§7Connexion au territoire urbain...",
-
+                        "§7Retour à ton territoire.",
                         Sound.BLOCK_CHAIN_PLACE,
-
-                        0.95f
+                        1.1f,
+                        Sound.BLOCK_STONE_BUTTON_CLICK_ON,
+                        1.5f
                 );
             }
-
-            //
-            // 🔙 RETOUR
-            //
 
             case 31 -> {
 
-                p.playSound(
-
-                        p.getLocation(),
-
+                premiumClick(
+                        p,
                         Sound.UI_BUTTON_CLICK,
-
-                        1f,
-
-                        0.8f
+                        0.8f,
+                        Sound.BLOCK_CHEST_CLOSE,
+                        1.2f
                 );
 
                 MainMenuGUI.open(p);
@@ -179,83 +108,64 @@ public class TeleportHandler implements GUIHandler {
         }
     }
 
-    //
-    // ✨ TP WRAPPER
-    //
+    private void teleport(
+            Player p,
+            String command,
+            String title,
+            String subtitle,
+            Sound mainSound,
+            float mainPitch,
+            Sound secondSound,
+            float secondPitch
+    ) {
 
-    private void teleport(Player p,
-                          String command,
-                          String title,
-                          String subtitle,
-                          Sound sound,
-                          float pitch) {
-
-        //
-        // 🔊 SOUND
-        //
-
-        p.playSound(
-
-                p.getLocation(),
-
-                sound,
-
-                1f,
-
-                pitch
-        );
-
-        //
-        // 💬 MESSAGE
-        //
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        );
-
-        p.sendMessage(
-                title
+        premiumClick(
+                p,
+                mainSound,
+                mainPitch,
+                secondSound,
+                secondPitch
         );
 
         p.sendMessage("");
-
-        p.sendMessage(
-                subtitle
-        );
-
+        p.sendMessage("§8----- §6Téléportation §8-----");
+        p.sendMessage(title);
+        p.sendMessage(subtitle);
         p.sendMessage("");
-
-        p.sendMessage(
-                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        );
-
-        p.sendMessage("");
-
-        //
-        // 🎬 TITLE
-        //
 
         p.sendTitle(
-
                 title,
-
                 "§fTéléportation en cours...",
-
                 5,
-
                 25,
-
                 10
         );
-
-        //
-        // 🚀 COMMAND
-        //
 
         p.closeInventory();
 
         p.performCommand(command);
+    }
+
+    private void premiumClick(
+            Player p,
+            Sound main,
+            float mainPitch,
+            Sound second,
+            float secondPitch
+    ) {
+
+        p.playSound(
+                p.getLocation(),
+                main,
+                0.75f,
+                mainPitch
+        );
+
+        p.playSound(
+                p.getLocation(),
+                second,
+                0.35f,
+                secondPitch
+        );
     }
 }
