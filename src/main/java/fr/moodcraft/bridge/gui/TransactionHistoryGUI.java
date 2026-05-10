@@ -18,62 +18,56 @@ import java.util.List;
 
 public class TransactionHistoryGUI {
 
-    //
-    // 📄 20 transactions par page
-    //
-
     private static final int PAGE_SIZE = 20;
 
-    public static void open(Player p,
-                            int page) {
+    public static void open(
+            Player p,
+            int page
+    ) {
 
         Inventory inv =
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§d✦ §0Historique bancaire §8• §7Page " + page
+                        "§8✦ §dHistorique Bancaire"
                 );
 
-        //
-        // 🖤 FILL
-        //
-
-        for (int i = 0; i < inv.getSize(); i++) {
-
-            SafeGUI.safeSet(
-
-                    inv,
-
-                    i,
-
-                    SafeGUI.item(
-                            Material.BLACK_STAINED_GLASS_PANE,
-                            " "
-                    )
-            );
-        }
-
-        //
-        // 📜 DATA
-        //
+        SafeGUI.fill(
+                inv,
+                Material.BLACK_STAINED_GLASS_PANE,
+                " "
+        );
 
         List<String> history =
-
                 TransactionManager.getHistory(
                         p.getUniqueId()
                 );
 
         List<String> pageData =
-
                 TransactionManager.getPage(
                         history,
                         page,
                         PAGE_SIZE
                 );
 
-        //
-        // 📦 SLOTS
-        //
+        SafeGUI.safeSet(inv, 4,
+                SafeGUI.glow(
+                        SafeGUI.item(
+                                Material.KNOWLEDGE_BOOK,
+                                "§d✦ Historique",
+                                "§8----- §dTransactions §8-----",
+                                "§7Toutes les opérations",
+                                "§7économiques enregistrées.",
+                                "",
+                                "§8• §7Entrées: §a"
+                                        + history.size(),
+                                "§8• §7Page: §e"
+                                        + page,
+                                "",
+                                "§e▶ Registre bancaire"
+                        )
+                )
+        );
 
         int[] slots = {
 
@@ -83,10 +77,6 @@ public class TransactionHistoryGUI {
 
                 28,29,30,32,33,34
         };
-
-        //
-        // 📜 TRANSACTIONS
-        //
 
         for (int i = 0;
              i < pageData.size();
@@ -98,171 +88,87 @@ public class TransactionHistoryGUI {
             Material mat =
                     Material.PAPER;
 
-            //
-            // 📥 DEPOT
-            //
+            String name =
+                    "§fTransaction";
 
             if (line.contains("[DEPOSIT]")) {
 
                 mat = Material.EMERALD;
+                name = "§a✦ Dépôt";
             }
-
-            //
-            // 📤 RETRAIT
-            //
 
             else if (line.contains("[WITHDRAW]")) {
 
                 mat = Material.REDSTONE;
+                name = "§c✦ Retrait";
             }
-
-            //
-            // 💸 VIREMENT
-            //
 
             else if (line.contains("[TRANSFER]")) {
 
                 mat = Material.WRITABLE_BOOK;
+                name = "§e✦ Virement";
             }
-
-            //
-            // 🛒 ACHAT
-            //
 
             else if (line.contains("[MARKET_BUY]")) {
 
                 mat = Material.CHEST_MINECART;
+                name = "§6✦ Achat Marché";
             }
-
-            //
-            // 💰 VENTE
-            //
 
             else if (line.contains("[MARKET_SELL]")) {
 
                 mat = Material.GOLD_INGOT;
+                name = "§b✦ Vente Marché";
             }
 
             SafeGUI.safeSet(
-
                     inv,
-
                     slots[i],
-
                     SafeGUI.item(
-
                             mat,
-
-                            "§fTransaction",
-
-                            "§8━━━━━━━━━━━━━━━━",
+                            name,
+                            "§7" + line,
                             "",
-                            line,
-                            "",
-                            "§8MoodCraft Economy"
+                            "§8▶ Archive bancaire"
                     )
             );
         }
-
-        //
-        // 📄 PAGE
-        //
-
-        SafeGUI.safeSet(
-
-                inv,
-
-                4,
-
-                SafeGUI.item(
-
-                        Material.BOOK,
-
-                        "§d✦ §fHistorique bancaire",
-
-                        "§8━━━━━━━━━━━━━━━━",
-                        "",
-                        "§7Transactions:",
-                        "§f" + history.size(),
-                        "",
-                        "§7Page actuelle:",
-                        "§e" + page,
-                        "",
-                        "§8MoodCraft Financial System"
-                )
-        );
-
-        //
-        // ◀ PAGE PRÉCÉDENTE
-        //
 
         if (page > 1) {
 
-            SafeGUI.safeSet(
-
-                    inv,
-
-                    27,
-
+            SafeGUI.safeSet(inv, 27,
                     SafeGUI.item(
-
-                            Material.ARROW,
-
-                            "§e← §fPage précédente",
-
-                            "§7Revenir à la page",
-                            "§7précédente."
+                            Material.SPECTRAL_ARROW,
+                            "§e✦ Page précédente",
+                            "§7Revenir à la page précédente.",
+                            "",
+                            "§e▶ Ouvrir"
                     )
             );
         }
-
-        //
-        // ▶ PAGE SUIVANTE
-        //
 
         if (history.size() > page * PAGE_SIZE) {
 
-            SafeGUI.safeSet(
-
-                    inv,
-
-                    35,
-
+            SafeGUI.safeSet(inv, 35,
                     SafeGUI.item(
-
-                            Material.ARROW,
-
-                            "§e→ §fPage suivante",
-
-                            "§7Accéder à la page",
-                            "§7suivante."
+                            Material.SPECTRAL_ARROW,
+                            "§e✦ Page suivante",
+                            "§7Afficher plus de transactions.",
+                            "",
+                            "§e▶ Ouvrir"
                     )
             );
         }
 
-        //
-        // 🔙 RETOUR
-        //
-
-        SafeGUI.safeSet(
-
-                inv,
-
-                31,
-
+        SafeGUI.safeSet(inv, 31,
                 SafeGUI.item(
-
-                        Material.BARRIER,
-
-                        "§c✦ §fRetour",
-
-                        "§7Retour à la banque"
+                        Material.ARROW,
+                        "§c✦ Retour",
+                        "§7Retour à la banque.",
+                        "",
+                        "§c▶ Retour"
                 )
         );
-
-        //
-        // 🚀 OPEN
-        //
 
         GUIManager.open(
                 p,
