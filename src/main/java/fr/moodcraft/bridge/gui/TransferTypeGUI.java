@@ -5,7 +5,6 @@ import fr.moodcraft.bridge.manager.GUIManager;
 import fr.moodcraft.bridge.util.SafeGUI;
 
 import org.bukkit.Bukkit;
-
 import org.bukkit.Material;
 
 import org.bukkit.entity.Player;
@@ -16,152 +15,75 @@ public class TransferTypeGUI {
 
     public static void open(Player p) {
 
-        Inventory inv = Bukkit.createInventory(
-
-                null,
-
-                27,
-
-                "§8✦ §eType de Virement"
-        );
-
-        //
-        // 🌌 FOND
-        //
+        Inventory inv =
+                Bukkit.createInventory(
+                        null,
+                        27,
+                        "§8✦ §eVirement"
+                );
 
         SafeGUI.fill(
-
                 inv,
-
                 Material.BLACK_STAINED_GLASS_PANE,
-
                 " "
         );
 
-        //
-        // 📄 HEADER
-        //
-
         SafeGUI.safeSet(inv, 4,
-
                 SafeGUI.glow(
-
                         SafeGUI.item(
-
                                 Material.PAPER,
-
-                                "§6✦ Système Bancaire MoodCraft",
-
-                                "§8━━━━━━━━━━━━━━━━",
-
-                                "§7Choisis le mode",
-
-                                "§7de transfert bancaire.",
-
+                                "§6✦ Virement bancaire",
+                                "§8----- §6Banque §8-----",
+                                "§7Choisis le type de transfert.",
                                 "",
-
-                                "§8• Sécurisé",
-
-                                "§8• Historique sauvegardé",
-
-                                "§8• Vérification active"
+                                "§8• §7Sécurisé",
+                                "§8• §7Historique sauvegardé",
+                                "§8• §7Vérification active"
                         )
                 )
         );
-
-        //
-        // 👤 JOUEUR
-        //
 
         SafeGUI.safeSet(inv, 11,
-
                 SafeGUI.glow(
-
                         SafeGUI.item(
-
                                 Material.PLAYER_HEAD,
-
-                                "§a✦ Vers un Joueur",
-
-                                "§8━━━━━━━━━━━━━━━━",
-
-                                "§7Envoyer un virement",
-
-                                "§7direct à un joueur",
-
-                                "§7connecté au serveur.",
-
+                                "§a✦ Joueur",
+                                "§7Envoie à un joueur connecté.",
                                 "",
-
-                                "§8• Instantané",
-
-                                "§8• Sélection visuelle",
-
+                                "§8• §7Rapide",
+                                "§8• §7Sélection visuelle",
                                 "",
-
-                                "§e▶ Sélectionner"
+                                "§e▶ Choisir"
                         )
                 )
         );
 
-        //
-        // 🏦 IBAN
-        //
-
         SafeGUI.safeSet(inv, 15,
-
                 SafeGUI.item(
-
-                        Material.WRITABLE_BOOK,
-
-                        "§b✦ Via IBAN",
-
-                        "§8━━━━━━━━━━━━━━━━",
-
-                        "§7Effectuer un transfert",
-
-                        "§7grâce à un IBAN MoodCraft.",
-
+                        Material.NAME_TAG,
+                        "§b✦ IBAN",
+                        "§7Envoie avec un IBAN MoodCraft.",
                         "",
-
-                        "§8• Compatible hors ligne",
-
-                        "§8• Transactions sécurisées",
-
+                        "§8• §7Compatible hors ligne",
+                        "§8• §7Transaction sécurisée",
                         "",
-
                         "§e▶ Continuer"
                 )
         );
 
-        //
-        // 🔙 RETOUR
-        //
-
         SafeGUI.safeSet(inv, 22,
-
                 SafeGUI.item(
-
                         Material.ARROW,
-
                         "§c✦ Retour",
-
-                        "§8━━━━━━━━━━━━━━━━",
-
-                        "§7Retour au menu banque.",
-
+                        "§7Retour à la banque.",
                         "",
-
-                        "§e▶ Revenir"
+                        "§c▶ Retour"
                 )
         );
 
         GUIManager.open(
-
                 p,
-
                 "transfer_type",
-
                 inv
         );
     }
