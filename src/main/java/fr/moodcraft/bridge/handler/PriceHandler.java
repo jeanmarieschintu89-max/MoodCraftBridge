@@ -330,4 +330,8 @@ public class PriceHandler implements GUIHandler {
         p.playSound(
                 p.getLocation(),
                 second,
-                0.35
+                0.35f,
+                secondPitch
+        );
+    }
+}
