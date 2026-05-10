@@ -15,12 +15,10 @@ import org.bukkit.entity.Player;
 public class TransferTypeHandler implements GUIHandler {
 
     @Override
-    public void onClick(Player p,
-                        int slot) {
-
-        //
-        // 🔒 ANTI SPAM
-        //
+    public void onClick(
+            Player p,
+            int slot
+    ) {
 
         if (ActionLock.isLocked(
                 p.getUniqueId(),
@@ -29,149 +27,89 @@ public class TransferTypeHandler implements GUIHandler {
 
         switch (slot) {
 
-            //
-            // 👤 VIREMENT JOUEUR
-            //
-
             case 11 -> {
 
                 TransferBuilder.setAction(
-
                         p,
-
                         TransferBuilder.Action.PLAYER_TRANSFER
                 );
 
                 p.sendMessage("");
-
-                p.sendMessage(
-                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                );
-
-                p.sendMessage(
-                        "§6✦ §fVirement Joueur"
-                );
-
+                p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+                p.sendMessage("§a✔ Virement joueur sélectionné");
+                p.sendMessage("§7Choisis un joueur connecté.");
                 p.sendMessage("");
 
-                p.sendMessage(
-                        "§7Sélectionne un joueur"
-                );
-
-                p.sendMessage(
-                        "§7connecté au réseau bancaire."
-                );
-
-                p.sendMessage("");
-
-                p.sendMessage(
-                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                );
-
-                p.sendMessage("");
-
-                p.playSound(
-
-                        p.getLocation(),
-
+                premiumClick(
+                        p,
                         Sound.BLOCK_NOTE_BLOCK_CHIME,
-
-                        1f,
-
-                        1.15f
+                        1.25f,
+                        Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
+                        1.4f
                 );
 
                 TargetPlayerGUI.open(p);
             }
 
-            //
-            // 🏦 VIREMENT IBAN
-            //
-
             case 15 -> {
 
                 TransferBuilder.setAction(
-
                         p,
-
                         TransferBuilder.Action.IBAN_TRANSFER
                 );
 
                 p.sendMessage("");
-
-                p.sendMessage(
-                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                );
-
-                p.sendMessage(
-                        "§b✦ §fTransfert IBAN"
-                );
-
+                p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+                p.sendMessage("§b✔ Virement IBAN sélectionné");
+                p.sendMessage("§7Entre un IBAN MoodCraft.");
                 p.sendMessage("");
 
-                p.sendMessage(
-                        "§7Connexion au réseau"
-                );
-
-                p.sendMessage(
-                        "§7bancaire MoodCraft..."
-                );
-
-                p.sendMessage("");
-
-                p.sendMessage(
-                        "§8• Compatible hors ligne"
-                );
-
-                p.sendMessage(
-                        "§8• Transactions sécurisées"
-                );
-
-                p.sendMessage(
-                        "§8• Validation bancaire"
-                );
-
-                p.sendMessage("");
-
-                p.sendMessage(
-                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                );
-
-                p.sendMessage("");
-
-                p.playSound(
-
-                        p.getLocation(),
-
+                premiumClick(
+                        p,
                         Sound.BLOCK_BEACON_ACTIVATE,
-
-                        1f,
-
-                        1f
+                        1.1f,
+                        Sound.BLOCK_AMETHYST_BLOCK_CHIME,
+                        1.3f
                 );
 
                 IbanGUI.open(p);
             }
 
-            //
-            // 🔙 RETOUR
-            //
-
             case 22 -> {
 
-                p.playSound(
-
-                        p.getLocation(),
-
+                premiumClick(
+                        p,
                         Sound.UI_BUTTON_CLICK,
-
-                        1f,
-
-                        0.8f
+                        0.8f,
+                        Sound.BLOCK_CHEST_CLOSE,
+                        1.2f
                 );
 
                 BankGUI.open(p);
             }
         }
+    }
+
+    private void premiumClick(
+            Player p,
+            Sound main,
+            float mainPitch,
+            Sound second,
+            float secondPitch
+    ) {
+
+        p.playSound(
+                p.getLocation(),
+                main,
+                0.75f,
+                mainPitch
+        );
+
+        p.playSound(
+                p.getLocation(),
+                second,
+                0.35f,
+                secondPitch
+        );
     }
 }
