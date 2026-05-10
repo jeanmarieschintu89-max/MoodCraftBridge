@@ -16,7 +16,6 @@ import fr.moodcraft.bridge.util.VaultHook;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Sound;
-
 import org.bukkit.entity.Player;
 
 public class WithdrawHandler implements GUIHandler {
@@ -26,103 +25,51 @@ public class WithdrawHandler implements GUIHandler {
 
         switch (slot) {
 
-            //
-            // 💸 RETRAITS RAPIDES
-            //
+            case 10 -> withdraw(p, 100);
 
-            case 11 -> withdraw(p, 100);
+            case 12 -> withdraw(p, 1000);
 
-            case 13 -> withdraw(p, 1000);
+            case 14 -> withdraw(p, 10000);
 
-            case 15 -> withdraw(p, 10000);
+            case 16 -> withdrawAll(p);
 
-            //
-            // 🏦 RETRAIT TOTAL
-            //
-
-            case 21 -> withdrawAll(p);
-
-            //
-            // ✍️ PERSONNALISÉ
-            //
-
-            case 23 -> {
+            case 22 -> {
 
                 p.closeInventory();
 
                 AmountInputManager.wait(
-
                         p,
-
                         AmountInputManager.Type.WITHDRAW
                 );
 
                 InputManager.wait(
-
                         p,
-
                         "amount_input"
                 );
 
                 p.sendMessage("");
-
-                p.sendMessage(
-                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                );
-
-                p.sendMessage(
-                        "§6✦ §fRetrait Personnalisé"
-                );
-
+                p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+                p.sendMessage("§7Entre le montant à retirer.");
+                p.sendMessage("§8Exemple: §e2500");
                 p.sendMessage("");
 
-                p.sendMessage(
-                        "§7Entre le montant"
-                );
-
-                p.sendMessage(
-                        "§7à retirer dans le chat."
-                );
-
-                p.sendMessage("");
-
-                p.sendMessage(
-                        "§8Exemple: §e2500"
-                );
-
-                p.sendMessage(
-                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                );
-
-                p.sendMessage("");
-
-                p.playSound(
-
-                        p.getLocation(),
-
+                premiumClick(
+                        p,
                         Sound.UI_BUTTON_CLICK,
-
-                        1f,
-
-                        1f
+                        1.1f,
+                        Sound.ITEM_BOOK_PAGE_TURN,
+                        1.0f
                 );
             }
 
-            //
-            // 🔙 RETOUR
-            //
-
             case 31 -> {
 
-                p.playSound(
-
-                        p.getLocation(),
-
+                premiumClick(
+                        p,
                         Sound.UI_BUTTON_CLICK,
-
-                        1f,
-
-                        0.8f
+                        0.8f,
+                        Sound.BLOCK_CHEST_CLOSE,
+                        1.2f
                 );
 
                 BankGUI.open(p);
@@ -130,16 +77,7 @@ public class WithdrawHandler implements GUIHandler {
         }
     }
 
-    // =========================
-    // 💸 RETRAIT NORMAL
-    // =========================
-
-    private void withdraw(Player p,
-                          double amount) {
-
-        //
-        // 🔒 ANTI SPAM
-        //
+    private void withdraw(Player p, double amount) {
 
         if (ActionLock.isLocked(
                 p.getUniqueId(),
@@ -151,10 +89,7 @@ public class WithdrawHandler implements GUIHandler {
 
         if (eco == null) {
 
-            p.sendMessage(
-                    "§cErreur économie Vault."
-            );
-
+            p.sendMessage("§cErreur économie Vault.");
             return;
         }
 
@@ -163,183 +98,55 @@ public class WithdrawHandler implements GUIHandler {
 
         double bank =
                 BankStorage.get(id);
-
-        //
-        // ❌ FONDS
-        //
 
         if (bank < amount) {
 
             p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage(
-                    "§c✦ Fonds insuffisants"
-            );
-
+            p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+            p.sendMessage("§cSolde bancaire insuffisant.");
+            p.sendMessage("§7Banque: §6" + SafeGUI.money(bank) + "€");
             p.sendMessage("");
 
-            p.sendMessage(
-                    "§7Solde bancaire disponible:"
-            );
-
-            p.sendMessage(
-                    "§6"
-                            + SafeGUI.money(bank)
-                            + "€"
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage("");
-
-            p.playSound(
-
-                    p.getLocation(),
-
-                    Sound.ENTITY_VILLAGER_NO,
-
-                    1f,
-
-                    0.9f
-            );
+            fail(p);
 
             return;
         }
-
-        //
-        // 💸 RETRAIT BANQUE
-        //
 
         BankStorage.remove(
                 id,
                 amount
         );
 
-        //
-        // 💰 AJOUT CASH
-        //
-
         eco.depositPlayer(
                 p,
                 amount
         );
-
-        //
-        // 📜 HISTORIQUE
-        //
 
         TransactionManager.withdraw(
                 p.getUniqueId(),
                 amount
         );
 
-        //
-        // 💳 NOUVEAU SOLDE
-        //
-
         double newBank =
                 BankStorage.get(id);
 
-        //
-        // ✨ MESSAGE
-        //
-
+        p.sendMessage("");
+        p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+        p.sendMessage("§a✔ Retrait effectué");
+        p.sendMessage("§7Montant: §c-" + SafeGUI.money(amount) + "€");
+        p.sendMessage("§7Banque: §6" + SafeGUI.money(newBank) + "€");
         p.sendMessage("");
 
-        p.sendMessage(
-                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        success(
+                p,
+                "§c-" + SafeGUI.money(amount) + "€",
+                "§fRetrait effectué"
         );
-
-        p.sendMessage(
-                "§6✦ §fRetrait effectué"
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§7Montant transféré:"
-        );
-
-        p.sendMessage(
-                "§c-"
-                        + SafeGUI.money(amount)
-                        + "€"
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§7Nouveau solde bancaire:"
-        );
-
-        p.sendMessage(
-                "§6"
-                        + SafeGUI.money(newBank)
-                        + "€"
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        );
-
-        p.sendMessage("");
-
-        //
-        // 🔊 FEEDBACK
-        //
-
-        p.playSound(
-
-                p.getLocation(),
-
-                Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
-
-                1f,
-
-                1.15f
-        );
-
-        p.sendTitle(
-
-                "§c-"
-                        + SafeGUI.money(amount)
-                        + "€",
-
-                "§fRetrait bancaire effectué",
-
-                5,
-
-                35,
-
-                10
-        );
-
-        //
-        // 🔄 REFRESH
-        //
 
         WithdrawGUI.open(p);
     }
 
-    // =========================
-    // 🏦 RETRAIT TOTAL
-    // =========================
-
     private void withdrawAll(Player p) {
-
-        //
-        // 🔒 ANTI SPAM
-        //
 
         if (ActionLock.isLocked(
                 p.getUniqueId(),
@@ -351,10 +158,7 @@ public class WithdrawHandler implements GUIHandler {
 
         if (eco == null) {
 
-            p.sendMessage(
-                    "§cErreur économie Vault."
-            );
-
+            p.sendMessage("§cErreur économie Vault.");
             return;
         }
 
@@ -364,155 +168,102 @@ public class WithdrawHandler implements GUIHandler {
         double bank =
                 BankStorage.get(id);
 
-        //
-        // ❌ VIDE
-        //
-
         if (bank <= 0) {
 
             p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage(
-                    "§c✦ Compte bancaire vide"
-            );
-
+            p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+            p.sendMessage("§cTon compte bancaire est vide.");
             p.sendMessage("");
 
-            p.sendMessage(
-                    "§7Aucun fond disponible."
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage("");
-
-            p.playSound(
-
-                    p.getLocation(),
-
-                    Sound.ENTITY_VILLAGER_NO,
-
-                    1f,
-
-                    0.8f
-            );
+            fail(p);
 
             return;
         }
-
-        //
-        // 💸 RESET BANQUE
-        //
 
         BankStorage.remove(
                 id,
                 bank
         );
 
-        //
-        // 💰 CASH
-        //
-
         eco.depositPlayer(
                 p,
                 bank
         );
-
-        //
-        // 📜 HISTORIQUE
-        //
 
         TransactionManager.withdraw(
                 p.getUniqueId(),
                 bank
         );
 
-        //
-        // ✨ MESSAGE
-        //
-
+        p.sendMessage("");
+        p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+        p.sendMessage("§a✔ Retrait total effectué");
+        p.sendMessage("§7Montant: §c-" + SafeGUI.money(bank) + "€");
+        p.sendMessage("§7Banque: §60€");
         p.sendMessage("");
 
-        p.sendMessage(
-                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        success(
+                p,
+                "§c-" + SafeGUI.money(bank) + "€",
+                "§fTout a été retiré"
         );
 
-        p.sendMessage(
-                "§6✦ §fRetrait total effectué"
-        );
+        WithdrawGUI.open(p);
+    }
 
-        p.sendMessage("");
+    private void success(
+            Player p,
+            String title,
+            String subtitle
+    ) {
 
-        p.sendMessage(
-                "§7Montant transféré:"
-        );
-
-        p.sendMessage(
-                "§c-"
-                        + SafeGUI.money(bank)
-                        + "€"
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§7Solde bancaire:"
-        );
-
-        p.sendMessage(
-                "§60€"
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        );
-
-        p.sendMessage("");
-
-        //
-        // 🔊 FEEDBACK
-        //
-
-        p.playSound(
-
-                p.getLocation(),
-
-                Sound.BLOCK_BEACON_DEACTIVATE,
-
-                1f,
-
-                1f
+        premiumClick(
+                p,
+                Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
+                1.2f,
+                Sound.BLOCK_NOTE_BLOCK_CHIME,
+                1.4f
         );
 
         p.sendTitle(
-
-                "§c-"
-                        + SafeGUI.money(bank)
-                        + "€",
-
-                "§fTout a été retiré",
-
+                title,
+                subtitle,
                 5,
-
-                40,
-
+                35,
                 10
         );
+    }
 
-        //
-        // 🔄 REFRESH
-        //
+    private void fail(Player p) {
 
-        WithdrawGUI.open(p);
+        p.playSound(
+                p.getLocation(),
+                Sound.ENTITY_VILLAGER_NO,
+                1f,
+                0.85f
+        );
+    }
+
+    private void premiumClick(
+            Player p,
+            Sound main,
+            float mainPitch,
+            Sound second,
+            float secondPitch
+    ) {
+
+        p.playSound(
+                p.getLocation(),
+                main,
+                0.75f,
+                mainPitch
+        );
+
+        p.playSound(
+                p.getLocation(),
+                second,
+                0.35f,
+                secondPitch
+        );
     }
 }
