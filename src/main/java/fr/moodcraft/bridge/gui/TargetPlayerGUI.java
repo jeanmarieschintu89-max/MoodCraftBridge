@@ -5,14 +5,15 @@ import fr.moodcraft.bridge.manager.GUIManager;
 import fr.moodcraft.bridge.util.SafeGUI;
 
 import org.bukkit.Bukkit;
-
 import org.bukkit.Material;
 
 import org.bukkit.entity.Player;
 
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.HashMap;
@@ -21,101 +22,47 @@ import java.util.UUID;
 
 public class TargetPlayerGUI {
 
-    //
-    // 🔥 SLOT → UUID
-    //
-
     private static final Map<Integer, UUID> slotMap =
             new HashMap<>();
-
-    //
-    // 📂 OPEN
-    //
 
     public static void open(Player p) {
 
         Inventory inv =
                 Bukkit.createInventory(
-
                         null,
-
                         54,
-
-                        "§8✦ §fChoix du Joueur"
+                        "§8✦ §aDestinataire"
                 );
-
-        //
-        // 🌌 RESET
-        //
 
         slotMap.clear();
 
-        //
-        // 🌌 FOND
-        //
-
         SafeGUI.fill(
-
                 inv,
-
                 Material.BLACK_STAINED_GLASS_PANE,
-
                 " "
         );
 
-        //
-        // 📄 HEADER
-        //
-
         SafeGUI.safeSet(inv, 4,
-
                 SafeGUI.glow(
-
-                        SafeGUI.item(
-
+                        button(
                                 Material.PAPER,
-
-                                "§6✦ Sélection du Destinataire",
-
-                                "§8━━━━━━━━━━━━━━━━",
-
-                                "§7Choisis un joueur",
-
-                                "§7connecté au serveur.",
-
+                                "§6✦ Choisir un joueur",
+                                "§8----- §6Virement §8-----",
+                                "§7Sélectionne un joueur connecté.",
                                 "",
-
-                                "§8• Virement instantané",
-
-                                "§8• Transaction sécurisée",
-
-                                "§8• Historique bancaire",
-
-                                "",
-
-                                "§e▶ Sélectionner"
+                                "§8• §7Instantané",
+                                "§8• §7Sécurisé",
+                                "§8• §7Historique sauvegardé"
                         )
                 )
         );
-
-        //
-        // 👥 JOUEURS
-        //
 
         int slot = 10;
 
         for (Player target : Bukkit.getOnlinePlayers()) {
 
-            //
-            // ❌ SOI-MÊME
-            //
-
             if (target.equals(p))
                 continue;
-
-            //
-            // 🔥 ÉVITE BORDURES
-            //
 
             if (slot == 17)
                 slot = 19;
@@ -124,20 +71,15 @@ public class TargetPlayerGUI {
                 slot = 28;
 
             if (slot == 35)
-                break;
+                slot = 37;
 
-            //
-            // 💾 SAVE UUID
-            //
+            if (slot >= 44)
+                break;
 
             slotMap.put(
                     slot,
                     target.getUniqueId()
             );
-
-            //
-            // 👤 HEAD
-            //
 
             ItemStack head =
                     new ItemStack(
@@ -154,113 +96,123 @@ public class TargetPlayerGUI {
                 );
 
                 meta.setLore(java.util.List.of(
-
-                        "§8━━━━━━━━━━━━━━━━",
-
-                        "§7Joueur actuellement",
-
-                        "§7connecté au serveur.",
-
+                        "§7Joueur connecté.",
                         "",
-
-                        "§8• Disponible",
-
-                        "§8• Transaction instantanée",
-
-                        "§8• Sécurisé",
-
+                        "§8• §7Virement instantané",
+                        "§8• §7Transaction sécurisée",
                         "",
-
                         "§e▶ Sélectionner"
                 ));
+
+                hide(meta);
 
                 head.setItemMeta(meta);
             }
 
             SafeGUI.safeSet(
-
                     inv,
-
                     slot,
-
                     SafeGUI.glow(head)
             );
 
             slot++;
         }
 
-        //
-        // 📊 INFOS
-        //
+        if (slotMap.isEmpty()) {
 
-        SafeGUI.safeSet(inv, 49,
-
-                SafeGUI.item(
-
-                        Material.BOOK,
-
-                        "§6✦ Réseau Bancaire",
-
-                        "§8━━━━━━━━━━━━━━━━",
-
-                        "§7Les virements MoodCraft",
-
-                        "§7sont protégés et",
-
-                        "§7sauvegardés automatiquement.",
-
-                        "",
-
-                        "§8• Logs sécurisés",
-
-                        "§8• Détection fraude",
-
-                        "§8• Historique complet"
-                )
-        );
-
-        //
-        // 🔙 RETOUR
-        //
+            SafeGUI.safeSet(inv, 22,
+                    button(
+                            Material.BARRIER,
+                            "§c✖ Aucun joueur",
+                            "§7Aucun autre joueur connecté.",
+                            "",
+                            "§8• §7Utilise plutôt l'IBAN",
+                            "",
+                            "§c▶ Retour"
+                    )
+            );
+        }
 
         SafeGUI.safeSet(inv, 45,
-
-                SafeGUI.item(
-
+                button(
                         Material.ARROW,
-
                         "§c✦ Retour",
-
-                        "§8━━━━━━━━━━━━━━━━",
-
-                        "§7Retour au menu précédent.",
-
+                        "§7Retour au type de virement.",
                         "",
-
-                        "§e▶ Revenir"
+                        "§c▶ Retour"
                 )
         );
 
-        //
-        // 📂 OPEN
-        //
+        SafeGUI.safeSet(inv, 49,
+                button(
+                        Material.NAME_TAG,
+                        "§b✦ IBAN",
+                        "§7Besoin d'envoyer hors ligne ?",
+                        "",
+                        "§8• §7Retour puis choisis IBAN"
+                )
+        );
 
         GUIManager.open(
-
                 p,
-
                 "transfer_target",
-
                 inv
         );
     }
 
-    //
-    // 🔍 GET TARGET
-    //
-
     public static UUID getTarget(int slot) {
 
         return slotMap.get(slot);
+    }
+
+    private static ItemStack button(
+            Material material,
+            String name,
+            String... lore
+    ) {
+
+        ItemStack item =
+                SafeGUI.item(
+                        material,
+                        name,
+                        lore
+                );
+
+        ItemMeta meta =
+                item.getItemMeta();
+
+        if (meta != null) {
+
+            hide(meta);
+
+            item.setItemMeta(meta);
+        }
+
+        return item;
+    }
+
+    private static void hide(
+            ItemMeta meta
+    ) {
+
+        meta.addItemFlags(
+                ItemFlag.HIDE_ATTRIBUTES,
+                ItemFlag.HIDE_ENCHANTS,
+                ItemFlag.HIDE_UNBREAKABLE,
+                ItemFlag.HIDE_DESTROYS,
+                ItemFlag.HIDE_PLACED_ON,
+                ItemFlag.HIDE_ADDITIONAL_TOOLTIP
+        );
+
+        try {
+
+            ItemFlag flag =
+                    ItemFlag.valueOf(
+                            "HIDE_ITEM_SPECIFICS"
+                    );
+
+            meta.addItemFlags(flag);
+
+        } catch (IllegalArgumentException ignored) {}
     }
 }
