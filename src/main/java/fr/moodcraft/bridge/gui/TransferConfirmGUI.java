@@ -6,9 +6,7 @@ import fr.moodcraft.bridge.manager.TransferBuilder;
 import fr.moodcraft.bridge.util.SafeGUI;
 
 import org.bukkit.Bukkit;
-
 import org.bukkit.Material;
-
 import org.bukkit.Sound;
 
 import org.bukkit.entity.Player;
@@ -21,31 +19,18 @@ public class TransferConfirmGUI {
 
     public static void open(Player p) {
 
-        Inventory inv = Bukkit.createInventory(
-
-                null,
-
-                27,
-
-                "§8✦ §6Confirmation Bancaire"
-        );
-
-        //
-        // 🌌 FOND
-        //
+        Inventory inv =
+                Bukkit.createInventory(
+                        null,
+                        27,
+                        "§8✦ §6Confirmation"
+                );
 
         SafeGUI.fill(
-
                 inv,
-
                 Material.BLACK_STAINED_GLASS_PANE,
-
                 " "
         );
-
-        //
-        // 📄 DONNÉES
-        //
 
         UUID targetUUID =
                 TransferBuilder.getTarget(p);
@@ -70,132 +55,60 @@ public class TransferConfirmGUI {
             }
         }
 
-        //
-        // 💰 FORMAT
-        //
-
         String amount =
                 SafeGUI.money(amountValue);
 
-        //
-        // 📋 INFOS
-        //
-
         SafeGUI.safeSet(inv, 13,
-
                 SafeGUI.glow(
-
                         SafeGUI.item(
-
                                 Material.PAPER,
-
-                                "§6✦ Confirmation du Virement",
-
-                                "§8━━━━━━━━━━━━━━━━",
-
-                                "§7Destinataire:",
-
-                                targetName,
-
+                                "§6✦ Confirmer le virement",
+                                "§8----- §6Résumé §8-----",
+                                "§7Destinataire: " + targetName,
+                                "§7Montant: §6" + amount + "€",
                                 "",
-
-                                "§7Montant:",
-
-                                "§6" + amount + "€",
-
+                                "§8• §7Transaction sécurisée",
+                                "§8• §7Historique sauvegardé",
                                 "",
-
-                                "§8• Transaction sécurisée",
-
-                                "§8• Historique enregistré",
-
-                                "§8• Validation finale",
-
-                                "",
-
                                 "§e▶ Vérifie avant validation"
                         )
                 )
         );
 
-        //
-        // ❌ ANNULER
-        //
-
         SafeGUI.safeSet(inv, 11,
-
                 SafeGUI.item(
-
                         Material.REDSTONE_BLOCK,
-
                         "§c✦ Annuler",
-
-                        "§8━━━━━━━━━━━━━━━━",
-
-                        "§7Annuler le transfert",
-
-                        "§7et revenir au menu.",
-
+                        "§7Annule le transfert.",
                         "",
-
-                        "§e▶ Retour"
+                        "§c▶ Retour"
                 )
         );
 
-        //
-        // ✅ CONFIRMER
-        //
-
         SafeGUI.safeSet(inv, 15,
-
                 SafeGUI.glow(
-
                         SafeGUI.item(
-
                                 Material.EMERALD_BLOCK,
-
                                 "§a✦ Confirmer",
-
-                                "§8━━━━━━━━━━━━━━━━",
-
-                                "§7Valider le transfert",
-
-                                "§7vers le destinataire.",
-
+                                "§7Valide le virement.",
                                 "",
-
-                                "§7Montant final: §6"
-                                        + amount
-                                        + "€",
-
+                                "§8• §7Montant: §6" + amount + "€",
                                 "",
-
-                                "§e▶ Valider"
+                                "§a▶ Envoyer"
                         )
                 )
         );
 
-        //
-        // 🔊 SON
-        //
-
         p.playSound(
-
                 p.getLocation(),
-
-                Sound.UI_BUTTON_CLICK,
-
-                1f,
-
+                Sound.BLOCK_NOTE_BLOCK_CHIME,
+                0.6f,
                 1.2f
         );
 
         GUIManager.open(
-
                 p,
-
                 "transfer_confirm",
-
                 inv
         );
     }
