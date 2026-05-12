@@ -58,16 +58,16 @@ public class BankChatInputListener
 
         p.closeInventory();
 
-        p.sendMessage("");
-        p.sendMessage("§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----");
+        header(p);
+
         p.sendMessage("§fÉcris le montant à déposer.");
         p.sendMessage("");
         p.sendMessage("§8• §7Exemple: §e5000");
-        p.sendMessage("§8• §7L'argent sera retiré de ton liquide");
-        p.sendMessage("§8• §7et ajouté à ta banque personnelle.");
+        p.sendMessage("§8• §7Liquide §8➜ §6Banque");
         p.sendMessage("");
         p.sendMessage("§7Tape §cannuler §7pour quitter.");
-        p.sendMessage("");
+
+        footer(p);
 
         soundClick(p);
     }
@@ -90,16 +90,16 @@ public class BankChatInputListener
 
         p.closeInventory();
 
-        p.sendMessage("");
-        p.sendMessage("§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----");
+        header(p);
+
         p.sendMessage("§fÉcris le montant à retirer.");
         p.sendMessage("");
         p.sendMessage("§8• §7Exemple: §e5000");
-        p.sendMessage("§8• §7L'argent sera retiré de ta banque");
-        p.sendMessage("§8• §7et ajouté à ton liquide.");
+        p.sendMessage("§8• §7Banque §8➜ §aLiquide");
         p.sendMessage("");
         p.sendMessage("§7Tape §cannuler §7pour quitter.");
-        p.sendMessage("");
+
+        footer(p);
 
         soundClick(p);
     }
@@ -143,17 +143,17 @@ public class BankChatInputListener
 
         p.closeInventory();
 
-        p.sendMessage("");
-        p.sendMessage("§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----");
+        header(p);
+
         p.sendMessage("§fÉcris le montant du virement.");
-        p.sendMessage("§7Destinataire: §e" + targetName);
         p.sendMessage("");
+        p.sendMessage("§7Destinataire: §e" + targetName);
         p.sendMessage("§8• §7Exemple: §e5000");
-        p.sendMessage("§8• §7Les gros paiements professionnels");
-        p.sendMessage("§8• §7doivent passer par §e/contrat§7.");
+        p.sendMessage("§8• §7Paiement pro: §e/contrat");
         p.sendMessage("");
         p.sendMessage("§7Tape §cannuler §7pour quitter.");
-        p.sendMessage("");
+
+        footer(p);
 
         soundClick(p);
     }
@@ -213,10 +213,11 @@ public class BankChatInputListener
 
             TransferBuilder.clear(p);
 
-            p.sendMessage("");
-            p.sendMessage("§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----");
+            header(p);
+
             p.sendMessage("§7Opération bancaire annulée.");
-            p.sendMessage("");
+
+            footer(p);
 
             fail(p);
 
@@ -228,12 +229,14 @@ public class BankChatInputListener
 
         if (amount <= 0) {
 
+            header(p);
+
+            p.sendMessage("§c✘ §fMontant invalide.");
             p.sendMessage("");
-            p.sendMessage("§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----");
-            p.sendMessage("§cMontant invalide.");
             p.sendMessage("§7Écris un nombre supérieur à zéro.");
             p.sendMessage("§8Exemple: §e5000");
-            p.sendMessage("");
+
+            footer(p);
 
             fail(p);
 
@@ -299,10 +302,15 @@ public class BankChatInputListener
 
             error(
                     p,
-                    "Fonds liquides insuffisants. Liquide: §a"
-                            + SafeGUI.money(cash)
-                            + "€"
+                    "Fonds liquides insuffisants."
             );
+
+            header(p);
+
+            p.sendMessage("§7Liquide disponible: §a" + SafeGUI.money(cash) + "€");
+            p.sendMessage("§7Montant demandé: §e" + SafeGUI.money(amount) + "€");
+
+            footer(p);
 
             return;
         }
@@ -332,12 +340,14 @@ public class BankChatInputListener
                 p.getUniqueId()
         );
 
+        header(p);
+
+        p.sendMessage("§a✔ §fDépôt effectué.");
         p.sendMessage("");
-        p.sendMessage("§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----");
-        p.sendMessage("§a✔ Dépôt effectué");
         p.sendMessage("§7Montant: §a+" + SafeGUI.money(amount) + "€");
         p.sendMessage("§7Banque: §6" + SafeGUI.money(newBank) + "€");
-        p.sendMessage("");
+
+        footer(p);
 
         success(
                 p,
@@ -380,10 +390,15 @@ public class BankChatInputListener
 
             error(
                     p,
-                    "Fonds bancaires insuffisants. Banque: §6"
-                            + SafeGUI.money(bank)
-                            + "€"
+                    "Fonds bancaires insuffisants."
             );
+
+            header(p);
+
+            p.sendMessage("§7Banque disponible: §6" + SafeGUI.money(bank) + "€");
+            p.sendMessage("§7Montant demandé: §e" + SafeGUI.money(amount) + "€");
+
+            footer(p);
 
             return;
         }
@@ -410,12 +425,14 @@ public class BankChatInputListener
                 p.getUniqueId()
         );
 
+        header(p);
+
+        p.sendMessage("§a✔ §fRetrait effectué.");
         p.sendMessage("");
-        p.sendMessage("§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----");
-        p.sendMessage("§a✔ Retrait effectué");
         p.sendMessage("§7Montant: §a+" + SafeGUI.money(amount) + "€");
         p.sendMessage("§7Banque: §6" + SafeGUI.money(newBank) + "€");
-        p.sendMessage("");
+
+        footer(p);
 
         success(
                 p,
@@ -508,14 +525,16 @@ public class BankChatInputListener
                 p.getUniqueId()
         );
 
+        header(p);
+
+        p.sendMessage("§a✔ §fMontant enregistré.");
         p.sendMessage("");
-        p.sendMessage("§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----");
-        p.sendMessage("§a✔ Montant enregistré");
         p.sendMessage("§7Destinataire: §e" + target.getName());
         p.sendMessage("§7Montant: §e" + SafeGUI.money(amount) + "€");
         p.sendMessage("");
         p.sendMessage("§8• §7Une confirmation est nécessaire.");
-        p.sendMessage("");
+
+        footer(p);
 
         p.playSound(
                 p.getLocation(),
@@ -536,13 +555,37 @@ public class BankChatInputListener
             String msg
     ) {
 
+        header(p);
+
+        p.sendMessage("§c✘ §fTransaction refusée.");
         p.sendMessage("");
-        p.sendMessage("§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----");
-        p.sendMessage("§cTransaction refusée.");
         p.sendMessage("§7" + msg);
-        p.sendMessage("");
+
+        footer(p);
 
         fail(p);
+    }
+
+    //
+    // 🎨 HEADER / FOOTER
+    //
+
+    private static void header(
+            Player p
+    ) {
+
+        p.sendMessage("");
+        p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----");
+        p.sendMessage("");
+    }
+
+    private static void footer(
+            Player p
+    ) {
+
+        p.sendMessage("");
+        p.sendMessage("§8-----------------------------");
+        p.sendMessage("");
     }
 
     //
