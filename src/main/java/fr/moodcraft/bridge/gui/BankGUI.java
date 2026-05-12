@@ -22,7 +22,7 @@ public class BankGUI {
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§8✦ §6Banque"
+                        "§8✦ §6Banque §aMood§6Craft"
                 );
 
         SafeGUI.fill(
@@ -52,9 +52,9 @@ public class BankGUI {
                 SafeGUI.glow(
                         SafeGUI.item(
                                 Material.GOLD_BLOCK,
-                                "§6✦ Banque MoodCraft",
-                                "§8----- §6Compte §8-----",
-                                "§7Consulte tes fonds.",
+                                "§6✦ §fCompte bancaire §6✦",
+                                "§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----",
+                                "§7Consulte tes fonds personnels.",
                                 "",
                                 "§8• §7Liquide: §a"
                                         + SafeGUI.money(cash)
@@ -64,7 +64,10 @@ public class BankGUI {
                                         + "€",
                                 "§8• §7Total: §e"
                                         + SafeGUI.money(total)
-                                        + "€"
+                                        + "€",
+                                "",
+                                "§7Les gros paiements professionnels",
+                                "§7doivent passer par §e/contrat§7."
                         )
                 )
         );
@@ -73,10 +76,15 @@ public class BankGUI {
                 SafeGUI.glow(
                         SafeGUI.item(
                                 Material.CHEST,
-                                "§a✦ Déposer",
-                                "§7Ajoute de l'argent au compte.",
+                                "§6✦ §fDéposer des fonds §6✦",
+                                "§7Transférer ton argent liquide",
+                                "§7vers ta banque personnelle.",
                                 "",
-                                "§e▶ Ouvrir"
+                                "§8• §7Saisie directe dans le chat",
+                                "§8• §7Exemple: §e5000",
+                                "§8• §7Historique sauvegardé",
+                                "",
+                                "§a✔ Cliquer pour saisir"
                         )
                 )
         );
@@ -84,10 +92,15 @@ public class BankGUI {
         SafeGUI.safeSet(inv, 12,
                 SafeGUI.item(
                         Material.HOPPER,
-                        "§c✦ Retirer",
-                        "§7Récupère de l'argent liquide.",
+                        "§6✦ §fRetirer des fonds §6✦",
+                        "§7Récupérer de l'argent",
+                        "§7depuis ta banque personnelle.",
                         "",
-                        "§e▶ Ouvrir"
+                        "§8• §7Saisie directe dans le chat",
+                        "§8• §7Exemple: §e5000",
+                        "§8• §7Historique sauvegardé",
+                        "",
+                        "§a✔ Cliquer pour saisir"
                 )
         );
 
@@ -95,10 +108,18 @@ public class BankGUI {
                 SafeGUI.glow(
                         SafeGUI.item(
                                 Material.PAPER,
-                                "§e✦ Virement",
-                                "§7Envoie de l'argent à un joueur.",
+                                "§6✦ §fVirement personnel §6✦",
+                                "§7Envoyer de l'argent à un joueur.",
                                 "",
-                                "§e▶ Ouvrir"
+                                "§8• §7Choisir le joueur",
+                                "§8• §7Écrire le montant dans le chat",
+                                "§8• §7Confirmer le virement",
+                                "",
+                                "§e⚠ Limite anti-fraude active",
+                                "§7Les paiements professionnels",
+                                "§7doivent passer par §e/contrat§7.",
+                                "",
+                                "§a✔ Ouvrir"
                         )
                 )
         );
@@ -106,8 +127,12 @@ public class BankGUI {
         SafeGUI.safeSet(inv, 16,
                 SafeGUI.item(
                         Material.NAME_TAG,
-                        "§b✦ IBAN",
+                        "§6✦ §fIBAN §6✦",
                         "§7Consulte ton identité bancaire.",
+                        "",
+                        "§8• §7Nom du compte",
+                        "§8• §7Identifiant bancaire",
+                        "§8• §7Informations personnelles",
                         "",
                         "§e▶ Ouvrir"
                 )
@@ -116,12 +141,13 @@ public class BankGUI {
         SafeGUI.safeSet(inv, 21,
                 SafeGUI.item(
                         Material.BOOK,
-                        "§d✦ Historique",
+                        "§6✦ §fHistorique §6✦",
                         "§7Retrouve tes transactions.",
                         "",
                         "§8• §7Dépôts",
                         "§8• §7Retraits",
                         "§8• §7Virements",
+                        "§8• §7Paiements surveillés",
                         "",
                         "§e▶ Ouvrir"
                 )
@@ -130,12 +156,12 @@ public class BankGUI {
         SafeGUI.safeSet(inv, 23,
                 SafeGUI.item(
                         Material.AMETHYST_SHARD,
-                        "§5✦ Activité",
+                        "§6✦ §fActivité bancaire §6✦",
                         "§7Statistiques économiques.",
                         "",
-                        "§8• §7Profit",
-                        "§8• §7Volume",
-                        "§8• §7Marché",
+                        "§8• §7Volume bancaire",
+                        "§8• §7Flux personnels",
+                        "§8• §7Activité du compte",
                         "",
                         "§8▶ Bientôt"
                 )
