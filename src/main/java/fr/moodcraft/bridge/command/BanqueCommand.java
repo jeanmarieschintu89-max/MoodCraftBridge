@@ -9,6 +9,7 @@ import fr.moodcraft.bridge.gui.BankGUI;
 import fr.moodcraft.bridge.manager.ReputationManager;
 
 import fr.moodcraft.bridge.util.SafeGUI;
+import fr.moodcraft.bridge.util.TransactionLogger;
 import fr.moodcraft.bridge.util.VaultHook;
 
 import org.bukkit.Bukkit;
@@ -20,23 +21,47 @@ import org.bukkit.command.CommandSender;
 
 import org.bukkit.entity.Player;
 
+import java.time.LocalDate;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class BanqueCommand implements CommandExecutor {
 
-    private static final int PAGE_SIZE = 8;
+    private static final int PAGE_SIZE =
+            8;
+
+    //
+    // 🔒 LIMITES VIREMENT DIRECT
+    //
+
+    private static final double MAX_PERSONAL_TRANSFER =
+            10000.0;
+
+    private static final double MAX_DAILY_PERSONAL_TRANSFER =
+            25000.0;
+
+    private static final Map<UUID, Double> dailySent =
+            new HashMap<>();
+
+    private static final Map<UUID, String> dailyDate =
+            new HashMap<>();
 
     @Override
-    public boolean onCommand(CommandSender sender,
-                             Command cmd,
-                             String label,
-                             String[] args) {
+    public boolean onCommand(
+            CommandSender sender,
+            Command cmd,
+            String label,
+            String[] args
+    ) {
 
-        if (!(sender instanceof Player p))
+        if (!(sender instanceof Player p)) {
             return true;
+        }
 
-//
+        //
         // 📥 /depot
         //
 
@@ -50,46 +75,10 @@ public class BanqueCommand implements CommandExecutor {
                 );
             }
 
-            double amount =
-                    parseAmount(
-                            p,
-                            args[0]
-                    );
-
-            if (amount <= 0)
-                return true;
-
-            if (VaultHook.getBalance(p)
-                    < amount) {
-
-                return error(
-                        p,
-                        "Pas assez d'argent."
-                );
-            }
-
-            VaultHook.remove(
+            return deposit(
                     p,
-                    amount
+                    args[0]
             );
-
-            BankStorage.add(
-                    p.getUniqueId().toString(),
-                    amount
-            );
-
-            TransactionManager.deposit(
-                    p.getUniqueId(),
-                    amount
-            );
-
-            success(
-                    p,
-                    "Dépôt",
-                    "+" + SafeGUI.money(amount)
-            );
-
-            return true;
         }
 
         //
@@ -106,49 +95,10 @@ public class BanqueCommand implements CommandExecutor {
                 );
             }
 
-            double amount =
-                    parseAmount(
-                            p,
-                            args[0]
-                    );
-
-            if (amount <= 0)
-                return true;
-
-            String uuid =
-                    p.getUniqueId().toString();
-
-            if (BankStorage.get(uuid)
-                    < amount) {
-
-                return error(
-                        p,
-                        "Fonds insuffisants."
-                );
-            }
-
-            BankStorage.remove(
-                    uuid,
-                    amount
-            );
-
-            VaultHook.add(
+            return withdraw(
                     p,
-                    amount
+                    args[0]
             );
-
-            TransactionManager.withdraw(
-                    p.getUniqueId(),
-                    amount
-            );
-
-            success(
-                    p,
-                    "Retrait",
-                    "-" + SafeGUI.money(amount)
-            );
-
-            return true;
         }
 
         //
@@ -157,51 +107,7 @@ public class BanqueCommand implements CommandExecutor {
 
         if (label.equalsIgnoreCase("rib")) {
 
-            String iban =
-                    IbanManager.get(
-                            p.getUniqueId()
-                    );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage(
-                    "§6🏦 §fCompte bancaire MoodCraft"
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§7IBAN associé:"
-            );
-
-            p.sendMessage(
-                    "§e" + iban
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§7Utilisable pour les virements."
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage("");
-
-            p.playSound(
-                    p.getLocation(),
-                    Sound.BLOCK_NOTE_BLOCK_PLING,
-                    1f,
-                    1.2f
-            );
+            sendIban(p);
 
             return true;
         }
@@ -220,211 +126,15 @@ public class BanqueCommand implements CommandExecutor {
                 );
             }
 
-            String iban =
-                    args[0]
-                            .replace(" ", "")
-                            .toUpperCase();
-
-            double amount =
-                    parseAmount(
-                            p,
-                            args[1]
-                    );
-
-            if (amount <= 0)
-                return true;
-
-            UUID targetUUID =
-                    IbanManager.getOwner(
-                            iban
-                    );
-
-            if (targetUUID == null)
-                return error(
-                        p,
-                        "IBAN introuvable."
-                );
-
-            if (targetUUID.equals(
-                    p.getUniqueId()
-            )) {
-
-                return error(
-                        p,
-                        "Auto-virement interdit."
-                );
-            }
-
-            String senderUUID =
-                    p.getUniqueId().toString();
-
-            if (BankStorage.get(senderUUID)
-                    < amount) {
-
-                return error(
-                        p,
-                        "Fonds insuffisants."
-                );
-            }
-
-            Player target =
-                    Bukkit.getPlayer(targetUUID);
-
-            String targetName =
-                    Bukkit.getOfflinePlayer(
-                            targetUUID
-                    ).getName();
-
-            if (targetName == null)
-                targetName = "Inconnu";
-
-            int targetRep =
-                    ReputationManager.get(
-                            targetUUID.toString()
-                    );
-
-            String targetRank =
-                    ReputationManager.getRank(
-                            targetRep
-                    );
-
-            int senderRep =
-                    ReputationManager.get(
-                            p.getUniqueId().toString()
-                    );
-
-            String senderRank =
-                    ReputationManager.getRank(
-                            senderRep
-                    );
-
-            //
-            // 💸 TRANSACTION
-            //
-
-            BankStorage.remove(
-                    senderUUID,
-                    amount
+            return directTransfer(
+                    p,
+                    args[0],
+                    args[1]
             );
-
-            BankStorage.add(
-                    targetUUID.toString(),
-                    amount
-            );
-
-            TransactionManager.transfer(
-                    p.getUniqueId(),
-                    targetUUID,
-                    amount
-            );
-
-            //
-            // ✨ ENVOYEUR
-            //
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage(
-                    "§6✦ §fBanque MoodCraft"
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§a✔ §fVirement effectué"
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§7Destinataire: §e"
-                            + targetName
-                            + " §8("
-                            + targetRank
-                            + "§8)"
-            );
-
-            p.sendMessage(
-                    "§7Montant envoyé: §c-"
-                            + SafeGUI.money(amount)
-                            + "€"
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage("");
-
-            p.playSound(
-                    p.getLocation(),
-                    Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
-                    1f,
-                    1.2f
-            );
-
-            if (target != null
-                    && target.isOnline()) {
-
-                target.sendMessage("");
-
-                target.sendMessage(
-                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                );
-
-                target.sendMessage(
-                        "§6✦ §fBanque MoodCraft"
-                );
-
-                target.sendMessage("");
-
-                target.sendMessage(
-                        "§a✔ §fVirement reçu"
-                );
-
-                target.sendMessage("");
-
-                target.sendMessage(
-                        "§7Expéditeur: §e"
-                                + p.getName()
-                                + " §8("
-                                + senderRank
-                                + "§8)"
-                );
-
-                target.sendMessage(
-                        "§7Montant reçu: §a+"
-                                + SafeGUI.money(amount)
-                                + "€"
-                );
-
-                target.sendMessage("");
-
-                target.sendMessage(
-                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                );
-
-                target.sendMessage("");
-
-                target.playSound(
-                        target.getLocation(),
-                        Sound.BLOCK_NOTE_BLOCK_PLING,
-                        1f,
-                        1.3f
-                );
-            }
-
-            return true;
         }
 
         //
-        // 🏦 GUI BANQUE
+        // 🏦 /banque
         //
 
         if (args.length == 0) {
@@ -437,110 +147,57 @@ public class BanqueCommand implements CommandExecutor {
         String sub =
                 args[0].toLowerCase();
 
-        switch (sub) {//
-            // 📥 DEPOT
+        switch (sub) {
+
+            //
+            // 📥 /banque depot <montant>
             //
 
-            case "depot" -> {
+            case "depot", "dépôt", "deposit" -> {
 
-                if (args.length < 2)
+                if (args.length < 2) {
+
                     return usage(
                             p,
                             "/banque depot <montant>"
                     );
-
-                double amount =
-                        parseAmount(
-                                p,
-                                args[1]
-                        );
-
-                if (amount <= 0)
-                    return true;
-
-                if (VaultHook.getBalance(p)
-                        < amount) {
-
-                    return error(
-                            p,
-                            "Pas assez d'argent."
-                    );
                 }
 
-                VaultHook.remove(
+                return deposit(
                         p,
-                        amount
-                );
-
-                BankStorage.add(
-                        p.getUniqueId().toString(),
-                        amount
-                );
-
-                TransactionManager.deposit(
-                        p.getUniqueId(),
-                        amount
-                );
-
-                success(
-                        p,
-                        "Dépôt",
-                        "+" + SafeGUI.money(amount)
+                        args[1]
                 );
             }
 
             //
-            // 📤 RETRAIT
+            // 📤 /banque retrait <montant>
             //
 
-            case "retrait" -> {
+            case "retrait", "withdraw" -> {
 
-                if (args.length < 2)
+                if (args.length < 2) {
+
                     return usage(
                             p,
                             "/banque retrait <montant>"
                     );
-
-                double amount =
-                        parseAmount(
-                                p,
-                                args[1]
-                        );
-
-                if (amount <= 0)
-                    return true;
-
-                String uuid =
-                        p.getUniqueId().toString();
-
-                if (BankStorage.get(uuid)
-                        < amount) {
-
-                    return error(
-                            p,
-                            "Fonds insuffisants."
-                    );
                 }
 
-                BankStorage.remove(
-                        uuid,
-                        amount
-                );
-
-                VaultHook.add(
+                return withdraw(
                         p,
-                        amount
+                        args[1]
                 );
+            }
 
-                TransactionManager.withdraw(
-                        p.getUniqueId(),
-                        amount
-                );
+            //
+            // 💸 /banque virement
+            //
 
-                success(
+            case "virement", "transfer" -> {
+
+                return usage(
                         p,
-                        "Retrait",
-                        "-" + SafeGUI.money(amount)
+                        "/virement <iban> <montant>"
                 );
             }
 
@@ -548,69 +205,34 @@ public class BanqueCommand implements CommandExecutor {
             // 📜 HISTORIQUE
             //
 
-            case "historique" -> {
+            case "historique", "history" -> {
 
-                int page = 1;
+                int page =
+                        1;
 
-                String filter = null;
+                String filter =
+                        null;
 
-                if (args.length >= 2)
-                    filter = translate(args[1]);
+                if (args.length >= 2) {
+
+                    filter =
+                            translate(args[1]);
+                }
 
                 if (args.length >= 3
                         && isNumber(args[2])) {
 
-                    page = Integer.parseInt(args[2]);
+                    page =
+                            Integer.parseInt(args[2]);
                 }
 
-                List<String> list =
-                        TransactionManager.getFiltered(
-                                p.getUniqueId(),
-                                filter,
-                                null
-                        );
-
-                List<String> pageData =
-                        TransactionManager.getPage(
-                                list,
-                                page,
-                                PAGE_SIZE
-                        );
-
-                p.sendMessage("");
-
-                p.sendMessage(
-                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                sendHistory(
+                        p,
+                        filter,
+                        page
                 );
 
-                p.sendMessage(
-                        "§6✦ §fHistorique bancaire §8(Page "
-                                + page
-                                + ")"
-                );
-
-                p.sendMessage("");
-
-                if (pageData.isEmpty()) {
-
-                    p.sendMessage(
-                            "§7Aucune transaction."
-                    );
-
-                } else {
-
-                    pageData.forEach(
-                            line -> p.sendMessage(" " + line)
-                    );
-                }
-
-                p.sendMessage("");
-
-                p.sendMessage(
-                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                );
-
-                p.sendMessage("");
+                return true;
             }
 
             //
@@ -619,60 +241,18 @@ public class BanqueCommand implements CommandExecutor {
 
             case "iban" -> {
 
-                String iban =
-                        IbanManager.get(
-                                p.getUniqueId()
-                        );
+                sendIban(p);
 
-                p.sendMessage("");
+                return true;
+            }
 
-                p.sendMessage(
-                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                );
-
-                p.sendMessage(
-                        "§6🏦 §fCompte bancaire MoodCraft"
-                );
-
-                p.sendMessage("");
-
-                p.sendMessage(
-                        "§7IBAN associé:"
-                );
-
-                p.sendMessage(
-                        "§e" + iban
-                );
-
-                p.sendMessage("");
-
-                p.sendMessage(
-                        "§7Utilisable pour les virements."
-                );
-
-                p.sendMessage("");
-
-                p.sendMessage(
-                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                );
-
-                p.sendMessage("");
-
-                p.playSound(
-                        p.getLocation(),
-                        Sound.BLOCK_NOTE_BLOCK_PLING,
-                        1f,
-                        1.2f
-                );
-            }//
+            //
             // 🔒 ADMIN
             //
 
             case "admin" -> {
 
-                if (!p.hasPermission(
-                        "moodcraft.admin"
-                )) {
+                if (!p.hasPermission("moodcraft.admin")) {
 
                     return error(
                             p,
@@ -680,9 +260,16 @@ public class BanqueCommand implements CommandExecutor {
                     );
                 }
 
-                p.sendMessage(
-                        "§cAdministration bancaire active."
-                );
+                header(p);
+
+                p.sendMessage("§a✔ §fAdministration bancaire active.");
+                p.sendMessage("");
+                p.sendMessage("§8• §7Utilisez les sous-commandes");
+                p.sendMessage("§8• §7réservées au staff.");
+
+                footer(p);
+
+                return true;
             }
 
             //
@@ -691,9 +278,7 @@ public class BanqueCommand implements CommandExecutor {
 
             case "logs" -> {
 
-                if (!p.hasPermission(
-                        "moodcraft.admin"
-                )) {
+                if (!p.hasPermission("moodcraft.admin")) {
 
                     return error(
                             p,
@@ -701,39 +286,528 @@ public class BanqueCommand implements CommandExecutor {
                     );
                 }
 
-                p.sendMessage("");
+                sendLogs(p);
 
-                p.sendMessage(
-                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                );
-
-                p.sendMessage(
-                        "§6✦ §fLogs bancaires"
-                );
-
-                p.sendMessage("");
-
-                TransactionManager.getGlobal()
-                        .stream()
-                        .limit(10)
-                        .forEach(
-                                line -> p.sendMessage(" " + line)
-                        );
-
-                p.sendMessage("");
-
-                p.sendMessage(
-                        "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                );
-
-                p.sendMessage("");
+                return true;
             }
 
-            default ->
-                    p.sendMessage(
-                            "§cSous-commande inconnue."
-                    );
+            default -> {
+
+                return error(
+                        p,
+                        "Sous-commande inconnue."
+                );
+            }
         }
+    }
+
+    //
+    // 📥 DEPOT
+    //
+
+    private boolean deposit(
+            Player p,
+            String rawAmount
+    ) {
+
+        double amount =
+                parseAmount(
+                        p,
+                        rawAmount
+                );
+
+        if (amount <= 0) {
+            return true;
+        }
+
+        if (VaultHook.getBalance(p) < amount) {
+
+            return error(
+                    p,
+                    "Pas assez d'argent liquide."
+            );
+        }
+
+        VaultHook.remove(
+                p,
+                amount
+        );
+
+        BankStorage.add(
+                p.getUniqueId().toString(),
+                amount
+        );
+
+        TransactionManager.deposit(
+                p.getUniqueId(),
+                amount
+        );
+
+        return success(
+                p,
+                "Dépôt",
+                "§a+" + SafeGUI.money(amount) + "€"
+        );
+    }
+
+    //
+    // 📤 RETRAIT
+    //
+
+    private boolean withdraw(
+            Player p,
+            String rawAmount
+    ) {
+
+        double amount =
+                parseAmount(
+                        p,
+                        rawAmount
+                );
+
+        if (amount <= 0) {
+            return true;
+        }
+
+        String uuid =
+                p.getUniqueId().toString();
+
+        if (BankStorage.get(uuid) < amount) {
+
+            return error(
+                    p,
+                    "Fonds bancaires insuffisants."
+            );
+        }
+
+        BankStorage.remove(
+                uuid,
+                amount
+        );
+
+        VaultHook.add(
+                p,
+                amount
+        );
+
+        TransactionManager.withdraw(
+                p.getUniqueId(),
+                amount
+        );
+
+        return success(
+                p,
+                "Retrait",
+                "§a+" + SafeGUI.money(amount) + "€"
+        );
+    }
+
+    //
+    // 💸 VIREMENT DIRECT PAR IBAN
+    //
+
+    private boolean directTransfer(
+            Player p,
+            String rawIban,
+            String rawAmount
+    ) {
+
+        String iban =
+                rawIban
+                        .replace(" ", "")
+                        .toUpperCase();
+
+        double amount =
+                parseAmount(
+                        p,
+                        rawAmount
+                );
+
+        if (amount <= 0) {
+            return true;
+        }
+
+        UUID targetUUID =
+                IbanManager.getOwner(
+                        iban
+                );
+
+        if (targetUUID == null) {
+
+            return error(
+                    p,
+                    "IBAN introuvable."
+            );
+        }
+
+        if (targetUUID.equals(
+                p.getUniqueId()
+        )) {
+
+            return error(
+                    p,
+                    "Auto-virement interdit."
+            );
+        }
+
+        String targetName =
+                Bukkit.getOfflinePlayer(
+                        targetUUID
+                ).getName();
+
+        if (targetName == null) {
+            targetName = "Inconnu";
+        }
+
+        if (!canBypassLimit(p)) {
+
+            if (amount > MAX_PERSONAL_TRANSFER) {
+
+                TransactionLogger.log(
+                        p.getUniqueId().toString(),
+                        "IBAN_TRANSFER_BLOCKED_HIGH_AMOUNT",
+                        amount,
+                        targetName
+                );
+
+                return denyProfessionalTransfer(
+                        p,
+                        targetName,
+                        amount
+                );
+            }
+
+            resetDailyIfNeeded(
+                    p.getUniqueId()
+            );
+
+            double today =
+                    dailySent.getOrDefault(
+                            p.getUniqueId(),
+                            0.0
+                    );
+
+            if (today + amount > MAX_DAILY_PERSONAL_TRANSFER) {
+
+                TransactionLogger.log(
+                        p.getUniqueId().toString(),
+                        "IBAN_TRANSFER_BLOCKED_DAILY_LIMIT",
+                        amount,
+                        targetName
+                );
+
+                return denyDailyLimit(
+                        p,
+                        targetName,
+                        today,
+                        amount
+                );
+            }
+        }
+
+        String senderUUID =
+                p.getUniqueId().toString();
+
+        if (BankStorage.get(senderUUID) < amount) {
+
+            return error(
+                    p,
+                    "Fonds bancaires insuffisants."
+            );
+        }
+
+        Player target =
+                Bukkit.getPlayer(targetUUID);
+
+        int targetRep =
+                ReputationManager.get(
+                        targetUUID.toString()
+                );
+
+        String targetRank =
+                ReputationManager.getRank(
+                        targetRep
+                );
+
+        int senderRep =
+                ReputationManager.get(
+                        p.getUniqueId().toString()
+                );
+
+        String senderRank =
+                ReputationManager.getRank(
+                        senderRep
+                );
+
+        //
+        // 💸 TRANSACTION
+        //
+
+        BankStorage.remove(
+                senderUUID,
+                amount
+        );
+
+        BankStorage.add(
+                targetUUID.toString(),
+                amount
+        );
+
+        TransactionManager.transfer(
+                p.getUniqueId(),
+                targetUUID,
+                amount
+        );
+
+        if (!canBypassLimit(p)) {
+
+            resetDailyIfNeeded(
+                    p.getUniqueId()
+            );
+
+            dailySent.put(
+                    p.getUniqueId(),
+                    dailySent.getOrDefault(
+                            p.getUniqueId(),
+                            0.0
+                    ) + amount
+            );
+        }
+
+        TransactionLogger.log(
+                p.getUniqueId().toString(),
+                "IBAN_TRANSFER_SENT",
+                amount,
+                targetName
+        );
+
+        TransactionLogger.log(
+                targetUUID.toString(),
+                "IBAN_TRANSFER_RECEIVED",
+                amount,
+                p.getName()
+        );
+
+        //
+        // ✨ ENVOYEUR
+        //
+
+        header(p);
+
+        p.sendMessage("§a✔ §fVirement effectué.");
+        p.sendMessage("");
+        p.sendMessage("§7Destinataire: §e" + targetName);
+        p.sendMessage("§7Réputation: §a" + targetRep + " §8• " + targetRank);
+        p.sendMessage("§7Montant: §c-" + SafeGUI.money(amount) + "€");
+
+        footer(p);
+
+        p.playSound(
+                p.getLocation(),
+                Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
+                1f,
+                1.2f
+        );
+
+        //
+        // ✨ DESTINATAIRE
+        //
+
+        if (target != null && target.isOnline()) {
+
+            header(target);
+
+            target.sendMessage("§a✔ §fVirement reçu.");
+            target.sendMessage("");
+            target.sendMessage("§7Expéditeur: §e" + p.getName());
+            target.sendMessage("§7Réputation: §a" + senderRep + " §8• " + senderRank);
+            target.sendMessage("§7Montant: §a+" + SafeGUI.money(amount) + "€");
+
+            footer(target);
+
+            target.playSound(
+                    target.getLocation(),
+                    Sound.BLOCK_NOTE_BLOCK_PLING,
+                    1f,
+                    1.3f
+            );
+        }
+
+        return true;
+    }
+
+    //
+    // 🏦 IBAN
+    //
+
+    private void sendIban(
+            Player p
+    ) {
+
+        String iban =
+                IbanManager.get(
+                        p.getUniqueId()
+                );
+
+        header(p);
+
+        p.sendMessage("§fCompte bancaire personnel.");
+        p.sendMessage("");
+        p.sendMessage("§7IBAN: §e" + iban);
+        p.sendMessage("");
+        p.sendMessage("§8• §7Utilisable pour les virements");
+        p.sendMessage("§8• §7Ne le partagez qu'aux joueurs de confiance");
+
+        footer(p);
+
+        p.playSound(
+                p.getLocation(),
+                Sound.BLOCK_NOTE_BLOCK_PLING,
+                1f,
+                1.2f
+        );
+    }
+
+    //
+    // 📜 HISTORIQUE
+    //
+
+    private void sendHistory(
+            Player p,
+            String filter,
+            int page
+    ) {
+
+        List<String> list =
+                TransactionManager.getFiltered(
+                        p.getUniqueId(),
+                        filter,
+                        null
+                );
+
+        List<String> pageData =
+                TransactionManager.getPage(
+                        list,
+                        page,
+                        PAGE_SIZE
+                );
+
+        header(p);
+
+        p.sendMessage("§fHistorique bancaire.");
+        p.sendMessage("");
+        p.sendMessage("§7Page: §e" + page);
+        p.sendMessage("§7Entrées: §e" + list.size());
+        p.sendMessage("");
+
+        if (pageData.isEmpty()) {
+
+            p.sendMessage("§7Aucune transaction.");
+
+        } else {
+
+            pageData.forEach(
+                    line -> p.sendMessage("§8• §7" + line)
+            );
+        }
+
+        footer(p);
+    }
+
+    //
+    // 📜 LOGS ADMIN
+    //
+
+    private void sendLogs(
+            Player p
+    ) {
+
+        header(p);
+
+        p.sendMessage("§fLogs bancaires.");
+        p.sendMessage("");
+        p.sendMessage("§7Dernières lignes:");
+
+        p.sendMessage("");
+
+        TransactionManager.getGlobal()
+                .stream()
+                .limit(10)
+                .forEach(
+                        line -> p.sendMessage("§8• §7" + line)
+                );
+
+        footer(p);
+    }
+
+    //
+    // ❌ VIREMENT REFUSÉ PRO
+    //
+
+    private boolean denyProfessionalTransfer(
+            Player p,
+            String targetName,
+            double amount
+    ) {
+
+        header(p);
+
+        p.sendMessage("§c✘ §fVirement refusé.");
+        p.sendMessage("");
+        p.sendMessage("§7Destinataire: §e" + targetName);
+        p.sendMessage("§7Montant: §e" + SafeGUI.money(amount) + "€");
+        p.sendMessage("§7Limite personnelle: §e" + SafeGUI.money(MAX_PERSONAL_TRANSFER) + "€");
+        p.sendMessage("");
+        p.sendMessage("§7Paiement professionnel:");
+        p.sendMessage("§e/contrat");
+        p.sendMessage("");
+        p.sendMessage("§8• §7Fonds sécurisés");
+        p.sendMessage("§8• §7Taxe économique 20%");
+        p.sendMessage("§8• §7Historique officiel");
+
+        footer(p);
+
+        p.playSound(
+                p.getLocation(),
+                Sound.ENTITY_VILLAGER_NO,
+                1f,
+                1f
+        );
+
+        return true;
+    }
+
+    //
+    // ❌ LIMITE JOURNALIÈRE
+    //
+
+    private boolean denyDailyLimit(
+            Player p,
+            String targetName,
+            double already,
+            double amount
+    ) {
+
+        header(p);
+
+        p.sendMessage("§c✘ §fVirement refusé.");
+        p.sendMessage("");
+        p.sendMessage("§7Destinataire: §e" + targetName);
+        p.sendMessage("§7Déjà envoyé: §e" + SafeGUI.money(already) + "€");
+        p.sendMessage("§7Montant: §e" + SafeGUI.money(amount) + "€");
+        p.sendMessage("§7Limite jour: §e" + SafeGUI.money(MAX_DAILY_PERSONAL_TRANSFER) + "€");
+        p.sendMessage("");
+        p.sendMessage("§7Pour un paiement important:");
+        p.sendMessage("§e/contrat");
+
+        footer(p);
+
+        p.playSound(
+                p.getLocation(),
+                Sound.ENTITY_VILLAGER_NO,
+                1f,
+                1f
+        );
 
         return true;
     }
@@ -742,8 +816,10 @@ public class BanqueCommand implements CommandExecutor {
     // 🔢 PARSE
     //
 
-    private double parseAmount(Player p,
-                               String s) {
+    private double parseAmount(
+            Player p,
+            String s
+    ) {
 
         try {
 
@@ -766,7 +842,9 @@ public class BanqueCommand implements CommandExecutor {
     // 🔢 NUMBER
     //
 
-    private boolean isNumber(String s) {
+    private boolean isNumber(
+            String s
+    ) {
 
         try {
 
@@ -784,32 +862,18 @@ public class BanqueCommand implements CommandExecutor {
     // ❌ ERROR
     //
 
-    private boolean error(Player p,
-                          String msg) {
+    private boolean error(
+            Player p,
+            String msg
+    ) {
 
+        header(p);
+
+        p.sendMessage("§c✘ §fAction refusée.");
         p.sendMessage("");
+        p.sendMessage("§7" + msg);
 
-        p.sendMessage(
-                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        );
-
-        p.sendMessage(
-                "§c✦ §fBanque MoodCraft"
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§7" + msg
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        );
-
-        p.sendMessage("");
+        footer(p);
 
         p.playSound(
                 p.getLocation(),
@@ -825,37 +889,20 @@ public class BanqueCommand implements CommandExecutor {
     // ✅ SUCCESS
     //
 
-    private boolean success(Player p,
-                            String type,
-                            String amount) {
+    private boolean success(
+            Player p,
+            String type,
+            String amount
+    ) {
 
+        header(p);
+
+        p.sendMessage("§a✔ §fTransaction bancaire.");
         p.sendMessage("");
+        p.sendMessage("§7Type: §e" + type);
+        p.sendMessage("§7Montant: " + amount);
 
-        p.sendMessage(
-                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        );
-
-        p.sendMessage(
-                "§6✦ §fTransaction bancaire"
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§7Type: §e" + type
-        );
-
-        p.sendMessage(
-                "§7Montant: §a" + amount
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        );
-
-        p.sendMessage("");
+        footer(p);
 
         p.playSound(
                 p.getLocation(),
@@ -871,32 +918,18 @@ public class BanqueCommand implements CommandExecutor {
     // 📘 USAGE
     //
 
-    private boolean usage(Player p,
-                          String msg) {
+    private boolean usage(
+            Player p,
+            String msg
+    ) {
 
+        header(p);
+
+        p.sendMessage("§fCommande bancaire.");
         p.sendMessage("");
+        p.sendMessage("§7Usage: §e" + msg);
 
-        p.sendMessage(
-                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        );
-
-        p.sendMessage(
-                "§6✦ §fCommande bancaire"
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§7Usage: §e" + msg
-        );
-
-        p.sendMessage("");
-
-        p.sendMessage(
-                "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        );
-
-        p.sendMessage("");
+        footer(p);
 
         p.playSound(
                 p.getLocation(),
@@ -909,10 +942,74 @@ public class BanqueCommand implements CommandExecutor {
     }
 
     //
+    // 🎨 HEADER / FOOTER
+    //
+
+    private void header(
+            Player p
+    ) {
+
+        p.sendMessage("");
+        p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----");
+        p.sendMessage("");
+    }
+
+    private void footer(
+            Player p
+    ) {
+
+        p.sendMessage("");
+        p.sendMessage("§8-----------------------------");
+        p.sendMessage("");
+    }
+
+    //
+    // 📅 DAILY RESET
+    //
+
+    private void resetDailyIfNeeded(
+            UUID uuid
+    ) {
+
+        String today =
+                LocalDate.now().toString();
+
+        String stored =
+                dailyDate.get(uuid);
+
+        if (!today.equals(stored)) {
+
+            dailyDate.put(
+                    uuid,
+                    today
+            );
+
+            dailySent.put(
+                    uuid,
+                    0.0
+            );
+        }
+    }
+
+    //
+    // 🔒 BYPASS
+    //
+
+    private boolean canBypassLimit(
+            Player p
+    ) {
+
+        return p.hasPermission("moodcraftbridge.transfer.bypass")
+                || p.hasPermission("moodbusiness.bypass");
+    }
+
+    //
     // 🌍 FILTER
     //
 
-    private String translate(String s) {
+    private String translate(
+            String s
+    ) {
 
         return switch (s.toLowerCase()) {
 
