@@ -36,7 +36,7 @@ public class MainMenuGUI {
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§8✦ §6MoodCraft"
+                        "§8✦ §aMood§6Craft"
                 );
 
         double bank =
@@ -226,7 +226,7 @@ public class MainMenuGUI {
                         button(
                                 Material.GOLD_INGOT,
                                 "§6✦ Banque",
-                                "§7Gère ton argent.",
+                                "§7Gère ton argent personnel.",
                                 "",
                                 "§8• §7Solde: §6"
                                         + SafeGUI.money(bank)
@@ -253,17 +253,27 @@ public class MainMenuGUI {
                 )
         );
 
+        /*
+         * Ancien bouton Projets retiré.
+         * Les projets urbains doivent rester uniquement dans MoodTownMenu.
+         */
+
         SafeGUI.safeSet(inv, 14,
                 SafeGUI.glow(
                         button(
-                                Material.WRITABLE_BOOK,
-                                "§b✦ Projets",
-                                "§7Participe à l'urbanisme.",
+                                Material.LECTERN,
+                                "§6✦ Bureau des Entreprises",
+                                "§7Créer, rejoindre ou gérer",
+                                "§7une entreprise sur §aMood§6Craft§7.",
                                 "",
-                                "§8• §7Déposer",
-                                "§8• §7Voter",
-                                "§8• §7Classement",
+                                "§8• §7Entreprises officielles",
+                                "§8• §7Employés et rôles",
+                                "§8• §7Stages et apprentissages",
+                                "§8• §7Demandes et offres",
+                                "§8• §7Contrats sécurisés",
+                                "§8• §7Banque entreprise",
                                 "",
+                                "§a✔ Économie professionnelle",
                                 "§e▶ Ouvrir"
                         )
                 )
