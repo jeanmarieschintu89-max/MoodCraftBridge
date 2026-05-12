@@ -29,7 +29,7 @@ public class TeleportHandler implements GUIHandler {
                         p,
                         "spawn",
                         "§e✦ Spawn",
-                        "§7Retour au centre MoodCraft.",
+                        "§7Retour au centre de §aMood§6Craft§7.",
                         Sound.BLOCK_RESPAWN_ANCHOR_CHARGE,
                         1.1f,
                         Sound.BLOCK_NOTE_BLOCK_CHIME,
@@ -43,7 +43,7 @@ public class TeleportHandler implements GUIHandler {
                         p,
                         "warp shop",
                         "§6✦ AdminShop",
-                        "§7Ouverture de la boutique.",
+                        "§7Ouverture de la boutique officielle.",
                         Sound.BLOCK_NOTE_BLOCK_BELL,
                         1.15f,
                         Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
@@ -128,9 +128,15 @@ public class TeleportHandler implements GUIHandler {
         );
 
         p.sendMessage("");
-        p.sendMessage("§8----- §6Téléportation §8-----");
+        p.sendMessage("§8----- §6✦ §aMood§6Craft §fTéléportation §6✦ §8-----");
+        p.sendMessage("");
         p.sendMessage(title);
         p.sendMessage(subtitle);
+        p.sendMessage("");
+        p.sendMessage("§8• §7Préparation du voyage...");
+        p.sendMessage("§8• §7Merci de ne pas bouger si une attente est appliquée.");
+        p.sendMessage("");
+        p.sendMessage("§8-----------------------------");
         p.sendMessage("");
 
         p.sendTitle(
