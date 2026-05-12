@@ -148,11 +148,14 @@ public class PriceHandler implements GUIHandler {
 
         if (amount <= 0) {
 
+            header(p);
+
+            p.sendMessage("§c✘ §fAucune ressource détectée.");
             p.sendMessage("");
-            p.sendMessage("§8----- §6Marché MoodCraft §8-----");
-            p.sendMessage("§cAucune ressource détectée.");
             p.sendMessage("§7Ressource: §e" + display);
-            p.sendMessage("");
+            p.sendMessage("§7Place cette ressource dans ton inventaire.");
+
+            footer(p);
 
             fail(p);
 
@@ -174,7 +177,7 @@ public class PriceHandler implements GUIHandler {
         String trend =
                 MarketState.trend.getOrDefault(
                         id,
-                        "§7▬ Stable"
+                        "§7Stable"
                 );
 
         VaultHook.getEconomy()
@@ -201,21 +204,25 @@ public class PriceHandler implements GUIHandler {
                 amount
         );
 
+        header(p);
+
+        p.sendMessage("§a✔ §fVente effectuée.");
         p.sendMessage("");
-        p.sendMessage("§8----- §6Marché MoodCraft §8-----");
-        p.sendMessage("§a✔ Vente effectuée");
         p.sendMessage("§7Ressource: §e" + amount + "x " + display);
         p.sendMessage("§7Prix unité: §6" + SafeGUI.money(unit) + "€");
-        p.sendMessage("§7Tendance: " + trend);
-        p.sendMessage("§7Taxe: §c-" + SafeGUI.money(tax) + "€");
+        p.sendMessage("§7Tendance: " + cleanTrend(trend));
+        p.sendMessage("");
+        p.sendMessage("§7Brut: §e" + SafeGUI.money(gross) + "€");
+        p.sendMessage("§7Taxe marché: §c-" + SafeGUI.money(tax) + "€");
         p.sendMessage("§7Gain net: §a+" + SafeGUI.money(total) + "€");
 
         if (total >= 50000) {
 
-            p.sendMessage("§6⚠ Vente majeure détectée");
+            p.sendMessage("");
+            p.sendMessage("§6⚠ §fVente majeure détectée.");
         }
 
-        p.sendMessage("");
+        footer(p);
 
         if (total >= 50000) {
 
@@ -242,11 +249,42 @@ public class PriceHandler implements GUIHandler {
                 "§a+"
                         + SafeGUI.money(total)
                         + "€",
-                "§fMarché MoodCraft",
+                "§fMarché §aMood§6Craft",
                 5,
                 35,
                 10
         );
+    }
+
+    private void header(
+            Player p
+    ) {
+
+        p.sendMessage("");
+        p.sendMessage("§8----- §6✦ §aMood§6Craft §fMarché §6✦ §8-----");
+        p.sendMessage("");
+    }
+
+    private void footer(
+            Player p
+    ) {
+
+        p.sendMessage("");
+        p.sendMessage("§8-----------------------------");
+        p.sendMessage("");
+    }
+
+    private String cleanTrend(
+            String trend
+    ) {
+
+        if (trend == null || trend.isBlank()) {
+            return "§7Stable";
+        }
+
+        return trend
+                .replace("▬", "")
+                .trim();
     }
 
     private int count(
