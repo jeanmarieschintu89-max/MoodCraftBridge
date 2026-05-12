@@ -106,22 +106,6 @@ public class Main extends JavaPlugin {
                 new BankHandler()
         );
 
-        //
-        // Anciens menus gardés pour compatibilité.
-        // Le nouveau BankHandler utilise maintenant BankChatInputListener
-        // pour dépôt / retrait par saisie chat.
-        //
-
-        GUIManager.register(
-                "bank_deposit",
-                new DepositHandler()
-        );
-
-        GUIManager.register(
-                "bank_withdraw",
-                new WithdrawHandler()
-        );
-
         GUIManager.register(
                 "iban_gui",
                 new IbanHandler()
@@ -135,11 +119,6 @@ public class Main extends JavaPlugin {
         GUIManager.register(
                 "transfer_target",
                 new TargetPlayerHandler()
-        );
-
-        GUIManager.register(
-                "transfer_amount",
-                new TransferAmountHandler()
         );
 
         GUIManager.register(
