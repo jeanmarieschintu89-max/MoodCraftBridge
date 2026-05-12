@@ -11,6 +11,7 @@ import fr.moodcraft.bridge.manager.TransferBuilder;
 
 import fr.moodcraft.bridge.util.ActionLock;
 import fr.moodcraft.bridge.util.SafeGUI;
+import fr.moodcraft.bridge.util.TransactionLogger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
@@ -20,9 +21,33 @@ import org.bukkit.entity.Player;
 
 import org.bukkit.metadata.FixedMetadataValue;
 
+import java.time.LocalDate;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class TransferConfirmHandler implements GUIHandler {
+
+    //
+    // 🔒 LIMITES ANTI-FRAUDE
+    //
+
+    private static final double MAX_PERSONAL_TRANSFER =
+            10000.0;
+
+    private static final double MAX_DAILY_PERSONAL_TRANSFER =
+            25000.0;
+
+    //
+    // 📅 LIMITES JOURNALIÈRES
+    //
+
+    private static final Map<UUID, Double> dailySent =
+            new HashMap<>();
+
+    private static final Map<UUID, String> dailyDate =
+            new HashMap<>();
 
     @Override
     public void onClick(Player p, int slot) {
@@ -114,6 +139,60 @@ public class TransferConfirmHandler implements GUIHandler {
                         return;
                     }
 
+                    //
+                    // 🔒 ANTI-FRAUDE TAXE / CONTRATS
+                    //
+
+                    if (!canBypassLimit(p)) {
+
+                        if (amount > MAX_PERSONAL_TRANSFER) {
+
+                            denyProfessionalTransfer(
+                                    p,
+                                    target,
+                                    amount
+                            );
+
+                            TransactionLogger.log(
+                                    p.getUniqueId().toString(),
+                                    "BANK_TRANSFER_BLOCKED_HIGH_AMOUNT",
+                                    amount,
+                                    target.getName()
+                            );
+
+                            return;
+                        }
+
+                        resetDailyIfNeeded(
+                                p.getUniqueId()
+                        );
+
+                        double today =
+                                dailySent.getOrDefault(
+                                        p.getUniqueId(),
+                                        0.0
+                                );
+
+                        if (today + amount > MAX_DAILY_PERSONAL_TRANSFER) {
+
+                            denyDailyLimit(
+                                    p,
+                                    target,
+                                    today,
+                                    amount
+                            );
+
+                            TransactionLogger.log(
+                                    p.getUniqueId().toString(),
+                                    "BANK_TRANSFER_BLOCKED_DAILY_LIMIT",
+                                    amount,
+                                    target.getName()
+                            );
+
+                            return;
+                        }
+                    }
+
                     String senderId =
                             p.getUniqueId().toString();
 
@@ -150,11 +229,58 @@ public class TransferConfirmHandler implements GUIHandler {
                         return;
                     }
 
+                    //
+                    // 📅 COMPTE JOURNALIER
+                    //
+
+                    if (!canBypassLimit(p)) {
+
+                        resetDailyIfNeeded(
+                                p.getUniqueId()
+                        );
+
+                        dailySent.put(
+                                p.getUniqueId(),
+                                dailySent.getOrDefault(
+                                        p.getUniqueId(),
+                                        0.0
+                                ) + amount
+                        );
+                    }
+
+                    //
+                    // 🧾 LOGS
+                    //
+
                     TransactionManager.transfer(
                             p.getUniqueId(),
                             target.getUniqueId(),
                             amount
                     );
+
+                    TransactionLogger.log(
+                            p.getUniqueId().toString(),
+                            "BANK_TRANSFER_SENT",
+                            amount,
+                            target.getName()
+                    );
+
+                    TransactionLogger.log(
+                            target.getUniqueId().toString(),
+                            "BANK_TRANSFER_RECEIVED",
+                            amount,
+                            p.getName()
+                    );
+
+                    if (amount >= MAX_PERSONAL_TRANSFER * 0.75) {
+
+                        TransactionLogger.log(
+                                p.getUniqueId().toString(),
+                                "BANK_TRANSFER_HIGH_VALUE_MONITORED",
+                                amount,
+                                target.getName()
+                        );
+                    }
 
                     double senderNew =
                             BankStorage.get(senderId);
@@ -163,7 +289,7 @@ public class TransferConfirmHandler implements GUIHandler {
                             BankStorage.get(targetId);
 
                     p.sendMessage("");
-                    p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+                    p.sendMessage("§8----- §6Banque §aMood§6Craft §8-----");
                     p.sendMessage("§a✔ Virement envoyé");
                     p.sendMessage("§7Destinataire: §e" + target.getName());
                     p.sendMessage("§7Montant: §c-" + SafeGUI.money(amount) + "€");
@@ -171,7 +297,7 @@ public class TransferConfirmHandler implements GUIHandler {
                     p.sendMessage("");
 
                     target.sendMessage("");
-                    target.sendMessage("§8----- §6Banque MoodCraft §8-----");
+                    target.sendMessage("§8----- §6Banque §aMood§6Craft §8-----");
                     target.sendMessage("§a✔ Virement reçu");
                     target.sendMessage("§7Expéditeur: §e" + p.getName());
                     target.sendMessage("§7Montant: §a+" + SafeGUI.money(amount) + "€");
@@ -251,13 +377,128 @@ public class TransferConfirmHandler implements GUIHandler {
         }
     }
 
+    //
+    // 🔒 BYPASS
+    //
+
+    private boolean canBypassLimit(
+            Player p
+    ) {
+
+        return p.hasPermission("moodcraftbridge.transfer.bypass")
+                || p.hasPermission("moodbusiness.bypass");
+    }
+
+    //
+    // ❌ REFUS GROS VIREMENT
+    //
+
+    private void denyProfessionalTransfer(
+            Player p,
+            Player target,
+            double amount
+    ) {
+
+        p.sendMessage("");
+        p.sendMessage("§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----");
+        p.sendMessage("§cVirement refusé.");
+        p.sendMessage("");
+        p.sendMessage("§7Destinataire: §e" + target.getName());
+        p.sendMessage("§7Montant demandé: §e" + SafeGUI.money(amount) + "€");
+        p.sendMessage("§7Limite virement personnel: §e" + SafeGUI.money(MAX_PERSONAL_TRANSFER) + "€");
+        p.sendMessage("");
+        p.sendMessage("§7Les paiements professionnels doivent passer");
+        p.sendMessage("§7par un §econtrat officiel§7.");
+        p.sendMessage("");
+        p.sendMessage("§8• §7Fonds sécurisés");
+        p.sendMessage("§8• §7Taxe économique 20%");
+        p.sendMessage("§8• §7Historique officiel");
+        p.sendMessage("§8• §7Protection anti-arnaque");
+        p.sendMessage("");
+        p.sendMessage("§eUtilisez : §f/contrat");
+        p.sendMessage("");
+
+        p.playSound(
+                p.getLocation(),
+                Sound.ENTITY_VILLAGER_NO,
+                1f,
+                0.85f
+        );
+    }
+
+    //
+    // ❌ REFUS LIMITE JOURNALIÈRE
+    //
+
+    private void denyDailyLimit(
+            Player p,
+            Player target,
+            double already,
+            double amount
+    ) {
+
+        p.sendMessage("");
+        p.sendMessage("§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----");
+        p.sendMessage("§cVirement refusé.");
+        p.sendMessage("");
+        p.sendMessage("§7Destinataire: §e" + target.getName());
+        p.sendMessage("§7Déjà envoyé aujourd'hui: §e" + SafeGUI.money(already) + "€");
+        p.sendMessage("§7Montant demandé: §e" + SafeGUI.money(amount) + "€");
+        p.sendMessage("§7Limite journalière: §e" + SafeGUI.money(MAX_DAILY_PERSONAL_TRANSFER) + "€");
+        p.sendMessage("");
+        p.sendMessage("§7Pour un paiement important ou professionnel,");
+        p.sendMessage("§7utilisez un §econtrat officiel§7.");
+        p.sendMessage("");
+        p.sendMessage("§eCommande : §f/contrat");
+        p.sendMessage("");
+
+        p.playSound(
+                p.getLocation(),
+                Sound.ENTITY_VILLAGER_NO,
+                1f,
+                0.85f
+        );
+    }
+
+    //
+    // 📅 RESET JOURNALIER
+    //
+
+    private void resetDailyIfNeeded(
+            UUID uuid
+    ) {
+
+        String today =
+                LocalDate.now().toString();
+
+        String stored =
+                dailyDate.get(uuid);
+
+        if (!today.equals(stored)) {
+
+            dailyDate.put(
+                    uuid,
+                    today
+            );
+
+            dailySent.put(
+                    uuid,
+                    0.0
+            );
+        }
+    }
+
+    //
+    // ❌ ERREUR SIMPLE
+    //
+
     private void error(
             Player p,
             String msg
     ) {
 
         p.sendMessage("");
-        p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+        p.sendMessage("§8----- §6Banque §aMood§6Craft §8-----");
         p.sendMessage("§cTransaction refusée.");
         p.sendMessage("§7" + msg);
         p.sendMessage("");
@@ -269,6 +510,10 @@ public class TransferConfirmHandler implements GUIHandler {
                 0.85f
         );
     }
+
+    //
+    // 🔊 CLICK PREMIUM
+    //
 
     private void premiumClick(
             Player p,
