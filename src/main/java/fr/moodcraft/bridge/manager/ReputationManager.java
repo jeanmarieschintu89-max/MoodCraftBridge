@@ -1,4 +1,3 @@
-
 package fr.moodcraft.bridge.manager;
 
 import fr.moodcraft.bridge.Main;
@@ -391,7 +390,16 @@ public class ReputationManager {
         if (rep >= 40)
             return "§7Habitué";
 
-        return "§8Inconnu";
+        if (rep >= 15)
+            return "§bCitoyen reconnu";
+
+        if (rep >= 5)
+            return "§aHabitant apprécié";
+
+        if (rep >= 1)
+            return "§eVoyageur";
+
+        return "§8Nouveau";
     }
 
     // =========================
