@@ -1,5 +1,7 @@
 package fr.moodcraft.bridge.handler;
 
+import fr.moodcraft.bridge.bank.TransactionManager;
+
 import fr.moodcraft.bridge.gui.BankGUI;
 import fr.moodcraft.bridge.gui.TransactionHistoryGUI;
 
@@ -10,6 +12,9 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 public class TransactionHistoryHandler implements GUIHandler {
+
+    private static final int PAGE_SIZE =
+            20;
 
     @Override
     public void onClick(
@@ -29,15 +34,32 @@ public class TransactionHistoryHandler implements GUIHandler {
         int page =
                 getPage(title);
 
+        int total =
+                TransactionManager.getHistory(
+                        p.getUniqueId()
+                ).size();
+
+        int maxPage =
+                Math.max(
+                        1,
+                        (int) Math.ceil(
+                                total / (double) PAGE_SIZE
+                        )
+                );
+
         if (slot == 27) {
 
             if (page <= 1) {
 
                 fail(p);
 
-                p.sendMessage(
-                        "§8✦ §7Première page déjà affichée."
-                );
+                p.sendMessage("");
+                p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----");
+                p.sendMessage("");
+                p.sendMessage("§7Première page déjà affichée.");
+                p.sendMessage("");
+                p.sendMessage("§8-----------------------------");
+                p.sendMessage("");
 
                 return;
             }
@@ -60,6 +82,21 @@ public class TransactionHistoryHandler implements GUIHandler {
 
         if (slot == 35) {
 
+            if (page >= maxPage) {
+
+                fail(p);
+
+                p.sendMessage("");
+                p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----");
+                p.sendMessage("");
+                p.sendMessage("§7Dernière page déjà affichée.");
+                p.sendMessage("");
+                p.sendMessage("§8-----------------------------");
+                p.sendMessage("");
+
+                return;
+            }
+
             premiumClick(
                     p,
                     Sound.UI_BUTTON_CLICK,
@@ -72,6 +109,21 @@ public class TransactionHistoryHandler implements GUIHandler {
                     p,
                     page + 1
             );
+
+            return;
+        }
+
+        if (slot == 31) {
+
+            premiumClick(
+                    p,
+                    Sound.UI_BUTTON_CLICK,
+                    0.8f,
+                    Sound.BLOCK_CHEST_CLOSE,
+                    1.2f
+            );
+
+            BankGUI.open(p);
 
             return;
         }
@@ -93,24 +145,12 @@ public class TransactionHistoryHandler implements GUIHandler {
             );
 
             p.sendMessage("");
-            p.sendMessage("§8----- §6Archive bancaire §8-----");
+            p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----");
+            p.sendMessage("");
             p.sendMessage("§7Transaction enregistrée dans l'historique.");
             p.sendMessage("");
-
-            return;
-        }
-
-        if (slot == 31) {
-
-            premiumClick(
-                    p,
-                    Sound.UI_BUTTON_CLICK,
-                    0.8f,
-                    Sound.BLOCK_CHEST_CLOSE,
-                    1.2f
-            );
-
-            BankGUI.open(p);
+            p.sendMessage("§8-----------------------------");
+            p.sendMessage("");
         }
     }
 
@@ -120,6 +160,10 @@ public class TransactionHistoryHandler implements GUIHandler {
 
         try {
 
+            if (title == null) {
+                return 1;
+            }
+
             if (title.contains("Page ")) {
 
                 String raw =
@@ -127,9 +171,13 @@ public class TransactionHistoryHandler implements GUIHandler {
                                 title.indexOf("Page ") + 5
                         );
 
-                return Integer.parseInt(
-                        raw.replaceAll("[^0-9]", "")
-                );
+                String number =
+                        raw.replaceAll("[^0-9]", "");
+
+                if (!number.isBlank()) {
+
+                    return Integer.parseInt(number);
+                }
             }
 
         } catch (Exception ignored) {}
