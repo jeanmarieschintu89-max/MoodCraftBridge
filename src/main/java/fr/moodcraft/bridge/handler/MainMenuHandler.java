@@ -88,6 +88,12 @@ public class MainMenuHandler implements GUIHandler {
                 );
             }
 
+            //
+            // 🏢 BUREAU DES ENTREPRISES
+            // Ancien accès Projets retiré du /menu.
+            // Les projets urbains restent uniquement dans MoodTownMenu.
+            //
+
             case 14 -> {
 
                 premiumClick(
@@ -99,12 +105,34 @@ public class MainMenuHandler implements GUIHandler {
                 );
 
                 p.sendMessage(
-                        "§8✦ §bProjets §8• §7Ouverture..."
+                        "§8✦ §6Bureau des Entreprises §8• §7Ouverture..."
                 );
+
+                if (!Bukkit.getPluginManager()
+                        .isPluginEnabled("MoodBusiness")) {
+
+                    p.closeInventory();
+
+                    p.sendMessage("");
+                    p.sendMessage("§8----- §6✦ Bureau des Entreprises ✦ §8-----");
+                    p.sendMessage("§cModule indisponible.");
+                    p.sendMessage("§7Le service économique §aMood§6Craft §7n'est pas chargé.");
+                    p.sendMessage("§8Contactez l'administration du serveur.");
+                    p.sendMessage("");
+
+                    p.playSound(
+                            p.getLocation(),
+                            Sound.ENTITY_VILLAGER_NO,
+                            1f,
+                            0.85f
+                    );
+
+                    return;
+                }
 
                 openNext(
                         p,
-                        () -> p.performCommand("projet")
+                        () -> p.performCommand("entreprise")
                 );
             }
 
