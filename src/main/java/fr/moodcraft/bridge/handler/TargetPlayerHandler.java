@@ -1,8 +1,9 @@
 package fr.moodcraft.bridge.handler;
 
 import fr.moodcraft.bridge.gui.TargetPlayerGUI;
-import fr.moodcraft.bridge.gui.TransferAmountGUI;
 import fr.moodcraft.bridge.gui.TransferTypeGUI;
+
+import fr.moodcraft.bridge.listener.BankChatInputListener;
 
 import fr.moodcraft.bridge.manager.ReputationManager;
 import fr.moodcraft.bridge.manager.TransferBuilder;
@@ -52,7 +53,7 @@ public class TargetPlayerHandler implements GUIHandler {
         if (targetUUID == null) {
 
             p.sendMessage("");
-            p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+            p.sendMessage("§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----");
             p.sendMessage("§cAucun joueur sélectionné.");
             p.sendMessage("");
 
@@ -68,7 +69,7 @@ public class TargetPlayerHandler implements GUIHandler {
                 || !target.isOnline()) {
 
             p.sendMessage("");
-            p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+            p.sendMessage("§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----");
             p.sendMessage("§cCe joueur n'est plus connecté.");
             p.sendMessage("");
 
@@ -80,7 +81,7 @@ public class TargetPlayerHandler implements GUIHandler {
         if (target.equals(p)) {
 
             p.sendMessage("");
-            p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+            p.sendMessage("§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----");
             p.sendMessage("§cTu ne peux pas t'envoyer un virement.");
             p.sendMessage("");
 
@@ -107,11 +108,17 @@ public class TargetPlayerHandler implements GUIHandler {
                 targetUUID
         );
 
+        p.closeInventory();
+
         p.sendMessage("");
-        p.sendMessage("§8----- §6Banque MoodCraft §8-----");
+        p.sendMessage("§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----");
         p.sendMessage("§a✔ Destinataire sélectionné");
         p.sendMessage("§7Joueur: §e" + target.getName());
         p.sendMessage("§7Réputation: §a" + rep + " §8• " + rank);
+        p.sendMessage("");
+        p.sendMessage("§7Écris maintenant le montant du virement.");
+        p.sendMessage("§8Exemple: §e5000");
+        p.sendMessage("§8Tape §cannuler §8pour quitter.");
         p.sendMessage("");
 
         premiumClick(
@@ -122,7 +129,10 @@ public class TargetPlayerHandler implements GUIHandler {
                 1.4f
         );
 
-        TransferAmountGUI.open(p);
+        BankChatInputListener.startTransferAmount(
+                p,
+                targetUUID
+        );
     }
 
     private void fail(Player p) {
