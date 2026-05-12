@@ -25,11 +25,32 @@ public class TransactionHistoryGUI {
             int page
     ) {
 
+        List<String> history =
+                TransactionManager.getHistory(
+                        p.getUniqueId()
+                );
+
+        int maxPage =
+                Math.max(
+                        1,
+                        (int) Math.ceil(
+                                history.size() / (double) PAGE_SIZE
+                        )
+                );
+
+        if (page < 1) {
+            page = 1;
+        }
+
+        if (page > maxPage) {
+            page = maxPage;
+        }
+
         Inventory inv =
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§8✦ §dHistorique Bancaire"
+                        "§8✦ §6Historique §8• §ePage " + page
                 );
 
         SafeGUI.fill(
@@ -37,11 +58,6 @@ public class TransactionHistoryGUI {
                 Material.BLACK_STAINED_GLASS_PANE,
                 " "
         );
-
-        List<String> history =
-                TransactionManager.getHistory(
-                        p.getUniqueId()
-                );
 
         List<String> pageData =
                 TransactionManager.getPage(
@@ -54,84 +70,97 @@ public class TransactionHistoryGUI {
                 SafeGUI.glow(
                         SafeGUI.item(
                                 Material.KNOWLEDGE_BOOK,
-                                "§d✦ Historique",
-                                "§8----- §dTransactions §8-----",
-                                "§7Toutes les opérations",
-                                "§7économiques enregistrées.",
+                                "§6✦ §fHistorique bancaire §6✦",
+                                "§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----",
                                 "",
-                                "§8• §7Entrées: §a"
+                                "§7Transactions: §e"
                                         + history.size(),
-                                "§8• §7Page: §e"
-                                        + page,
+                                "§7Page: §e"
+                                        + page
+                                        + "§8/§e"
+                                        + maxPage,
                                 "",
-                                "§e▶ Registre bancaire"
+                                "§8• §7Dépôts",
+                                "§8• §7Retraits",
+                                "§8• §7Virements",
+                                "§8• §7Marché",
+                                "",
+                                "§eSélectionne une archive"
                         )
                 )
         );
 
         int[] slots = {
-
-                10,11,12,13,14,15,16,
-
-                19,20,21,22,23,24,25,
-
-                28,29,30,32,33,34
+                10, 11, 12, 13, 14, 15, 16,
+                19, 20, 21, 22, 23, 24, 25,
+                28, 29, 30, 32, 33, 34
         };
 
-        for (int i = 0;
-             i < pageData.size();
-             i++) {
+        if (pageData.isEmpty()) {
 
-            String line =
-                    pageData.get(i);
-
-            Material mat =
-                    Material.PAPER;
-
-            String name =
-                    "§fTransaction";
-
-            if (line.contains("[DEPOSIT]")) {
-
-                mat = Material.EMERALD;
-                name = "§a✦ Dépôt";
-            }
-
-            else if (line.contains("[WITHDRAW]")) {
-
-                mat = Material.REDSTONE;
-                name = "§c✦ Retrait";
-            }
-
-            else if (line.contains("[TRANSFER]")) {
-
-                mat = Material.WRITABLE_BOOK;
-                name = "§e✦ Virement";
-            }
-
-            else if (line.contains("[MARKET_BUY]")) {
-
-                mat = Material.CHEST_MINECART;
-                name = "§6✦ Achat Marché";
-            }
-
-            else if (line.contains("[MARKET_SELL]")) {
-
-                mat = Material.GOLD_INGOT;
-                name = "§b✦ Vente Marché";
-            }
-
-            SafeGUI.safeSet(
-                    inv,
-                    slots[i],
+            SafeGUI.safeSet(inv, 22,
                     SafeGUI.item(
-                            mat,
-                            name,
-                            "§7" + line,
-                            "",
-                            "§8▶ Archive bancaire"
+                            Material.PAPER,
+                            "§7Aucune transaction",
+                            "§7Votre historique bancaire",
+                            "§7est vide pour le moment."
                     )
             );
+
+        } else {
+
+            for (int i = 0;
+                 i < pageData.size()
+                         && i < slots.length;
+                 i++) {
+
+                String line =
+                        pageData.get(i);
+
+                Material mat =
+                        Material.PAPER;
+
+                String name =
+                        "§fTransaction";
+
+                if (line.contains("[DEPOSIT]")) {
+
+                    mat = Material.EMERALD;
+                    name = "§a✦ Dépôt";
+
+                } else if (line.contains("[WITHDRAW]")) {
+
+                    mat = Material.REDSTONE;
+                    name = "§c✦ Retrait";
+
+                } else if (line.contains("[TRANSFER]")) {
+
+                    mat = Material.WRITABLE_BOOK;
+                    name = "§e✦ Virement";
+
+                } else if (line.contains("[MARKET_BUY]")) {
+
+                    mat = Material.CHEST_MINECART;
+                    name = "§6✦ Achat Marché";
+
+                } else if (line.contains("[MARKET_SELL]")) {
+
+                    mat = Material.GOLD_INGOT;
+                    name = "§b✦ Vente Marché";
+                }
+
+                SafeGUI.safeSet(
+                        inv,
+                        slots[i],
+                        SafeGUI.item(
+                                mat,
+                                name,
+                                "§7" + crop(line),
+                                "",
+                                "§8• §7Archive bancaire"
+                        )
+                );
+            }
         }
 
         if (page > 1) {
@@ -140,22 +169,42 @@ public class TransactionHistoryGUI {
                     SafeGUI.item(
                             Material.SPECTRAL_ARROW,
                             "§e✦ Page précédente",
-                            "§7Revenir à la page précédente.",
+                            "§7Page: §e" + (page - 1),
                             "",
                             "§e▶ Ouvrir"
                     )
             );
+
+        } else {
+
+            SafeGUI.safeSet(inv, 27,
+                    SafeGUI.item(
+                            Material.GRAY_DYE,
+                            "§8✦ Première page",
+                            "§7Aucune page précédente."
+                    )
+            );
         }
 
-        if (history.size() > page * PAGE_SIZE) {
+        if (page < maxPage) {
 
             SafeGUI.safeSet(inv, 35,
                     SafeGUI.item(
                             Material.SPECTRAL_ARROW,
                             "§e✦ Page suivante",
-                            "§7Afficher plus de transactions.",
+                            "§7Page: §e" + (page + 1),
                             "",
                             "§e▶ Ouvrir"
+                    )
+            );
+
+        } else {
+
+            SafeGUI.safeSet(inv, 35,
+                    SafeGUI.item(
+                            Material.GRAY_DYE,
+                            "§8✦ Dernière page",
+                            "§7Aucune page suivante."
                     )
             );
         }
@@ -175,5 +224,24 @@ public class TransactionHistoryGUI {
                 "transaction_history",
                 inv
         );
+    }
+
+    private static String crop(
+            String text
+    ) {
+
+        if (text == null || text.isBlank()) {
+            return "Aucune donnée.";
+        }
+
+        String clean =
+                text.replaceAll("§.", "")
+                        .trim();
+
+        if (clean.length() <= 48) {
+            return clean;
+        }
+
+        return clean.substring(0, 45) + "...";
     }
 }
