@@ -4,6 +4,9 @@ import fr.moodcraft.bridge.bank.BankStorage;
 import fr.moodcraft.bridge.bank.TransactionManager;
 
 import fr.moodcraft.bridge.gui.BankGUI;
+import fr.moodcraft.bridge.gui.TransferConfirmGUI;
+
+import fr.moodcraft.bridge.manager.TransferBuilder;
 
 import fr.moodcraft.bridge.util.SafeGUI;
 import fr.moodcraft.bridge.util.VaultHook;
@@ -27,13 +30,14 @@ import java.util.UUID;
 public class BankChatInputListener
         implements Listener {
 
-    private static final Map<UUID, Type> WAITING =
+    private static final Map<UUID, Draft> WAITING =
             new HashMap<>();
 
     public enum Type {
 
         DEPOSIT,
-        WITHDRAW
+        WITHDRAW,
+        TRANSFER_AMOUNT
     }
 
     //
@@ -46,7 +50,10 @@ public class BankChatInputListener
 
         WAITING.put(
                 p.getUniqueId(),
-                Type.DEPOSIT
+                new Draft(
+                        Type.DEPOSIT,
+                        null
+                )
         );
 
         p.closeInventory();
@@ -75,7 +82,10 @@ public class BankChatInputListener
 
         WAITING.put(
                 p.getUniqueId(),
-                Type.WITHDRAW
+                new Draft(
+                        Type.WITHDRAW,
+                        null
+                )
         );
 
         p.closeInventory();
@@ -95,6 +105,60 @@ public class BankChatInputListener
     }
 
     //
+    // 🔁 VIREMENT MONTANT
+    //
+
+    public static void startTransferAmount(
+            Player p,
+            UUID targetUUID
+    ) {
+
+        WAITING.put(
+                p.getUniqueId(),
+                new Draft(
+                        Type.TRANSFER_AMOUNT,
+                        targetUUID
+                )
+        );
+
+        TransferBuilder.setAction(
+                p,
+                TransferBuilder.Action.PLAYER_TRANSFER
+        );
+
+        TransferBuilder.setTarget(
+                p,
+                targetUUID
+        );
+
+        Player target =
+                targetUUID != null
+                        ? Bukkit.getPlayer(targetUUID)
+                        : null;
+
+        String targetName =
+                target != null
+                        ? target.getName()
+                        : "Inconnu";
+
+        p.closeInventory();
+
+        p.sendMessage("");
+        p.sendMessage("§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----");
+        p.sendMessage("§fÉcris le montant du virement.");
+        p.sendMessage("§7Destinataire: §e" + targetName);
+        p.sendMessage("");
+        p.sendMessage("§8• §7Exemple: §e5000");
+        p.sendMessage("§8• §7Les gros paiements professionnels");
+        p.sendMessage("§8• §7doivent passer par §e/contrat§7.");
+        p.sendMessage("");
+        p.sendMessage("§7Tape §cannuler §7pour quitter.");
+        p.sendMessage("");
+
+        soundClick(p);
+    }
+
+    //
     // 💬 CHAT
     //
 
@@ -106,12 +170,12 @@ public class BankChatInputListener
         Player p =
                 e.getPlayer();
 
-        Type type =
+        Draft draft =
                 WAITING.get(
                         p.getUniqueId()
                 );
 
-        if (type == null) {
+        if (draft == null) {
             return;
         }
 
@@ -124,7 +188,7 @@ public class BankChatInputListener
                 fr.moodcraft.bridge.Main.getInstance(),
                 () -> handle(
                         p,
-                        type,
+                        draft,
                         message
                 )
         );
@@ -136,7 +200,7 @@ public class BankChatInputListener
 
     private void handle(
             Player p,
-            Type type,
+            Draft draft,
             String message
     ) {
 
@@ -146,6 +210,8 @@ public class BankChatInputListener
             WAITING.remove(
                     p.getUniqueId()
             );
+
+            TransferBuilder.clear(p);
 
             p.sendMessage("");
             p.sendMessage("§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----");
@@ -174,7 +240,7 @@ public class BankChatInputListener
             return;
         }
 
-        if (type == Type.DEPOSIT) {
+        if (draft.type == Type.DEPOSIT) {
 
             deposit(
                     p,
@@ -184,10 +250,21 @@ public class BankChatInputListener
             return;
         }
 
-        if (type == Type.WITHDRAW) {
+        if (draft.type == Type.WITHDRAW) {
 
             withdraw(
                     p,
+                    amount
+            );
+
+            return;
+        }
+
+        if (draft.type == Type.TRANSFER_AMOUNT) {
+
+            transferAmount(
+                    p,
+                    draft,
                     amount
             );
         }
@@ -350,6 +427,107 @@ public class BankChatInputListener
     }
 
     //
+    // 🔁 VIREMENT MONTANT LOGIC
+    //
+
+    private void transferAmount(
+            Player p,
+            Draft draft,
+            double amount
+    ) {
+
+        if (draft.targetUUID == null) {
+
+            error(
+                    p,
+                    "Aucun destinataire sélectionné."
+            );
+
+            TransferBuilder.clear(p);
+
+            WAITING.remove(
+                    p.getUniqueId()
+            );
+
+            return;
+        }
+
+        Player target =
+                Bukkit.getPlayer(
+                        draft.targetUUID
+                );
+
+        if (target == null || !target.isOnline()) {
+
+            error(
+                    p,
+                    "Le joueur sélectionné n'est plus connecté."
+            );
+
+            TransferBuilder.clear(p);
+
+            WAITING.remove(
+                    p.getUniqueId()
+            );
+
+            return;
+        }
+
+        if (target.equals(p)) {
+
+            error(
+                    p,
+                    "Tu ne peux pas t'envoyer un virement."
+            );
+
+            TransferBuilder.clear(p);
+
+            WAITING.remove(
+                    p.getUniqueId()
+            );
+
+            return;
+        }
+
+        TransferBuilder.setAction(
+                p,
+                TransferBuilder.Action.PLAYER_TRANSFER
+        );
+
+        TransferBuilder.setTarget(
+                p,
+                draft.targetUUID
+        );
+
+        TransferBuilder.setAmount(
+                p,
+                amount
+        );
+
+        WAITING.remove(
+                p.getUniqueId()
+        );
+
+        p.sendMessage("");
+        p.sendMessage("§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----");
+        p.sendMessage("§a✔ Montant enregistré");
+        p.sendMessage("§7Destinataire: §e" + target.getName());
+        p.sendMessage("§7Montant: §e" + SafeGUI.money(amount) + "€");
+        p.sendMessage("");
+        p.sendMessage("§8• §7Une confirmation est nécessaire.");
+        p.sendMessage("");
+
+        p.playSound(
+                p.getLocation(),
+                Sound.BLOCK_NOTE_BLOCK_CHIME,
+                0.75f,
+                1.25f
+        );
+
+        TransferConfirmGUI.open(p);
+    }
+
+    //
     // ❌ ERROR
     //
 
@@ -449,5 +627,23 @@ public class BankChatInputListener
                 1f,
                 0.85f
         );
+    }
+
+    private static class Draft {
+
+        private final Type type;
+        private final UUID targetUUID;
+
+        private Draft(
+                Type type,
+                UUID targetUUID
+        ) {
+
+            this.type =
+                    type;
+
+            this.targetUUID =
+                    targetUUID;
+        }
     }
 }
