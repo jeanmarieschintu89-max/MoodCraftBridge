@@ -79,6 +79,8 @@ public class Main extends JavaPlugin {
 
                 new ChatInputListener(),
 
+                new BankChatInputListener(),
+
                 new MineListener(),
 
                 new PayListener(),
@@ -103,6 +105,12 @@ public class Main extends JavaPlugin {
                 "bank_main",
                 new BankHandler()
         );
+
+        //
+        // Anciens menus gardés pour compatibilité.
+        // Le nouveau BankHandler utilise maintenant BankChatInputListener
+        // pour dépôt / retrait par saisie chat.
+        //
 
         GUIManager.register(
                 "bank_deposit",
@@ -270,6 +278,10 @@ public class Main extends JavaPlugin {
         );
 
         getLogger().info(
+                "💬 Banque Chat Input: OK"
+        );
+
+        getLogger().info(
                 "📊 Marché: OK"
         );
 
@@ -286,7 +298,7 @@ public class Main extends JavaPlugin {
         );
 
         getLogger().info(
-                "📜 Contrats: OFF"
+                "📜 Contrats: MoodBusiness"
         );
 
         getLogger().info(
