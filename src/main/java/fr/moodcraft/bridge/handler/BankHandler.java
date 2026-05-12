@@ -2,7 +2,12 @@ package fr.moodcraft.bridge.handler;
 
 import fr.moodcraft.bridge.bank.IbanManager;
 
-import fr.moodcraft.bridge.gui.*;
+import fr.moodcraft.bridge.gui.BankGUI;
+import fr.moodcraft.bridge.gui.MainMenuGUI;
+import fr.moodcraft.bridge.gui.TransactionHistoryGUI;
+import fr.moodcraft.bridge.gui.TransferTypeGUI;
+
+import fr.moodcraft.bridge.listener.BankChatInputListener;
 
 import fr.moodcraft.bridge.manager.TransferBuilder;
 
@@ -19,6 +24,10 @@ public class BankHandler implements GUIHandler {
     ) {
 
         switch (slot) {
+
+            //
+            // 💰 DEPOT PAR CHAT
+            //
 
             case 10 -> {
 
@@ -37,8 +46,12 @@ public class BankHandler implements GUIHandler {
                         1.4f
                 );
 
-                DepositGUI.open(p);
+                BankChatInputListener.startDeposit(p);
             }
+
+            //
+            // 💸 RETRAIT PAR CHAT
+            //
 
             case 12 -> {
 
@@ -57,8 +70,12 @@ public class BankHandler implements GUIHandler {
                         1.2f
                 );
 
-                WithdrawGUI.open(p);
+                BankChatInputListener.startWithdraw(p);
             }
+
+            //
+            // 🔁 VIREMENT
+            //
 
             case 14 -> {
 
@@ -75,6 +92,10 @@ public class BankHandler implements GUIHandler {
                 TransferTypeGUI.open(p);
             }
 
+            //
+            // 🏷 IBAN
+            //
+
             case 16 -> {
 
                 p.closeInventory();
@@ -86,8 +107,12 @@ public class BankHandler implements GUIHandler {
 
                 p.sendMessage("");
                 p.sendMessage(
-                        "§8----- §6Banque MoodCraft §8-----"
+                        "§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----"
                 );
+                p.sendMessage(
+                        "§fIdentité bancaire personnelle."
+                );
+                p.sendMessage("");
                 p.sendMessage(
                         "§7IBAN: §e" + iban
                 );
@@ -105,6 +130,10 @@ public class BankHandler implements GUIHandler {
                 );
             }
 
+            //
+            // 📖 HISTORIQUE
+            //
+
             case 21 -> {
 
                 premiumClick(
@@ -121,25 +150,30 @@ public class BankHandler implements GUIHandler {
                 );
             }
 
+            //
+            // 📊 ACTIVITE
+            //
+
             case 23 -> {
 
                 p.closeInventory();
 
                 p.sendMessage("");
                 p.sendMessage(
-                        "§8----- §6Activité économique §8-----"
+                        "§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----"
                 );
                 p.sendMessage(
-                        "§7Les statistiques arrivent bientôt."
+                        "§eActivité bancaire en préparation."
+                );
+                p.sendMessage("");
+                p.sendMessage(
+                        "§8• §7Volume personnel"
                 );
                 p.sendMessage(
-                        "§8• §7Profit"
+                        "§8• §7Flux bancaires"
                 );
                 p.sendMessage(
-                        "§8• §7Volume"
-                );
-                p.sendMessage(
-                        "§8• §7Classement"
+                        "§8• §7Statistiques économiques"
                 );
                 p.sendMessage("");
 
@@ -151,6 +185,10 @@ public class BankHandler implements GUIHandler {
                         1.4f
                 );
             }
+
+            //
+            // ↩ RETOUR
+            //
 
             case 31 -> {
 
