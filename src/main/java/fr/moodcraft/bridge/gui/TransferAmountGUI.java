@@ -22,7 +22,7 @@ public class TransferAmountGUI {
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§8✦ §eMontant"
+                        "§8✦ §6Virement §aMood§6Craft"
                 );
 
         SafeGUI.fill(
@@ -65,14 +65,18 @@ public class TransferAmountGUI {
                 SafeGUI.glow(
                         SafeGUI.item(
                                 Material.PAPER,
-                                "§6✦ Virement bancaire",
-                                "§8----- §6Destinataire §8-----",
+                                "§6✦ §fVirement personnel §6✦",
+                                "§8----- §6Banque §aMood§6Craft §8-----",
                                 "§7Joueur: " + targetName,
                                 "",
-                                "§7Choisis le montant à envoyer.",
+                                "§7Les virements sont réservés",
+                                "§7aux transferts personnels simples.",
                                 "",
-                                "§8• §7Sécurisé",
-                                "§8• §7Historique sauvegardé"
+                                "§8• §7Historique sauvegardé",
+                                "§8• §7Montants élevés surveillés",
+                                "",
+                                "§ePour un service ou une entreprise:",
+                                "§f/contrat"
                         )
                 )
         );
@@ -81,8 +85,9 @@ public class TransferAmountGUI {
                 SafeGUI.item(
                         Material.GOLD_NUGGET,
                         "§a✦ 100€",
-                        "§7Petit transfert.",
+                        "§7Petit transfert personnel.",
                         "",
+                        "§a✔ Autorisé",
                         "§e▶ Envoyer"
                 )
         );
@@ -91,8 +96,9 @@ public class TransferAmountGUI {
                 SafeGUI.item(
                         Material.GOLD_INGOT,
                         "§a✦ 1 000€",
-                        "§7Virement standard.",
+                        "§7Virement personnel standard.",
                         "",
+                        "§a✔ Autorisé",
                         "§e▶ Envoyer"
                 )
         );
@@ -102,7 +108,11 @@ public class TransferAmountGUI {
                         SafeGUI.item(
                                 Material.GOLD_BLOCK,
                                 "§6✦ 10 000€",
-                                "§7Transfert important.",
+                                "§7Transfert personnel important.",
+                                "",
+                                "§e⚠ Montant surveillé",
+                                "§7Pour un achat professionnel,",
+                                "§7utilisez plutôt §e/contrat§7.",
                                 "",
                                 "§e▶ Envoyer"
                         )
@@ -111,25 +121,30 @@ public class TransferAmountGUI {
 
         SafeGUI.safeSet(inv, 16,
                 SafeGUI.item(
-                        Material.EMERALD_BLOCK,
-                        "§2✦ 50 000€",
-                        "§7Virement haute valeur.",
+                        Material.BARRIER,
+                        "§c✦ 50 000€ bloqué",
+                        "§7Les gros paiements directs",
+                        "§7peuvent contourner les taxes",
+                        "§7et les contrats officiels.",
                         "",
-                        "§8• §7Contrôle bancaire",
-                        "",
-                        "§e▶ Envoyer"
+                        "§c✘ Virement déconseillé",
+                        "§eUtilisez: §f/contrat"
                 )
         );
 
         SafeGUI.safeSet(inv, 22,
                 SafeGUI.item(
-                        Material.DIAMOND_BLOCK,
-                        "§b✦ 100 000€",
-                        "§7Transfert premium.",
+                        Material.BARRIER,
+                        "§c✦ 100 000€ bloqué",
+                        "§7Ce montant doit passer par",
+                        "§7un contrat sécurisé.",
                         "",
-                        "§8• §7Vérification renforcée",
+                        "§8• §7Fonds bloqués",
+                        "§8• §7Taxe économique 20%",
+                        "§8• §7Historique officiel",
+                        "§8• §7Protection anti-arnaque",
                         "",
-                        "§e▶ Envoyer"
+                        "§eUtilisez: §f/contrat"
                 )
         );
 
@@ -139,8 +154,9 @@ public class TransferAmountGUI {
                         "§d✦ Montant libre",
                         "§7Choisis ton propre montant.",
                         "",
-                        "§8• §7Décimales acceptées",
-                        "§8• §7Vérification auto",
+                        "§e⚠ Limite anti-fraude appliquée",
+                        "§7Les paiements professionnels",
+                        "§7doivent passer par §e/contrat§7.",
                         "",
                         "§e▶ Saisir"
                 )
