@@ -2,14 +2,19 @@ package fr.moodcraft.bridge.command;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
-import org.bukkit.command.*;
+
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public class FreezeCommand implements CommandExecutor {
+public class FreezeCommand
+        implements CommandExecutor {
 
     //
     // ❄ JOUEURS FREEZE
@@ -22,7 +27,9 @@ public class FreezeCommand implements CommandExecutor {
     // 🔍 CHECK
     //
 
-    public static boolean isFrozen(Player p) {
+    public static boolean isFrozen(
+            Player p
+    ) {
 
         return frozen.contains(
                 p.getUniqueId()
@@ -33,7 +40,9 @@ public class FreezeCommand implements CommandExecutor {
     // ❄ FREEZE
     //
 
-    public static void freeze(Player p) {
+    public static void freeze(
+            Player p
+    ) {
 
         frozen.add(
                 p.getUniqueId()
@@ -44,7 +53,9 @@ public class FreezeCommand implements CommandExecutor {
     // 🔥 UNFREEZE
     //
 
-    public static void unfreeze(Player p) {
+    public static void unfreeze(
+            Player p
+    ) {
 
         frozen.remove(
                 p.getUniqueId()
@@ -56,10 +67,12 @@ public class FreezeCommand implements CommandExecutor {
     //
 
     @Override
-    public boolean onCommand(CommandSender sender,
-                             Command cmd,
-                             String label,
-                             String[] args) {
+    public boolean onCommand(
+            CommandSender sender,
+            Command cmd,
+            String label,
+            String[] args
+    ) {
 
         //
         // 🔒 PERMISSION
@@ -67,7 +80,12 @@ public class FreezeCommand implements CommandExecutor {
 
         if (!sender.hasPermission("moodcraft.admin")) {
 
-            sender.sendMessage("§c❌ Permission refusée.");
+            sendError(
+                    sender,
+                    "Contrôle Staff",
+                    "Permission refusée."
+            );
+
             return true;
         }
 
@@ -77,7 +95,12 @@ public class FreezeCommand implements CommandExecutor {
 
         if (args.length < 1) {
 
-            sender.sendMessage("§cUsage: /freeze <joueur>");
+            sendInfo(
+                    sender,
+                    "Contrôle Staff",
+                    "Utilisation: §e/freeze <joueur>"
+            );
+
             return true;
         }
 
@@ -90,7 +113,12 @@ public class FreezeCommand implements CommandExecutor {
 
         if (target == null) {
 
-            sender.sendMessage("§cJoueur introuvable.");
+            sendError(
+                    sender,
+                    "Contrôle Staff",
+                    "Joueur introuvable ou hors ligne."
+            );
+
             return true;
         }
 
@@ -102,72 +130,161 @@ public class FreezeCommand implements CommandExecutor {
 
             unfreeze(target);
 
-            //
-            // ✨ MESSAGE
-            //
-
-            target.sendTitle(
-                    "§aDéfreeze",
-                    "§7Tu peux rebouger.",
-                    10,
-                    40,
-                    10
+            sendUnfreezeTarget(
+                    target
             );
 
-            target.sendMessage("");
-            target.sendMessage("§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-            target.sendMessage("§a✔ Tu n'es plus freeze.");
-            target.sendMessage("§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-            target.sendMessage("");
-
-            target.playSound(
-                    target.getLocation(),
-                    Sound.BLOCK_NOTE_BLOCK_PLING,
-                    1f,
-                    1.2f
+            sendSuccess(
+                    sender,
+                    "Contrôle Staff",
+                    "Joueur défreeze: §e" + target.getName()
             );
 
-            sender.sendMessage(
-                    "§a✔ Joueur défreeze: §e"
-                            + target.getName()
-            );
-
-        } else {
-
-            freeze(target);
-
-            //
-            // ✨ MESSAGE
-            //
-
-            target.sendTitle(
-                    "§cFreeze",
-                    "§7Ne quitte pas le serveur.",
-                    10,
-                    999999,
-                    10
-            );
-
-            target.sendMessage("");
-            target.sendMessage("§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-            target.sendMessage("§c❄ Tu as été freeze.");
-            target.sendMessage("§7Ne déconnecte pas.");
-            target.sendMessage("§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-            target.sendMessage("");
-
-            target.playSound(
-                    target.getLocation(),
-                    Sound.BLOCK_GLASS_BREAK,
-                    1f,
-                    0.7f
-            );
-
-            sender.sendMessage(
-                    "§b❄ Joueur freeze: §e"
-                            + target.getName()
-            );
+            return true;
         }
 
+        freeze(target);
+
+        sendFreezeTarget(
+                target
+        );
+
+        sendSuccess(
+                sender,
+                "Contrôle Staff",
+                "Joueur freeze: §e" + target.getName()
+        );
+
         return true;
+    }
+
+    //
+    // ❄ MESSAGE TARGET FREEZE
+    //
+
+    private void sendFreezeTarget(
+            Player target
+    ) {
+
+        target.sendTitle(
+                "§cFreeze",
+                "§7Attends les consignes du staff.",
+                10,
+                999999,
+                10
+        );
+
+        target.sendMessage("");
+        target.sendMessage("§8----- §6✦ Sécurité §aMood§6Craft §6✦ §8-----");
+        target.sendMessage("");
+        target.sendMessage("§c✘ §fTu as été freeze.");
+        target.sendMessage("");
+        target.sendMessage("§8• §7Ne quitte pas le serveur");
+        target.sendMessage("§8• §7Attends les consignes du staff");
+        target.sendMessage("§8• §7Reste calme pendant la vérification");
+        target.sendMessage("");
+        target.sendMessage("§8-----------------------------");
+        target.sendMessage("");
+
+        target.playSound(
+                target.getLocation(),
+                Sound.BLOCK_GLASS_BREAK,
+                1f,
+                0.7f
+        );
+    }
+
+    //
+    // 🔥 MESSAGE TARGET UNFREEZE
+    //
+
+    private void sendUnfreezeTarget(
+            Player target
+    ) {
+
+        target.sendTitle(
+                "§aDéfreeze",
+                "§7Tu peux rebouger.",
+                10,
+                40,
+                10
+        );
+
+        target.sendMessage("");
+        target.sendMessage("§8----- §6✦ Sécurité §aMood§6Craft §6✦ §8-----");
+        target.sendMessage("");
+        target.sendMessage("§a✔ §fTu n'es plus freeze.");
+        target.sendMessage("");
+        target.sendMessage("§8• §7Tu peux à nouveau bouger");
+        target.sendMessage("§8• §7Merci d'avoir patienté");
+        target.sendMessage("");
+        target.sendMessage("§8-----------------------------");
+        target.sendMessage("");
+
+        target.playSound(
+                target.getLocation(),
+                Sound.BLOCK_NOTE_BLOCK_PLING,
+                1f,
+                1.2f
+        );
+    }
+
+    //
+    // ✅ SUCCESS
+    //
+
+    private void sendSuccess(
+            CommandSender sender,
+            String title,
+            String message
+    ) {
+
+        sender.sendMessage("");
+        sender.sendMessage("§8----- §6✦ " + title + " §6✦ §8-----");
+        sender.sendMessage("");
+        sender.sendMessage("§a✔ §f" + message);
+        sender.sendMessage("");
+        sender.sendMessage("§8-----------------------------");
+        sender.sendMessage("");
+    }
+
+    //
+    // ❌ ERROR
+    //
+
+    private void sendError(
+            CommandSender sender,
+            String title,
+            String message
+    ) {
+
+        sender.sendMessage("");
+        sender.sendMessage("§8----- §6✦ " + title + " §6✦ §8-----");
+        sender.sendMessage("");
+        sender.sendMessage("§c✘ §fAction refusée.");
+        sender.sendMessage("");
+        sender.sendMessage("§7" + message);
+        sender.sendMessage("");
+        sender.sendMessage("§8-----------------------------");
+        sender.sendMessage("");
+    }
+
+    //
+    // ℹ INFO
+    //
+
+    private void sendInfo(
+            CommandSender sender,
+            String title,
+            String message
+    ) {
+
+        sender.sendMessage("");
+        sender.sendMessage("§8----- §6✦ " + title + " §6✦ §8-----");
+        sender.sendMessage("");
+        sender.sendMessage("§7" + message);
+        sender.sendMessage("");
+        sender.sendMessage("§8-----------------------------");
+        sender.sendMessage("");
     }
 }
