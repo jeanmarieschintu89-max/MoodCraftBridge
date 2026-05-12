@@ -17,6 +17,9 @@ import java.util.UUID;
 
 public class TransferConfirmGUI {
 
+    private static final double MAX_PERSONAL_TRANSFER =
+            10000.0;
+
     public static void open(Player p) {
 
         Inventory inv =
@@ -37,6 +40,11 @@ public class TransferConfirmGUI {
 
         double amountValue =
                 TransferBuilder.getAmount(p);
+
+        boolean blocked =
+                amountValue > MAX_PERSONAL_TRANSFER
+                        && !p.hasPermission("moodcraftbridge.transfer.bypass")
+                        && !p.hasPermission("moodbusiness.bypass");
 
         String targetName =
                 "§7Inconnu";
@@ -61,16 +69,50 @@ public class TransferConfirmGUI {
         SafeGUI.safeSet(inv, 13,
                 SafeGUI.glow(
                         SafeGUI.item(
-                                Material.PAPER,
-                                "§6✦ Confirmer le virement",
-                                "§8----- §6Résumé §8-----",
+                                blocked
+                                        ? Material.BARRIER
+                                        : Material.PAPER,
+                                blocked
+                                        ? "§c✦ Virement bloqué"
+                                        : "§6✦ Confirmer le virement",
+                                "§8----- §6Banque §aMood§6Craft §8-----",
                                 "§7Destinataire: " + targetName,
                                 "§7Montant: §6" + amount + "€",
                                 "",
-                                "§8• §7Transaction sécurisée",
-                                "§8• §7Historique sauvegardé",
+                                blocked
+                                        ? "§cCe montant dépasse la limite personnelle."
+                                        : "§8• §7Transaction sécurisée",
+                                blocked
+                                        ? "§7Limite virement personnel: §e10 000€"
+                                        : "§8• §7Historique sauvegardé",
                                 "",
-                                "§e▶ Vérifie avant validation"
+                                blocked
+                                        ? "§7Les paiements professionnels doivent"
+                                        : "§e▶ Vérifie avant validation",
+                                blocked
+                                        ? "§7passer par un §econtrat officiel§7."
+                                        : "",
+                                blocked
+                                        ? ""
+                                        : "",
+                                blocked
+                                        ? "§8• §7Fonds sécurisés"
+                                        : "",
+                                blocked
+                                        ? "§8• §7Taxe économique 20%"
+                                        : "",
+                                blocked
+                                        ? "§8• §7Historique officiel"
+                                        : "",
+                                blocked
+                                        ? "§8• §7Protection anti-arnaque"
+                                        : "",
+                                blocked
+                                        ? ""
+                                        : "",
+                                blocked
+                                        ? "§eUtilisez: §f/contrat"
+                                        : ""
                         )
                 )
         );
@@ -85,26 +127,52 @@ public class TransferConfirmGUI {
                 )
         );
 
-        SafeGUI.safeSet(inv, 15,
-                SafeGUI.glow(
-                        SafeGUI.item(
-                                Material.EMERALD_BLOCK,
-                                "§a✦ Confirmer",
-                                "§7Valide le virement.",
-                                "",
-                                "§8• §7Montant: §6" + amount + "€",
-                                "",
-                                "§a▶ Envoyer"
-                        )
-                )
-        );
+        if (blocked) {
 
-        p.playSound(
-                p.getLocation(),
-                Sound.BLOCK_NOTE_BLOCK_CHIME,
-                0.6f,
-                1.2f
-        );
+            SafeGUI.safeSet(inv, 15,
+                    SafeGUI.item(
+                            Material.BARRIER,
+                            "§c✦ Confirmation impossible",
+                            "§7Ce virement est trop élevé",
+                            "§7pour un transfert personnel.",
+                            "",
+                            "§7Les paiements professionnels",
+                            "§7doivent passer par §e/contrat§7.",
+                            "",
+                            "§c▶ Virement bloqué"
+                    )
+            );
+
+            p.playSound(
+                    p.getLocation(),
+                    Sound.BLOCK_NOTE_BLOCK_BASS,
+                    0.8f,
+                    0.7f
+            );
+
+        } else {
+
+            SafeGUI.safeSet(inv, 15,
+                    SafeGUI.glow(
+                            SafeGUI.item(
+                                    Material.EMERALD_BLOCK,
+                                    "§a✦ Confirmer",
+                                    "§7Valide le virement.",
+                                    "",
+                                    "§8• §7Montant: §6" + amount + "€",
+                                    "",
+                                    "§a▶ Envoyer"
+                            )
+                    )
+            );
+
+            p.playSound(
+                    p.getLocation(),
+                    Sound.BLOCK_NOTE_BLOCK_CHIME,
+                    0.6f,
+                    1.2f
+            );
+        }
 
         GUIManager.open(
                 p,
