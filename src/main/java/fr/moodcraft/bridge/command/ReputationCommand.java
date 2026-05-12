@@ -164,27 +164,45 @@ public class ReputationCommand implements CommandExecutor {
 
             int i = 1;
 
-            for (Map.Entry<String, Integer> entry :
-                    ReputationManager.getTop(10).entrySet()) {
+            Map<String, Integer> top =
+                    ReputationManager.getTop(10);
 
-                UUID uuid =
-                        UUID.fromString(entry.getKey());
+            if (top.isEmpty()) {
 
-                String name =
-                        safeName(
-                                Bukkit.getOfflinePlayer(uuid)
-                        );
+                sender.sendMessage("§7Aucune réputation enregistrée.");
 
-                sender.sendMessage(
-                        "§e#"
-                                + i
-                                + " §7"
-                                + name
-                                + " §8» §a"
-                                + entry.getValue()
-                );
+            } else {
 
-                i++;
+                for (Map.Entry<String, Integer> entry :
+                        top.entrySet()) {
+
+                    UUID uuid =
+                            UUID.fromString(entry.getKey());
+
+                    String name =
+                            safeName(
+                                    Bukkit.getOfflinePlayer(uuid)
+                            );
+
+                    int rep =
+                            entry.getValue();
+
+                    String rank =
+                            ReputationManager.getRank(rep);
+
+                    sender.sendMessage(
+                            "§e#"
+                                    + i
+                                    + " §f"
+                                    + name
+                                    + " §8» §e"
+                                    + rep
+                                    + " §6✦ §7Rang: "
+                                    + rank
+                    );
+
+                    i++;
+                }
             }
 
             sender.sendMessage("");
