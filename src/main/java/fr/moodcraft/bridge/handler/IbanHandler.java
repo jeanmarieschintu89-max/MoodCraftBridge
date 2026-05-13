@@ -1,3 +1,4 @@
+
 package fr.moodcraft.bridge.handler;
 
 import fr.moodcraft.bridge.gui.TransferTypeGUI;
@@ -18,6 +19,10 @@ public class IbanHandler implements GUIHandler {
 
         switch (slot) {
 
+            //
+            // 🏦 SAISIE IBAN
+            //
+
             case 13 -> {
 
                 p.closeInventory();
@@ -27,11 +32,19 @@ public class IbanHandler implements GUIHandler {
                         "iban_input"
                 );
 
+                header(p);
+
+                p.sendMessage("§a✔ §fSaisie IBAN.");
                 p.sendMessage("");
-                p.sendMessage("§8----- §6Banque MoodCraft §8-----");
-                p.sendMessage("§b✔ Saisie IBAN");
-                p.sendMessage("§7Entre l'IBAN dans le chat.");
+                p.sendMessage("§fÉcris l'IBAN dans le chat.");
                 p.sendMessage("");
+                p.sendMessage("§8• §7Exemple: §eMC-1234-ABCD");
+                p.sendMessage("§8• §7Le joueur peut être hors ligne");
+                p.sendMessage("§8• §7Le montant sera demandé ensuite");
+                p.sendMessage("");
+                p.sendMessage("§7Tape §cannuler §7pour quitter.");
+
+                footer(p);
 
                 premiumClick(
                         p,
@@ -41,6 +54,10 @@ public class IbanHandler implements GUIHandler {
                         1.2f
                 );
             }
+
+            //
+            // ↩ RETOUR
+            //
 
             case 31 -> {
 
@@ -56,6 +73,36 @@ public class IbanHandler implements GUIHandler {
             }
         }
     }
+
+    //
+    // 🎨 HEADER
+    //
+
+    private void header(
+            Player p
+    ) {
+
+        p.sendMessage("");
+        p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----");
+        p.sendMessage("");
+    }
+
+    //
+    // 🎨 FOOTER
+    //
+
+    private void footer(
+            Player p
+    ) {
+
+        p.sendMessage("");
+        p.sendMessage("§8-----------------------------");
+        p.sendMessage("");
+    }
+
+    //
+    // 🔊 SOUND
+    //
 
     private void premiumClick(
             Player p,
