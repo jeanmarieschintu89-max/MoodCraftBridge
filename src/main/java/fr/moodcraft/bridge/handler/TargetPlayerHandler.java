@@ -30,6 +30,10 @@ public class TargetPlayerHandler implements GUIHandler {
                 250
         )) return;
 
+        //
+        // ↩ RETOUR / NAVIGATION
+        //
+
         if (slot == 45
                 || slot == 49
                 || slot == 53) {
@@ -52,12 +56,10 @@ public class TargetPlayerHandler implements GUIHandler {
 
         if (targetUUID == null) {
 
-            p.sendMessage("");
-            p.sendMessage("§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----");
-            p.sendMessage("§cAucun joueur sélectionné.");
-            p.sendMessage("");
-
-            fail(p);
+            error(
+                    p,
+                    "Aucun joueur sélectionné."
+            );
 
             return;
         }
@@ -68,24 +70,20 @@ public class TargetPlayerHandler implements GUIHandler {
         if (target == null
                 || !target.isOnline()) {
 
-            p.sendMessage("");
-            p.sendMessage("§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----");
-            p.sendMessage("§cCe joueur n'est plus connecté.");
-            p.sendMessage("");
-
-            fail(p);
+            error(
+                    p,
+                    "Ce joueur n'est plus connecté."
+            );
 
             return;
         }
 
         if (target.equals(p)) {
 
-            p.sendMessage("");
-            p.sendMessage("§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----");
-            p.sendMessage("§cTu ne peux pas t'envoyer un virement.");
-            p.sendMessage("");
-
-            fail(p);
+            error(
+                    p,
+                    "Tu ne peux pas t'envoyer un virement."
+            );
 
             return;
         }
@@ -110,16 +108,19 @@ public class TargetPlayerHandler implements GUIHandler {
 
         p.closeInventory();
 
+        header(p);
+
+        p.sendMessage("§a✔ §fDestinataire sélectionné.");
         p.sendMessage("");
-        p.sendMessage("§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----");
-        p.sendMessage("§a✔ Destinataire sélectionné");
         p.sendMessage("§7Joueur: §e" + target.getName());
         p.sendMessage("§7Réputation: §a" + rep + " §8• " + rank);
         p.sendMessage("");
-        p.sendMessage("§7Écris maintenant le montant du virement.");
-        p.sendMessage("§8Exemple: §e5000");
-        p.sendMessage("§8Tape §cannuler §8pour quitter.");
+        p.sendMessage("§fÉcris le montant du virement.");
         p.sendMessage("");
+        p.sendMessage("§8• §7Exemple: §e5000");
+        p.sendMessage("§8• §7Tape §cannuler §7pour quitter.");
+
+        footer(p);
 
         premiumClick(
                 p,
@@ -135,6 +136,56 @@ public class TargetPlayerHandler implements GUIHandler {
         );
     }
 
+    //
+    // ❌ ERROR
+    //
+
+    private void error(
+            Player p,
+            String message
+    ) {
+
+        header(p);
+
+        p.sendMessage("§c✘ §fAction refusée.");
+        p.sendMessage("");
+        p.sendMessage("§7" + message);
+
+        footer(p);
+
+        fail(p);
+    }
+
+    //
+    // 🎨 HEADER
+    //
+
+    private void header(
+            Player p
+    ) {
+
+        p.sendMessage("");
+        p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----");
+        p.sendMessage("");
+    }
+
+    //
+    // 🎨 FOOTER
+    //
+
+    private void footer(
+            Player p
+    ) {
+
+        p.sendMessage("");
+        p.sendMessage("§8-----------------------------");
+        p.sendMessage("");
+    }
+
+    //
+    // 🔊 FAIL
+    //
+
     private void fail(Player p) {
 
         p.playSound(
@@ -144,6 +195,10 @@ public class TargetPlayerHandler implements GUIHandler {
                 0.85f
         );
     }
+
+    //
+    // 🔊 CLICK PREMIUM
+    //
 
     private void premiumClick(
             Player p,
