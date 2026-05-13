@@ -23,7 +23,7 @@ public class PriceGUI {
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§8✦ §6Marché §aMood§6Craft §8✦"
+                        "§6✦ §8Marché §aMood§6Craft §6✦"
                 );
 
         try {
