@@ -8,6 +8,7 @@ import fr.moodcraft.bridge.util.VaultHook;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 
 import org.bukkit.entity.Player;
 
@@ -257,7 +258,7 @@ public class PayListener
         );
 
         //
-        // 🧾 LOGS PROPRES
+        // 🧾 LOGS
         //
 
         TransactionLogger.log(
@@ -297,47 +298,23 @@ public class PayListener
             double amount
     ) {
 
+        header(p);
+
+        p.sendMessage("§c✘ §fPaiement refusé.");
         p.sendMessage("");
-        p.sendMessage(
-                "§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----"
-        );
-        p.sendMessage(
-                "§cVirement refusé."
-        );
+        p.sendMessage("§7Montant: §e" + format(amount));
+        p.sendMessage("§7Limite personnelle: §e" + format(MAX_PERSONAL_PAY));
         p.sendMessage("");
-        p.sendMessage(
-                "§7Montant demandé: §e"
-                        + format(amount)
-        );
-        p.sendMessage(
-                "§7Limite virement personnel: §e"
-                        + format(MAX_PERSONAL_PAY)
-        );
+        p.sendMessage("§7Paiement professionnel:");
+        p.sendMessage("§e/contrat");
         p.sendMessage("");
-        p.sendMessage(
-                "§7Les paiements professionnels doivent passer"
-        );
-        p.sendMessage(
-                "§7par un §econtrat officiel§7."
-        );
-        p.sendMessage("");
-        p.sendMessage(
-                "§8• §7Fonds sécurisés"
-        );
-        p.sendMessage(
-                "§8• §7Taxe économique 20%"
-        );
-        p.sendMessage(
-                "§8• §7Historique officiel"
-        );
-        p.sendMessage(
-                "§8• §7Protection anti-arnaque"
-        );
-        p.sendMessage("");
-        p.sendMessage(
-                "§eUtilisez : §f/contrat"
-        );
-        p.sendMessage("");
+        p.sendMessage("§8• §7Argent bloqué");
+        p.sendMessage("§8• §7Taxe 20%");
+        p.sendMessage("§8• §7Historique gardé");
+
+        footer(p);
+
+        fail(p);
     }
 
     //
@@ -350,38 +327,62 @@ public class PayListener
             double amount
     ) {
 
+        header(p);
+
+        p.sendMessage("§c✘ §fPaiement refusé.");
         p.sendMessage("");
-        p.sendMessage(
-                "§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----"
-        );
-        p.sendMessage(
-                "§cVirement refusé."
-        );
+        p.sendMessage("§7Déjà envoyé: §e" + format(already));
+        p.sendMessage("§7Montant: §e" + format(amount));
+        p.sendMessage("§7Limite jour: §e" + format(MAX_DAILY_PERSONAL_PAY));
         p.sendMessage("");
-        p.sendMessage(
-                "§7Déjà envoyé aujourd'hui: §e"
-                        + format(already)
-        );
-        p.sendMessage(
-                "§7Montant demandé: §e"
-                        + format(amount)
-        );
-        p.sendMessage(
-                "§7Limite journalière: §e"
-                        + format(MAX_DAILY_PERSONAL_PAY)
-        );
+        p.sendMessage("§7Paiement important:");
+        p.sendMessage("§e/contrat");
+
+        footer(p);
+
+        fail(p);
+    }
+
+    //
+    // 🎨 HEADER
+    //
+
+    private void header(
+            Player p
+    ) {
+
         p.sendMessage("");
-        p.sendMessage(
-                "§7Pour un paiement important ou professionnel,"
-        );
-        p.sendMessage(
-                "§7utilisez un §econtrat officiel§7."
-        );
+        p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----");
         p.sendMessage("");
-        p.sendMessage(
-                "§eCommande : §f/contrat"
-        );
+    }
+
+    //
+    // 🎨 FOOTER
+    //
+
+    private void footer(
+            Player p
+    ) {
+
         p.sendMessage("");
+        p.sendMessage("§8-----------------------------");
+        p.sendMessage("");
+    }
+
+    //
+    // 🔊 FAIL
+    //
+
+    private void fail(
+            Player p
+    ) {
+
+        p.playSound(
+                p.getLocation(),
+                Sound.ENTITY_VILLAGER_NO,
+                1f,
+                0.85f
+        );
     }
 
     //
