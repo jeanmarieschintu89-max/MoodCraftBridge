@@ -36,7 +36,7 @@ public class MainMenuGUI {
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§8✦ §aMood§6Craft"
+                        "§6✦ §8Menu §aMood§6Craft §6✦"
                 );
 
         double bank =
