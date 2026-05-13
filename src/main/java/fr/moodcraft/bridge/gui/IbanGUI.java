@@ -19,7 +19,7 @@ public class IbanGUI {
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§8✦ §bIBAN"
+                        "§8✦ §6IBAN §aMood§6Craft"
                 );
 
         SafeGUI.fill(
@@ -32,13 +32,15 @@ public class IbanGUI {
                 SafeGUI.glow(
                         SafeGUI.item(
                                 Material.WRITABLE_BOOK,
-                                "§6✦ Réseau bancaire",
-                                "§8----- §6IBAN MoodCraft §8-----",
-                                "§7Effectue un virement via IBAN.",
+                                "§6✦ §fVirement par IBAN §6✦",
+                                "§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----",
                                 "",
-                                "§8• §7Compatible hors ligne",
-                                "§8• §7Transactions sécurisées",
-                                "§8• §7Historique sauvegardé"
+                                "§7Envoie de l'argent",
+                                "§7avec l'IBAN d'un joueur.",
+                                "",
+                                "§8• §7Fonctionne hors ligne",
+                                "§8• §7Historique sauvegardé",
+                                "§8• §7Confirmation avant envoi"
                         )
                 )
         );
@@ -47,13 +49,13 @@ public class IbanGUI {
                 SafeGUI.glow(
                         SafeGUI.item(
                                 Material.PAPER,
-                                "§b✦ Entrer un IBAN",
-                                "§7Saisis un IBAN dans le chat.",
+                                "§6✦ §fEntrer un IBAN §6✦",
+                                "§7Écris l'IBAN dans le chat.",
                                 "",
-                                "§8• §7Validation automatique",
-                                "§8• §7Format sécurisé",
+                                "§8• §7Exemple: §eMC-1234-ABCD",
+                                "§8• §7Le compte sera vérifié",
                                 "",
-                                "§e▶ Saisir"
+                                "§a✔ Cliquer pour saisir"
                         )
                 )
         );
@@ -61,13 +63,15 @@ public class IbanGUI {
         SafeGUI.safeSet(inv, 21,
                 SafeGUI.item(
                         Material.BOOK,
-                        "§e✦ Informations",
-                        "§7Les IBAN sont liés",
-                        "§7aux comptes MoodCraft.",
+                        "§6✦ §fInformations §6✦",
+                        "§7Un IBAN identifie",
+                        "§7un compte bancaire.",
                         "",
-                        "§8• §7Transfert distant",
-                        "§8• §7Compatible contrats",
-                        "§8• §7Historique complet"
+                        "§8• §7Virement à distance",
+                        "§8• §7Joueur connecté ou non",
+                        "§8• §7Trace dans l'historique",
+                        "",
+                        "§eUtilisez avec prudence"
                 )
         );
 
@@ -75,9 +79,9 @@ public class IbanGUI {
                 SafeGUI.item(
                         Material.ARROW,
                         "§c✦ Retour",
-                        "§7Retour au menu précédent.",
+                        "§7Retour à la banque.",
                         "",
-                        "§c▶ Retour"
+                        "§cClique pour revenir"
                 )
         );
 
