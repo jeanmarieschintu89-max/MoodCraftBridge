@@ -22,7 +22,7 @@ public class BankGUI {
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§8✦ §6Banque §aMood§6Craft"
+                        "§8✦ §6Banque §aMood§6Craft §8✦"
                 );
 
         SafeGUI.fill(
