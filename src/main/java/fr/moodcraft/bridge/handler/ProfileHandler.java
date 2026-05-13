@@ -33,20 +33,27 @@ public class ProfileHandler implements GUIHandler {
 
         switch (slot) {
 
+            //
+            // 👤 PROFIL
+            //
+
             case 13 -> {
 
+                header(p, "Profil");
+
+                p.sendMessage("§fVotre fiche joueur.");
                 p.sendMessage("");
-                p.sendMessage("§8----- §6Profil MoodCraft §8-----");
                 p.sendMessage("§7Joueur: §e" + p.getName());
                 p.sendMessage("§7Réputation: §a" + rep);
                 p.sendMessage("§7Rang: " + rank);
 
                 if (rep >= 120) {
 
-                    p.sendMessage("§6✦ Statut Élite");
+                    p.sendMessage("");
+                    p.sendMessage("§6✦ §fStatut Élite");
                 }
 
-                p.sendMessage("");
+                footer(p);
 
                 premiumClick(
                         p,
@@ -65,13 +72,22 @@ public class ProfileHandler implements GUIHandler {
                 );
             }
 
+            //
+            // 💰 ÉCONOMIE
+            //
+
             case 21 -> {
 
+                header(p, "Économie");
+
+                p.sendMessage("§fRésumé rapide.");
                 p.sendMessage("");
-                p.sendMessage("§8----- §6Économie §8-----");
-                p.sendMessage("§7Résumé bancaire disponible dans la banque.");
+                p.sendMessage("§7Banque: §fouvrez le menu banque");
                 p.sendMessage("§7Réputation: §a" + rep);
                 p.sendMessage("");
+                p.sendMessage("§8• §7Utilisez §e/banque §7pour voir vos fonds");
+
+                footer(p);
 
                 premiumClick(
                         p,
@@ -82,13 +98,23 @@ public class ProfileHandler implements GUIHandler {
                 );
             }
 
+            //
+            // ⭐ RÉPUTATION
+            //
+
             case 23 -> {
 
+                header(p, "Réputation");
+
+                p.sendMessage("§fVotre place dans la communauté.");
                 p.sendMessage("");
-                p.sendMessage("§8----- §6Réputation §8-----");
                 p.sendMessage("§7Score: §a" + rep);
                 p.sendMessage("§7Rang: " + rank);
                 p.sendMessage("");
+                p.sendMessage("§8• §7La réputation augmente avec");
+                p.sendMessage("§8• §7les actions utiles au serveur");
+
+                footer(p);
 
                 premiumClick(
                         p,
@@ -98,6 +124,10 @@ public class ProfileHandler implements GUIHandler {
                         1.5f
                 );
             }
+
+            //
+            // ↩ RETOUR
+            //
 
             case 31 -> {
 
@@ -113,6 +143,41 @@ public class ProfileHandler implements GUIHandler {
             }
         }
     }
+
+    //
+    // 🎨 HEADER
+    //
+
+    private void header(
+            Player p,
+            String title
+    ) {
+
+        p.sendMessage("");
+        p.sendMessage(
+                "§8----- §6✦ §aMood§6Craft §f"
+                        + title
+                        + " §6✦ §8-----"
+        );
+        p.sendMessage("");
+    }
+
+    //
+    // 🎨 FOOTER
+    //
+
+    private void footer(
+            Player p
+    ) {
+
+        p.sendMessage("");
+        p.sendMessage("§8-----------------------------");
+        p.sendMessage("");
+    }
+
+    //
+    // 🔊 SOUND
+    //
 
     private void premiumClick(
             Player p,
