@@ -418,9 +418,9 @@ public class TransferConfirmHandler implements GUIHandler {
         p.sendMessage("§7Paiement professionnel:");
         p.sendMessage("§e/contrat");
         p.sendMessage("");
-        p.sendMessage("§8• §7Fonds sécurisés");
-        p.sendMessage("§8• §7Taxe économique 20%");
-        p.sendMessage("§8• §7Historique officiel");
+        p.sendMessage("§8• §7Argent bloqué");
+        p.sendMessage("§8• §7Taxe 20%");
+        p.sendMessage("§8• §7Historique gardé");
 
         footer(p);
 
@@ -494,7 +494,7 @@ public class TransferConfirmHandler implements GUIHandler {
 
         header(p);
 
-        p.sendMessage("§c✘ §fTransaction refusée.");
+        p.sendMessage("§c✘ §fVirement refusé.");
         p.sendMessage("");
         p.sendMessage("§7" + msg);
 
