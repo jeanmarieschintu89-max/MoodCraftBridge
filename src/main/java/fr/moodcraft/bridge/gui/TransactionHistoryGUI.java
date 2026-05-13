@@ -49,7 +49,7 @@ public class TransactionHistoryGUI {
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§6✦ §8Historique §e" + page + "/" + maxPage + " §6✦"
+                        "§6✦ §8Historique §8• §ePage " + page + " §6✦"
                 );
 
         SafeGUI.fill(
