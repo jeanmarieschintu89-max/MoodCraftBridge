@@ -105,21 +105,16 @@ public class BankHandler implements GUIHandler {
                                 p.getUniqueId()
                         );
 
+                header(p);
+
+                p.sendMessage("§fIdentité bancaire personnelle.");
                 p.sendMessage("");
-                p.sendMessage(
-                        "§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----"
-                );
-                p.sendMessage(
-                        "§fIdentité bancaire personnelle."
-                );
+                p.sendMessage("§7IBAN: §e" + iban);
                 p.sendMessage("");
-                p.sendMessage(
-                        "§7IBAN: §e" + iban
-                );
-                p.sendMessage(
-                        "§7Utilisable pour les virements."
-                );
-                p.sendMessage("");
+                p.sendMessage("§8• §7Utile pour les virements");
+                p.sendMessage("§8• §7À partager avec prudence");
+
+                footer(p);
 
                 premiumClick(
                         p,
@@ -158,24 +153,15 @@ public class BankHandler implements GUIHandler {
 
                 p.closeInventory();
 
+                header(p);
+
+                p.sendMessage("§eActivité bancaire en préparation.");
                 p.sendMessage("");
-                p.sendMessage(
-                        "§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----"
-                );
-                p.sendMessage(
-                        "§eActivité bancaire en préparation."
-                );
-                p.sendMessage("");
-                p.sendMessage(
-                        "§8• §7Volume personnel"
-                );
-                p.sendMessage(
-                        "§8• §7Flux bancaires"
-                );
-                p.sendMessage(
-                        "§8• §7Statistiques économiques"
-                );
-                p.sendMessage("");
+                p.sendMessage("§8• §7Volume personnel");
+                p.sendMessage("§8• §7Flux bancaires");
+                p.sendMessage("§8• §7Résumé du compte");
+
+                footer(p);
 
                 premiumClick(
                         p,
@@ -204,6 +190,36 @@ public class BankHandler implements GUIHandler {
             }
         }
     }
+
+    //
+    // 🎨 HEADER
+    //
+
+    private void header(
+            Player p
+    ) {
+
+        p.sendMessage("");
+        p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----");
+        p.sendMessage("");
+    }
+
+    //
+    // 🎨 FOOTER
+    //
+
+    private void footer(
+            Player p
+    ) {
+
+        p.sendMessage("");
+        p.sendMessage("§8-----------------------------");
+        p.sendMessage("");
+    }
+
+    //
+    // 🔊 SOUND
+    //
 
     private void premiumClick(
             Player p,
