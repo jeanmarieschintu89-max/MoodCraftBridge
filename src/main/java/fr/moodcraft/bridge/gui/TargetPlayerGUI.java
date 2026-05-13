@@ -31,7 +31,7 @@ public class TargetPlayerGUI {
                 Bukkit.createInventory(
                         null,
                         54,
-                        "§8✦ §6Choisir un joueur §8✦"
+                        "§6✦ §8Choisir un joueur §6✦"
                 );
 
         slotMap.clear();
@@ -59,7 +59,11 @@ public class TargetPlayerGUI {
                 )
         );
 
-        int slot = 10;
+        int slot =
+                10;
+
+        boolean found =
+                false;
 
         for (Player target : Bukkit.getOnlinePlayers()) {
 
@@ -99,14 +103,18 @@ public class TargetPlayerGUI {
                 meta.setOwningPlayer(target);
 
                 meta.setDisplayName(
-                        "§6✦ §f" + shortText(target.getName(), 18)
+                        "§6✦ §f"
+                                + shortText(
+                                target.getName(),
+                                16
+                        )
                 );
 
                 meta.setLore(java.util.List.of(
                         "§7Joueur connecté.",
                         "",
                         "§8• §7Clique pour choisir",
-                        "§8• §7Puis écris le montant",
+                        "§8• §7puis écris le montant",
                         "",
                         "§eSélectionner"
                 ));
@@ -122,10 +130,13 @@ public class TargetPlayerGUI {
                     SafeGUI.glow(head)
             );
 
+            found =
+                    true;
+
             slot++;
         }
 
-        if (slotMap.isEmpty()) {
+        if (!found) {
 
             SafeGUI.safeSet(inv, 22,
                     button(
@@ -134,10 +145,10 @@ public class TargetPlayerGUI {
                             "§7Aucun autre joueur",
                             "§7n'est connecté.",
                             "",
-                            "§8• §7Pour un joueur absent",
+                            "§8• §7Pour envoyer hors ligne",
                             "§8• §7utilise l'IBAN",
                             "",
-                            "§cRetour"
+                            "§cAucun choix disponible"
                     )
             );
         }
