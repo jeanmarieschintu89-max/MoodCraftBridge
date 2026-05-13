@@ -11,8 +11,10 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 public class TransferTargetGUI {
@@ -20,29 +22,19 @@ public class TransferTargetGUI {
     public static void open(Player p) {
 
         //
-        // 🔥 GARDE LE MÊME TITRE
-        // sinon ton listener casse
+        // ⚠ Garde ce titre si ton listener dépend encore du nom exact.
         //
 
-        Inventory inv = Bukkit.createInventory(
-
-                null,
-
-                36,
-
-                "§eChoisir joueur virement"
-        );
-
-        //
-        // 🌌 FOND
-        //
+        Inventory inv =
+                Bukkit.createInventory(
+                        null,
+                        36,
+                        "§eChoisir joueur virement"
+                );
 
         SafeGUI.fill(
-
                 inv,
-
                 Material.BLACK_STAINED_GLASS_PANE,
-
                 " "
         );
 
@@ -51,32 +43,20 @@ public class TransferTargetGUI {
         //
 
         SafeGUI.safeSet(inv, 4,
-
                 SafeGUI.glow(
-
-                        SafeGUI.item(
-
+                        item(
                                 Material.PAPER,
-
-                                "§6✦ Sélection du Destinataire",
-
-                                "§8━━━━━━━━━━━━━━━━",
-
+                                "§6✦ §fChoisir un joueur §6✦",
+                                "§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----",
+                                "",
                                 "§7Choisis le joueur",
-
-                                "§7à qui envoyer",
-
-                                "§7un virement bancaire.",
-
+                                "§7qui recevra le virement.",
                                 "",
-
-                                "§8• Transactions sécurisées",
-
-                                "§8• Historique sauvegardé",
-
+                                "§8• §7Joueur connecté",
+                                "§8• §7Montant ensuite dans le chat",
+                                "§8• §7Confirmation finale",
                                 "",
-
-                                "§e▶ Sélectionner joueur"
+                                "§eClique sur une tête"
                         )
                 )
         );
@@ -85,26 +65,25 @@ public class TransferTargetGUI {
         // 👥 JOUEURS
         //
 
-        int slot = 10;
+        int slot =
+                10;
+
+        boolean found =
+                false;
 
         for (Player target : Bukkit.getOnlinePlayers()) {
 
-            if (target.equals(p))
+            if (target.equals(p)) {
                 continue;
+            }
 
-            //
-            // 🔥 évite bordures
-            //
-
-            if (slot == 17)
+            if (slot == 17) {
                 slot = 19;
+            }
 
-            if (slot == 26)
+            if (slot == 26) {
                 break;
-
-            //
-            // 👤 TÊTE
-            //
+            }
 
             ItemStack head =
                     new ItemStack(
@@ -117,41 +96,58 @@ public class TransferTargetGUI {
                 meta.setOwningPlayer(target);
 
                 meta.setDisplayName(
-                        "§a✦ " + target.getName()
+                        "§6✦ §f"
+                                + shortText(
+                                target.getName(),
+                                16
+                        )
                 );
 
                 meta.setLore(java.util.List.of(
-
-                        "§8━━━━━━━━━━━━━━━━",
-
-                        "§7Joueur connecté",
-
-                        "§7et disponible.",
-
+                        "§7Joueur connecté.",
                         "",
-
-                        "§8• Virement instantané",
-
-                        "§8• Transaction sécurisée",
-
+                        "§8• §7Clique pour choisir",
+                        "§8• §7puis écris le montant",
                         "",
-
-                        "§e▶ Sélectionner"
+                        "§eSélectionner"
                 ));
+
+                hide(meta);
 
                 head.setItemMeta(meta);
             }
 
             SafeGUI.safeSet(
-
                     inv,
-
                     slot,
-
                     SafeGUI.glow(head)
             );
 
+            found =
+                    true;
+
             slot++;
+        }
+
+        //
+        // ❌ AUCUN JOUEUR
+        //
+
+        if (!found) {
+
+            SafeGUI.safeSet(inv, 13,
+                    item(
+                            Material.BARRIER,
+                            "§c✦ Aucun joueur",
+                            "§7Aucun autre joueur",
+                            "§7n'est connecté.",
+                            "",
+                            "§8• §7Pour envoyer hors ligne",
+                            "§8• §7utilise l'IBAN",
+                            "",
+                            "§cAucun choix disponible"
+                    )
+            );
         }
 
         //
@@ -159,30 +155,94 @@ public class TransferTargetGUI {
         //
 
         SafeGUI.safeSet(inv, 31,
-
-                SafeGUI.item(
-
+                item(
                         Material.ARROW,
-
                         "§c✦ Retour",
-
-                        "§8━━━━━━━━━━━━━━━━",
-
-                        "§7Retour au menu précédent.",
-
+                        "§7Retour au choix",
+                        "§7du virement.",
                         "",
-
-                        "§e▶ Revenir"
+                        "§cClique pour revenir"
                 )
         );
 
         GUIManager.open(
-
                 p,
-
                 "transfer_target",
-
                 inv
         );
+    }
+
+    private static ItemStack item(
+            Material material,
+            String name,
+            String... lore
+    ) {
+
+        ItemStack item =
+                SafeGUI.item(
+                        material,
+                        name,
+                        lore
+                );
+
+        ItemMeta meta =
+                item.getItemMeta();
+
+        if (meta != null) {
+
+            hide(meta);
+
+            item.setItemMeta(meta);
+        }
+
+        return item;
+    }
+
+    private static String shortText(
+            String text,
+            int max
+    ) {
+
+        if (text == null || text.isBlank()) {
+            return "Inconnu";
+        }
+
+        String clean =
+                text.replaceAll("§.", "")
+                        .trim();
+
+        if (clean.length() <= max) {
+            return clean;
+        }
+
+        return clean.substring(
+                0,
+                Math.max(1, max - 3)
+        ) + "...";
+    }
+
+    private static void hide(
+            ItemMeta meta
+    ) {
+
+        meta.addItemFlags(
+                ItemFlag.HIDE_ATTRIBUTES,
+                ItemFlag.HIDE_ENCHANTS,
+                ItemFlag.HIDE_UNBREAKABLE,
+                ItemFlag.HIDE_DESTROYS,
+                ItemFlag.HIDE_PLACED_ON,
+                ItemFlag.HIDE_ADDITIONAL_TOOLTIP
+        );
+
+        try {
+
+            ItemFlag flag =
+                    ItemFlag.valueOf(
+                            "HIDE_ITEM_SPECIFICS"
+                    );
+
+            meta.addItemFlags(flag);
+
+        } catch (IllegalArgumentException ignored) {}
     }
 }
