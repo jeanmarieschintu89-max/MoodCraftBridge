@@ -29,7 +29,7 @@ public class TransferTargetGUI {
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§eChoisir joueur virement"
+                        "§6✦ §8Choisir un joueur §6✦"
                 );
 
         SafeGUI.fill(
