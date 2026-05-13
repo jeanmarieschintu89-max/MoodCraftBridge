@@ -1,17 +1,19 @@
 package fr.moodcraft.bridge.listener;
 
+import fr.moodcraft.bridge.Main;
+
 import fr.moodcraft.bridge.bank.BankStorage;
+import fr.moodcraft.bridge.bank.IbanManager;
 import fr.moodcraft.bridge.bank.TransactionManager;
 
 import fr.moodcraft.bridge.gui.BankGUI;
-import fr.moodcraft.bridge.gui.TransferConfirmGUI;
 
-import fr.moodcraft.bridge.manager.TransferBuilder;
+import fr.moodcraft.bridge.manager.AmountInputManager;
+import fr.moodcraft.bridge.manager.InputManager;
 
 import fr.moodcraft.bridge.util.SafeGUI;
+import fr.moodcraft.bridge.util.TransactionLogger;
 import fr.moodcraft.bridge.util.VaultHook;
-
-import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -19,150 +21,36 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+
+import java.time.LocalDate;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class BankChatInputListener
-        implements Listener {
+public class ChatInputListener implements Listener {
 
-    private static final Map<UUID, Draft> WAITING =
+    //
+    // 🔒 LIMITES VIREMENT IBAN
+    //
+
+    private static final double MAX_PERSONAL_TRANSFER =
+            10000.0;
+
+    private static final double MAX_DAILY_PERSONAL_TRANSFER =
+            25000.0;
+
+    private static final Map<UUID, Double> dailySent =
             new HashMap<>();
 
-    public enum Type {
+    private static final Map<UUID, String> dailyDate =
+            new HashMap<>();
 
-        DEPOSIT,
-        WITHDRAW,
-        TRANSFER_AMOUNT
-    }
-
-    //
-    // 💰 DEPOT
-    //
-
-    public static void startDeposit(
-            Player p
-    ) {
-
-        WAITING.put(
-                p.getUniqueId(),
-                new Draft(
-                        Type.DEPOSIT,
-                        null
-                )
-        );
-
-        p.closeInventory();
-
-        header(p);
-
-        p.sendMessage("§fÉcris le montant à déposer.");
-        p.sendMessage("");
-        p.sendMessage("§8• §7Exemple: §e5000");
-        p.sendMessage("§8• §7Liquide §8➜ §6Banque");
-        p.sendMessage("");
-        p.sendMessage("§7Tape §cannuler §7pour quitter.");
-
-        footer(p);
-
-        soundClick(p);
-    }
-
-    //
-    // 💸 RETRAIT
-    //
-
-    public static void startWithdraw(
-            Player p
-    ) {
-
-        WAITING.put(
-                p.getUniqueId(),
-                new Draft(
-                        Type.WITHDRAW,
-                        null
-                )
-        );
-
-        p.closeInventory();
-
-        header(p);
-
-        p.sendMessage("§fÉcris le montant à retirer.");
-        p.sendMessage("");
-        p.sendMessage("§8• §7Exemple: §e5000");
-        p.sendMessage("§8• §7Banque §8➜ §aLiquide");
-        p.sendMessage("");
-        p.sendMessage("§7Tape §cannuler §7pour quitter.");
-
-        footer(p);
-
-        soundClick(p);
-    }
-
-    //
-    // 🔁 VIREMENT MONTANT
-    //
-
-    public static void startTransferAmount(
-            Player p,
-            UUID targetUUID
-    ) {
-
-        WAITING.put(
-                p.getUniqueId(),
-                new Draft(
-                        Type.TRANSFER_AMOUNT,
-                        targetUUID
-                )
-        );
-
-        TransferBuilder.setAction(
-                p,
-                TransferBuilder.Action.PLAYER_TRANSFER
-        );
-
-        TransferBuilder.setTarget(
-                p,
-                targetUUID
-        );
-
-        Player target =
-                targetUUID != null
-                        ? Bukkit.getPlayer(targetUUID)
-                        : null;
-
-        String targetName =
-                target != null
-                        ? target.getName()
-                        : "Inconnu";
-
-        p.closeInventory();
-
-        header(p);
-
-        p.sendMessage("§fÉcris le montant du virement.");
-        p.sendMessage("");
-        p.sendMessage("§7Destinataire: §e" + targetName);
-        p.sendMessage("§8• §7Exemple: §e5000");
-        p.sendMessage("§8• §7Paiement pro: §e/contrat");
-        p.sendMessage("");
-        p.sendMessage("§7Tape §cannuler §7pour quitter.");
-
-        footer(p);
-
-        soundClick(p);
-    }
-
-    //
-    // 💬 CHAT
-    //
-
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(
             AsyncPlayerChatEvent e
     ) {
@@ -170,380 +58,627 @@ public class BankChatInputListener
         Player p =
                 e.getPlayer();
 
-        Draft draft =
-                WAITING.get(
-                        p.getUniqueId()
-                );
+        //
+        // 💰 AMOUNT INPUT
+        //
 
-        if (draft == null) {
+        if (AmountInputManager.has(p)) {
+
+            e.setCancelled(true);
+
+            String msg =
+                    e.getMessage();
+
+            Bukkit.getScheduler().runTask(
+                    Main.getInstance(),
+                    () -> handleAmountInput(
+                            p,
+                            msg
+                    )
+            );
+
             return;
         }
 
-        e.setCancelled(true);
+        //
+        // 💳 TEXT INPUT
+        //
 
-        String message =
-                e.getMessage();
+        if (InputManager.has(p)) {
 
-        Bukkit.getScheduler().runTask(
-                fr.moodcraft.bridge.Main.getInstance(),
-                () -> handle(
-                        p,
-                        draft,
-                        message
-                )
-        );
+            e.setCancelled(true);
+
+            String input =
+                    e.getMessage()
+                            .replace(" ", "")
+                            .toUpperCase();
+
+            String context =
+                    InputManager.get(p);
+
+            Bukkit.getScheduler().runTask(
+                    Main.getInstance(),
+                    () -> handleTextInput(
+                            p,
+                            context,
+                            input
+                    )
+            );
+        }
     }
 
     //
-    // 🧠 HANDLE
+    // 💰 HANDLE AMOUNT
     //
 
-    private void handle(
+    private void handleAmountInput(
             Player p,
-            Draft draft,
-            String message
+            String msg
     ) {
 
-        if (message.equalsIgnoreCase("annuler")
-                || message.equalsIgnoreCase("cancel")) {
+        AmountInputManager.Type type =
+                AmountInputManager.getType(p);
 
-            WAITING.remove(
-                    p.getUniqueId()
+        AmountInputManager.clear(p);
+
+        if (isCancel(msg)) {
+
+            InputManager.clearData(p);
+            InputManager.clear(p);
+
+            info(
+                    p,
+                    "Opération bancaire annulée."
             );
-
-            TransferBuilder.clear(p);
-
-            header(p);
-
-            p.sendMessage("§7Opération bancaire annulée.");
-
-            footer(p);
-
-            fail(p);
 
             return;
         }
 
-        double amount =
-                parseAmount(message);
+        double amount;
+
+        try {
+
+            amount =
+                    Double.parseDouble(
+                            msg.replace(",", ".")
+                    );
+
+        } catch (Exception ex) {
+
+            error(
+                    p,
+                    "Montant invalide."
+            );
+
+            return;
+        }
 
         if (amount <= 0) {
 
-            header(p);
-
-            p.sendMessage("§c✘ §fMontant invalide.");
-            p.sendMessage("");
-            p.sendMessage("§7Écris un nombre supérieur à zéro.");
-            p.sendMessage("§8Exemple: §e5000");
-
-            footer(p);
-
-            fail(p);
-
-            return;
-        }
-
-        if (draft.type == Type.DEPOSIT) {
-
-            deposit(
-                    p,
-                    amount
-            );
-
-            return;
-        }
-
-        if (draft.type == Type.WITHDRAW) {
-
-            withdraw(
-                    p,
-                    amount
-            );
-
-            return;
-        }
-
-        if (draft.type == Type.TRANSFER_AMOUNT) {
-
-            transferAmount(
-                    p,
-                    draft,
-                    amount
-            );
-        }
-    }
-
-    //
-    // 💰 DEPOT LOGIC
-    //
-
-    private void deposit(
-            Player p,
-            double amount
-    ) {
-
-        Economy eco =
-                VaultHook.getEconomy();
-
-        if (eco == null) {
-
             error(
                     p,
-                    "Erreur économie Vault."
+                    "Le montant doit être supérieur à zéro."
             );
 
             return;
         }
 
-        double cash =
-                eco.getBalance(p);
+        switch (type) {
 
-        if (cash < amount) {
+            //
+            // 💰 DEPOT
+            //
 
-            error(
-                    p,
-                    "Fonds liquides insuffisants."
-            );
+            case DEPOSIT -> {
 
-            header(p);
+                double cash =
+                        VaultHook.getBalance(p);
 
-            p.sendMessage("§7Liquide disponible: §a" + SafeGUI.money(cash) + "€");
-            p.sendMessage("§7Montant demandé: §e" + SafeGUI.money(amount) + "€");
+                if (cash < amount) {
 
-            footer(p);
+                    error(
+                            p,
+                            "Pas assez d'argent liquide."
+                    );
 
-            return;
-        }
+                    return;
+                }
 
-        eco.withdrawPlayer(
-                p,
-                amount
-        );
-
-        String id =
-                p.getUniqueId().toString();
-
-        double newBank =
-                BankStorage.get(id) + amount;
-
-        BankStorage.set(
-                id,
-                newBank
-        );
-
-        TransactionManager.deposit(
-                p.getUniqueId(),
-                amount
-        );
-
-        WAITING.remove(
-                p.getUniqueId()
-        );
-
-        header(p);
-
-        p.sendMessage("§a✔ §fDépôt effectué.");
-        p.sendMessage("");
-        p.sendMessage("§7Montant: §a+" + SafeGUI.money(amount) + "€");
-        p.sendMessage("§7Banque: §6" + SafeGUI.money(newBank) + "€");
-
-        footer(p);
-
-        success(
-                p,
-                "§a+" + SafeGUI.money(amount) + "€",
-                "§fDépôt effectué"
-        );
-
-        BankGUI.open(p);
-    }
-
-    //
-    // 💸 RETRAIT LOGIC
-    //
-
-    private void withdraw(
-            Player p,
-            double amount
-    ) {
-
-        Economy eco =
-                VaultHook.getEconomy();
-
-        if (eco == null) {
-
-            error(
-                    p,
-                    "Erreur économie Vault."
-            );
-
-            return;
-        }
-
-        String id =
-                p.getUniqueId().toString();
-
-        double bank =
-                BankStorage.get(id);
-
-        if (bank < amount) {
-
-            error(
-                    p,
-                    "Fonds bancaires insuffisants."
-            );
-
-            header(p);
-
-            p.sendMessage("§7Banque disponible: §6" + SafeGUI.money(bank) + "€");
-            p.sendMessage("§7Montant demandé: §e" + SafeGUI.money(amount) + "€");
-
-            footer(p);
-
-            return;
-        }
-
-        BankStorage.set(
-                id,
-                bank - amount
-        );
-
-        eco.depositPlayer(
-                p,
-                amount
-        );
-
-        TransactionManager.withdraw(
-                p.getUniqueId(),
-                amount
-        );
-
-        double newBank =
-                BankStorage.get(id);
-
-        WAITING.remove(
-                p.getUniqueId()
-        );
-
-        header(p);
-
-        p.sendMessage("§a✔ §fRetrait effectué.");
-        p.sendMessage("");
-        p.sendMessage("§7Montant: §a+" + SafeGUI.money(amount) + "€");
-        p.sendMessage("§7Banque: §6" + SafeGUI.money(newBank) + "€");
-
-        footer(p);
-
-        success(
-                p,
-                "§a+" + SafeGUI.money(amount) + "€",
-                "§fRetrait effectué"
-        );
-
-        BankGUI.open(p);
-    }
-
-    //
-    // 🔁 VIREMENT MONTANT LOGIC
-    //
-
-    private void transferAmount(
-            Player p,
-            Draft draft,
-            double amount
-    ) {
-
-        if (draft.targetUUID == null) {
-
-            error(
-                    p,
-                    "Aucun destinataire sélectionné."
-            );
-
-            TransferBuilder.clear(p);
-
-            WAITING.remove(
-                    p.getUniqueId()
-            );
-
-            return;
-        }
-
-        Player target =
-                Bukkit.getPlayer(
-                        draft.targetUUID
+                VaultHook.remove(
+                        p,
+                        amount
                 );
 
-        if (target == null || !target.isOnline()) {
+                BankStorage.add(
+                        p.getUniqueId().toString(),
+                        amount
+                );
 
-            error(
+                TransactionManager.deposit(
+                        p.getUniqueId(),
+                        amount
+                );
+
+                success(
+                        p,
+                        "Dépôt effectué",
+                        "§a+" + SafeGUI.money(amount) + "€"
+                );
+            }
+
+            //
+            // 💸 RETRAIT
+            //
+
+            case WITHDRAW -> {
+
+                String uuid =
+                        p.getUniqueId().toString();
+
+                double bank =
+                        BankStorage.get(uuid);
+
+                if (bank < amount) {
+
+                    error(
+                            p,
+                            "Fonds bancaires insuffisants."
+                    );
+
+                    return;
+                }
+
+                BankStorage.remove(
+                        uuid,
+                        amount
+                );
+
+                VaultHook.add(
+                        p,
+                        amount
+                );
+
+                TransactionManager.withdraw(
+                        p.getUniqueId(),
+                        amount
+                );
+
+                success(
+                        p,
+                        "Retrait effectué",
+                        "§a+" + SafeGUI.money(amount) + "€"
+                );
+            }
+
+            //
+            // 💸 VIREMENT IBAN
+            //
+
+            case PLAYER_TRANSFER -> {
+
+                String targetIban =
+                        InputManager.getData(p);
+
+                if (targetIban == null) {
+
+                    error(
+                            p,
+                            "IBAN manquant."
+                    );
+
+                    InputManager.clear(p);
+                    InputManager.clearData(p);
+
+                    return;
+                }
+
+                UUID targetUUID =
+                        IbanManager.getOwner(
+                                targetIban
+                        );
+
+                if (targetUUID == null) {
+
+                    error(
+                            p,
+                            "IBAN introuvable."
+                    );
+
+                    InputManager.clear(p);
+                    InputManager.clearData(p);
+
+                    return;
+                }
+
+                if (targetUUID.equals(
+                        p.getUniqueId()
+                )) {
+
+                    error(
+                            p,
+                            "Auto-virement interdit."
+                    );
+
+                    InputManager.clear(p);
+                    InputManager.clearData(p);
+
+                    return;
+                }
+
+                String targetName =
+                        Bukkit.getOfflinePlayer(
+                                targetUUID
+                        ).getName();
+
+                if (targetName == null) {
+                    targetName = "Inconnu";
+                }
+
+                if (!canBypassLimit(p)) {
+
+                    if (amount > MAX_PERSONAL_TRANSFER) {
+
+                        TransactionLogger.log(
+                                p.getUniqueId().toString(),
+                                "IBAN_TRANSFER_BLOCKED_HIGH_AMOUNT",
+                                amount,
+                                targetName
+                        );
+
+                        denyProfessionalTransfer(
+                                p,
+                                targetName,
+                                amount
+                        );
+
+                        InputManager.clear(p);
+                        InputManager.clearData(p);
+
+                        return;
+                    }
+
+                    resetDailyIfNeeded(
+                            p.getUniqueId()
+                    );
+
+                    double today =
+                            dailySent.getOrDefault(
+                                    p.getUniqueId(),
+                                    0.0
+                            );
+
+                    if (today + amount > MAX_DAILY_PERSONAL_TRANSFER) {
+
+                        TransactionLogger.log(
+                                p.getUniqueId().toString(),
+                                "IBAN_TRANSFER_BLOCKED_DAILY_LIMIT",
+                                amount,
+                                targetName
+                        );
+
+                        denyDailyLimit(
+                                p,
+                                targetName,
+                                today,
+                                amount
+                        );
+
+                        InputManager.clear(p);
+                        InputManager.clearData(p);
+
+                        return;
+                    }
+                }
+
+                String uuid =
+                        p.getUniqueId().toString();
+
+                double bank =
+                        BankStorage.get(uuid);
+
+                if (bank < amount) {
+
+                    error(
+                            p,
+                            "Fonds bancaires insuffisants."
+                    );
+
+                    InputManager.clear(p);
+                    InputManager.clearData(p);
+
+                    return;
+                }
+
+                Player target =
+                        Bukkit.getPlayer(targetUUID);
+
+                BankStorage.remove(
+                        uuid,
+                        amount
+                );
+
+                BankStorage.add(
+                        targetUUID.toString(),
+                        amount
+                );
+
+                TransactionManager.transfer(
+                        p.getUniqueId(),
+                        targetUUID,
+                        amount
+                );
+
+                if (!canBypassLimit(p)) {
+
+                    resetDailyIfNeeded(
+                            p.getUniqueId()
+                    );
+
+                    dailySent.put(
+                            p.getUniqueId(),
+                            dailySent.getOrDefault(
+                                    p.getUniqueId(),
+                                    0.0
+                            ) + amount
+                    );
+                }
+
+                TransactionLogger.log(
+                        p.getUniqueId().toString(),
+                        "IBAN_TRANSFER_SENT",
+                        amount,
+                        targetName
+                );
+
+                TransactionLogger.log(
+                        targetUUID.toString(),
+                        "IBAN_TRANSFER_RECEIVED",
+                        amount,
+                        p.getName()
+                );
+
+                header(p);
+
+                p.sendMessage("§a✔ §fVirement effectué.");
+                p.sendMessage("");
+                p.sendMessage("§7Destinataire: §e" + targetName);
+                p.sendMessage("§7Montant: §c-" + SafeGUI.money(amount) + "€");
+
+                footer(p);
+
+                p.playSound(
+                        p.getLocation(),
+                        Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
+                        1f,
+                        1.2f
+                );
+
+                if (target != null && target.isOnline()) {
+
+                    header(target);
+
+                    target.sendMessage("§a✔ §fVirement reçu.");
+                    target.sendMessage("");
+                    target.sendMessage("§7Expéditeur: §e" + p.getName());
+                    target.sendMessage("§7Montant: §a+" + SafeGUI.money(amount) + "€");
+
+                    footer(target);
+
+                    target.playSound(
+                            target.getLocation(),
+                            Sound.BLOCK_NOTE_BLOCK_PLING,
+                            1f,
+                            1.2f
+                    );
+                }
+
+                InputManager.clear(p);
+                InputManager.clearData(p);
+            }
+        }
+
+        BankGUI.open(p);
+    }
+
+    //
+    // 💳 HANDLE TEXT
+    //
+
+    private void handleTextInput(
+            Player p,
+            String context,
+            String input
+    ) {
+
+        if (isCancel(input)) {
+
+            InputManager.clear(p);
+            InputManager.clearData(p);
+
+            info(
                     p,
-                    "Le joueur sélectionné n'est plus connecté."
-            );
-
-            TransferBuilder.clear(p);
-
-            WAITING.remove(
-                    p.getUniqueId()
+                    "Saisie annulée."
             );
 
             return;
         }
 
-        if (target.equals(p)) {
+        //
+        // 🏦 SET IBAN
+        //
 
-            error(
+        if (context.equals("set_iban")) {
+
+            if (!input.startsWith("FR")
+                    || input.length() < 10) {
+
+                error(
+                        p,
+                        "IBAN invalide."
+                );
+
+                InputManager.clear(p);
+
+                return;
+            }
+
+            boolean ok =
+                    IbanManager.set(
+                            p.getUniqueId(),
+                            input
+                    );
+
+            if (!ok) {
+
+                error(
+                        p,
+                        "Cet IBAN est déjà utilisé."
+                );
+
+                InputManager.clear(p);
+
+                return;
+            }
+
+            success(
                     p,
-                    "Tu ne peux pas t'envoyer un virement."
+                    "IBAN enregistré",
+                    input
             );
 
-            TransferBuilder.clear(p);
-
-            WAITING.remove(
-                    p.getUniqueId()
-            );
+            InputManager.clear(p);
 
             return;
         }
 
-        TransferBuilder.setAction(
-                p,
-                TransferBuilder.Action.PLAYER_TRANSFER
-        );
+        //
+        // 💸 VIREMENT IBAN
+        //
 
-        TransferBuilder.setTarget(
-                p,
-                draft.targetUUID
-        );
+        if (context.equals("transfer_iban")) {
 
-        TransferBuilder.setAmount(
-                p,
-                amount
-        );
+            UUID target =
+                    IbanManager.getOwner(input);
 
-        WAITING.remove(
-                p.getUniqueId()
-        );
+            if (target == null) {
+
+                error(
+                        p,
+                        "IBAN introuvable."
+                );
+
+                return;
+            }
+
+            if (target.equals(
+                    p.getUniqueId()
+            )) {
+
+                error(
+                        p,
+                        "Auto-virement interdit."
+                );
+
+                return;
+            }
+
+            String targetName =
+                    Bukkit.getOfflinePlayer(
+                            target
+                    ).getName();
+
+            if (targetName == null) {
+                targetName = "Inconnu";
+            }
+
+            InputManager.setData(
+                    p,
+                    input
+            );
+
+            AmountInputManager.wait(
+                    p,
+                    AmountInputManager.Type.PLAYER_TRANSFER
+            );
+
+            header(p);
+
+            p.sendMessage("§a✔ §fIBAN détecté.");
+            p.sendMessage("");
+            p.sendMessage("§7Destinataire: §e" + targetName);
+            p.sendMessage("");
+            p.sendMessage("§fÉcris maintenant le montant.");
+            p.sendMessage("");
+            p.sendMessage("§8• §7Exemple: §e5000");
+            p.sendMessage("§8• §7Tape §cannuler §7pour quitter.");
+
+            footer(p);
+
+            p.playSound(
+                    p.getLocation(),
+                    Sound.BLOCK_NOTE_BLOCK_PLING,
+                    1f,
+                    1.2f
+            );
+        }
+    }
+
+    //
+    // ❌ VIREMENT PRO REFUSÉ
+    //
+
+    private void denyProfessionalTransfer(
+            Player p,
+            String targetName,
+            double amount
+    ) {
 
         header(p);
 
-        p.sendMessage("§a✔ §fMontant enregistré.");
+        p.sendMessage("§c✘ §fVirement refusé.");
         p.sendMessage("");
-        p.sendMessage("§7Destinataire: §e" + target.getName());
+        p.sendMessage("§7Destinataire: §e" + targetName);
         p.sendMessage("§7Montant: §e" + SafeGUI.money(amount) + "€");
+        p.sendMessage("§7Limite personnelle: §e" + SafeGUI.money(MAX_PERSONAL_TRANSFER) + "€");
         p.sendMessage("");
-        p.sendMessage("§8• §7Une confirmation est nécessaire.");
+        p.sendMessage("§7Paiement professionnel:");
+        p.sendMessage("§e/contrat");
+        p.sendMessage("");
+        p.sendMessage("§8• §7Argent bloqué");
+        p.sendMessage("§8• §7Taxe 20%");
+        p.sendMessage("§8• §7Historique gardé");
 
         footer(p);
 
-        p.playSound(
-                p.getLocation(),
-                Sound.BLOCK_NOTE_BLOCK_CHIME,
-                0.75f,
-                1.25f
-        );
+        fail(p);
+    }
 
-        TransferConfirmGUI.open(p);
+    //
+    // ❌ LIMITE JOUR
+    //
+
+    private void denyDailyLimit(
+            Player p,
+            String targetName,
+            double already,
+            double amount
+    ) {
+
+        header(p);
+
+        p.sendMessage("§c✘ §fVirement refusé.");
+        p.sendMessage("");
+        p.sendMessage("§7Destinataire: §e" + targetName);
+        p.sendMessage("§7Déjà envoyé: §e" + SafeGUI.money(already) + "€");
+        p.sendMessage("§7Montant: §e" + SafeGUI.money(amount) + "€");
+        p.sendMessage("§7Limite jour: §e" + SafeGUI.money(MAX_DAILY_PERSONAL_TRANSFER) + "€");
+        p.sendMessage("");
+        p.sendMessage("§7Paiement important:");
+        p.sendMessage("§e/contrat");
+
+        footer(p);
+
+        fail(p);
     }
 
     //
@@ -557,7 +692,7 @@ public class BankChatInputListener
 
         header(p);
 
-        p.sendMessage("§c✘ §fTransaction refusée.");
+        p.sendMessage("§c✘ §fAction refusée.");
         p.sendMessage("");
         p.sendMessage("§7" + msg);
 
@@ -567,10 +702,52 @@ public class BankChatInputListener
     }
 
     //
+    // ✅ SUCCESS
+    //
+
+    private void success(
+            Player p,
+            String title,
+            String value
+    ) {
+
+        header(p);
+
+        p.sendMessage("§a✔ §f" + title + ".");
+        p.sendMessage("");
+        p.sendMessage("§7" + value);
+
+        footer(p);
+
+        p.playSound(
+                p.getLocation(),
+                Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
+                1f,
+                1.2f
+        );
+    }
+
+    //
+    // ℹ INFO
+    //
+
+    private void info(
+            Player p,
+            String message
+    ) {
+
+        header(p);
+
+        p.sendMessage("§7" + message);
+
+        footer(p);
+    }
+
+    //
     // 🎨 HEADER / FOOTER
     //
 
-    private static void header(
+    private void header(
             Player p
     ) {
 
@@ -579,7 +756,7 @@ public class BankChatInputListener
         p.sendMessage("");
     }
 
-    private static void footer(
+    private void footer(
             Player p
     ) {
 
@@ -592,73 +769,57 @@ public class BankChatInputListener
     // 🔢 PARSE
     //
 
-    private double parseAmount(
+    private boolean isCancel(
             String text
     ) {
 
-        try {
+        return text.equalsIgnoreCase("annuler")
+                || text.equalsIgnoreCase("cancel");
+    }
 
-            return Double.parseDouble(
-                    text.replace(",", ".")
+    //
+    // 📅 DAILY RESET
+    //
+
+    private void resetDailyIfNeeded(
+            UUID uuid
+    ) {
+
+        String today =
+                LocalDate.now().toString();
+
+        String stored =
+                dailyDate.get(uuid);
+
+        if (!today.equals(stored)) {
+
+            dailyDate.put(
+                    uuid,
+                    today
             );
 
-        } catch (Exception e) {
-
-            return -1;
+            dailySent.put(
+                    uuid,
+                    0.0
+            );
         }
     }
 
     //
-    // 🔊 SOUNDS
+    // 🔒 BYPASS
     //
 
-    private static void soundClick(
+    private boolean canBypassLimit(
             Player p
     ) {
 
-        p.playSound(
-                p.getLocation(),
-                Sound.UI_BUTTON_CLICK,
-                0.75f,
-                1.2f
-        );
-
-        p.playSound(
-                p.getLocation(),
-                Sound.ITEM_BOOK_PAGE_TURN,
-                0.35f,
-                1.1f
-        );
+        return p.hasPermission("moodcraftbridge.transfer.bypass")
+                || p.hasPermission("moodbusiness.bypass");
     }
 
-    private void success(
-            Player p,
-            String title,
-            String subtitle
-    ) {
-
-        p.playSound(
-                p.getLocation(),
-                Sound.BLOCK_AMETHYST_BLOCK_CHIME,
-                0.75f,
-                1.25f
-        );
-
-        p.playSound(
-                p.getLocation(),
-                Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
-                0.35f,
-                1.4f
-        );
-
-        p.sendTitle(
-                title,
-                subtitle,
-                5,
-                35,
-                10
-        );
-    }
+    //
+    // 🔊 FAIL
+    //
 
     private void fail(
             Player p
@@ -668,25 +829,7 @@ public class BankChatInputListener
                 p.getLocation(),
                 Sound.ENTITY_VILLAGER_NO,
                 1f,
-                0.85f
+                1f
         );
-    }
-
-    private static class Draft {
-
-        private final Type type;
-        private final UUID targetUUID;
-
-        private Draft(
-                Type type,
-                UUID targetUUID
-        ) {
-
-            this.type =
-                    type;
-
-            this.targetUUID =
-                    targetUUID;
-        }
     }
 }
