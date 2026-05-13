@@ -19,7 +19,7 @@ public class TransferTypeGUI {
                 Bukkit.createInventory(
                         null,
                         27,
-                        "§8✦ §6Virement §aMood§6Craft"
+                        "§8✦ §6Virement §8✦"
                 );
 
         SafeGUI.fill(
