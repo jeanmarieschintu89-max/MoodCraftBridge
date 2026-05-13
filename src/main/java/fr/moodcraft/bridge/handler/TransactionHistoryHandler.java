@@ -53,13 +53,9 @@ public class TransactionHistoryHandler implements GUIHandler {
 
                 fail(p);
 
-                p.sendMessage("");
-                p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----");
-                p.sendMessage("");
+                header(p);
                 p.sendMessage("§7Première page déjà affichée.");
-                p.sendMessage("");
-                p.sendMessage("§8-----------------------------");
-                p.sendMessage("");
+                footer(p);
 
                 return;
             }
@@ -86,13 +82,9 @@ public class TransactionHistoryHandler implements GUIHandler {
 
                 fail(p);
 
-                p.sendMessage("");
-                p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----");
-                p.sendMessage("");
+                header(p);
                 p.sendMessage("§7Dernière page déjà affichée.");
-                p.sendMessage("");
-                p.sendMessage("§8-----------------------------");
-                p.sendMessage("");
+                footer(p);
 
                 return;
             }
@@ -144,13 +136,9 @@ public class TransactionHistoryHandler implements GUIHandler {
                     1.35f
             );
 
-            p.sendMessage("");
-            p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----");
-            p.sendMessage("");
-            p.sendMessage("§7Transaction enregistrée dans l'historique.");
-            p.sendMessage("");
-            p.sendMessage("§8-----------------------------");
-            p.sendMessage("");
+            header(p);
+            p.sendMessage("§7Mouvement enregistré dans l'historique.");
+            footer(p);
         }
     }
 
@@ -164,11 +152,50 @@ public class TransactionHistoryHandler implements GUIHandler {
                 return 1;
             }
 
-            if (title.contains("Page ")) {
+            String clean =
+                    title.replaceAll("§.", "")
+                            .replace("✦", "")
+                            .trim();
+
+            //
+            // Nouveau format:
+            // Historique 1/3
+            //
+
+            if (clean.contains("Historique")
+                    && clean.contains("/")) {
+
+                String after =
+                        clean.substring(
+                                clean.indexOf("Historique")
+                                        + "Historique".length()
+                        ).trim();
+
+                String beforeSlash =
+                        after.substring(
+                                0,
+                                after.indexOf("/")
+                        ).trim();
+
+                String number =
+                        beforeSlash.replaceAll("[^0-9]", "");
+
+                if (!number.isBlank()) {
+
+                    return Integer.parseInt(number);
+                }
+            }
+
+            //
+            // Ancien format:
+            // Page 1
+            //
+
+            if (clean.contains("Page ")) {
 
                 String raw =
-                        title.substring(
-                                title.indexOf("Page ") + 5
+                        clean.substring(
+                                clean.indexOf("Page ") + 5
                         );
 
                 String number =
@@ -183,6 +210,24 @@ public class TransactionHistoryHandler implements GUIHandler {
         } catch (Exception ignored) {}
 
         return 1;
+    }
+
+    private void header(
+            Player p
+    ) {
+
+        p.sendMessage("");
+        p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----");
+        p.sendMessage("");
+    }
+
+    private void footer(
+            Player p
+    ) {
+
+        p.sendMessage("");
+        p.sendMessage("§8-----------------------------");
+        p.sendMessage("");
     }
 
     private void fail(Player p) {
