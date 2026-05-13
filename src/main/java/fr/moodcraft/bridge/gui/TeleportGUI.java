@@ -18,7 +18,7 @@ public class TeleportGUI {
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§8✦ §6Téléportation §aMood§6Craft"
+                        "§8✦ §6Téléportation §aMood§6Craft §8✦"
                 );
 
         SafeGUI.fill(
