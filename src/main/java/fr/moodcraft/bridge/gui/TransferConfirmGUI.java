@@ -47,7 +47,7 @@ public class TransferConfirmGUI {
                         && !p.hasPermission("moodbusiness.bypass");
 
         String targetName =
-                "§7Inconnu";
+                "Inconnu";
 
         if (targetUUID != null) {
 
@@ -59,7 +59,7 @@ public class TransferConfirmGUI {
             if (offline.getName() != null) {
 
                 targetName =
-                        "§e" + offline.getName();
+                        offline.getName();
             }
         }
 
@@ -74,44 +74,24 @@ public class TransferConfirmGUI {
                                         : Material.PAPER,
                                 blocked
                                         ? "§c✦ Virement bloqué"
-                                        : "§6✦ Confirmer le virement",
-                                "§8----- §6Banque §aMood§6Craft §8-----",
-                                "§7Destinataire: " + targetName,
+                                        : "§6✦ §fConfirmer §6✦",
+                                "§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----",
+                                "",
+                                "§7Joueur: §e" + shortText(targetName, 16),
                                 "§7Montant: §6" + amount + "€",
                                 "",
                                 blocked
-                                        ? "§cCe montant dépasse la limite personnelle."
-                                        : "§8• §7Transaction sécurisée",
+                                        ? "§cMontant trop élevé"
+                                        : "§8• §7Vérifie bien",
                                 blocked
-                                        ? "§7Limite virement personnel: §e10 000€"
-                                        : "§8• §7Historique sauvegardé",
+                                        ? "§7Limite: §e10 000€"
+                                        : "§8• §7puis confirme",
                                 "",
                                 blocked
-                                        ? "§7Les paiements professionnels doivent"
-                                        : "§e▶ Vérifie avant validation",
+                                        ? "§7Paiement pro:"
+                                        : "§a✔ Prêt à envoyer",
                                 blocked
-                                        ? "§7passer par un §econtrat officiel§7."
-                                        : "",
-                                blocked
-                                        ? ""
-                                        : "",
-                                blocked
-                                        ? "§8• §7Fonds sécurisés"
-                                        : "",
-                                blocked
-                                        ? "§8• §7Taxe économique 20%"
-                                        : "",
-                                blocked
-                                        ? "§8• §7Historique officiel"
-                                        : "",
-                                blocked
-                                        ? "§8• §7Protection anti-arnaque"
-                                        : "",
-                                blocked
-                                        ? ""
-                                        : "",
-                                blocked
-                                        ? "§eUtilisez: §f/contrat"
+                                        ? "§e/contrat"
                                         : ""
                         )
                 )
@@ -121,9 +101,9 @@ public class TransferConfirmGUI {
                 SafeGUI.item(
                         Material.REDSTONE_BLOCK,
                         "§c✦ Annuler",
-                        "§7Annule le transfert.",
+                        "§7Annule le virement.",
                         "",
-                        "§c▶ Retour"
+                        "§cClique pour revenir"
                 )
         );
 
@@ -132,14 +112,14 @@ public class TransferConfirmGUI {
             SafeGUI.safeSet(inv, 15,
                     SafeGUI.item(
                             Material.BARRIER,
-                            "§c✦ Confirmation impossible",
-                            "§7Ce virement est trop élevé",
-                            "§7pour un transfert personnel.",
+                            "§c✦ Impossible",
+                            "§7Ce virement dépasse",
+                            "§7la limite personnelle.",
                             "",
-                            "§7Les paiements professionnels",
-                            "§7doivent passer par §e/contrat§7.",
+                            "§8• §7Pour un gros paiement",
+                            "§8• §7utilise §e/contrat",
                             "",
-                            "§c▶ Virement bloqué"
+                            "§cVirement bloqué"
                     )
             );
 
@@ -157,11 +137,12 @@ public class TransferConfirmGUI {
                             SafeGUI.item(
                                     Material.EMERALD_BLOCK,
                                     "§a✦ Confirmer",
-                                    "§7Valide le virement.",
+                                    "§7Envoie le virement.",
                                     "",
                                     "§8• §7Montant: §6" + amount + "€",
+                                    "§8• §7Historique sauvegardé",
                                     "",
-                                    "§a▶ Envoyer"
+                                    "§aClique pour envoyer"
                             )
                     )
             );
@@ -179,5 +160,28 @@ public class TransferConfirmGUI {
                 "transfer_confirm",
                 inv
         );
+    }
+
+    private static String shortText(
+            String text,
+            int max
+    ) {
+
+        if (text == null || text.isBlank()) {
+            return "Inconnu";
+        }
+
+        String clean =
+                text.replaceAll("§.", "")
+                        .trim();
+
+        if (clean.length() <= max) {
+            return clean;
+        }
+
+        return clean.substring(
+                0,
+                Math.max(1, max - 3)
+        ) + "...";
     }
 }
