@@ -29,6 +29,10 @@ public class MainMenuHandler implements GUIHandler {
 
         switch (slot) {
 
+            //
+            // 👤 PROFIL
+            //
+
             case 4 -> {
 
                 premiumClick(
@@ -48,6 +52,10 @@ public class MainMenuHandler implements GUIHandler {
                 );
             }
 
+            //
+            // 🏦 BANQUE
+            //
+
             case 10 -> {
 
                 premiumClick(
@@ -58,8 +66,10 @@ public class MainMenuHandler implements GUIHandler {
                         1.4f
                 );
 
-                p.sendMessage(
-                        "§8✦ §6Banque §8• §7Ouverture..."
+                quick(
+                        p,
+                        "Banque",
+                        "Ouverture du compte..."
                 );
 
                 openNext(
@@ -67,6 +77,10 @@ public class MainMenuHandler implements GUIHandler {
                         () -> BankGUI.open(p)
                 );
             }
+
+            //
+            // 📊 MARCHÉ
+            //
 
             case 12 -> {
 
@@ -78,8 +92,10 @@ public class MainMenuHandler implements GUIHandler {
                         1.2f
                 );
 
-                p.sendMessage(
-                        "§8✦ §eMarché §8• §7Actualisation..."
+                quick(
+                        p,
+                        "Marché",
+                        "Chargement des prix..."
                 );
 
                 openNext(
@@ -104,10 +120,6 @@ public class MainMenuHandler implements GUIHandler {
                         1.2f
                 );
 
-                p.sendMessage(
-                        "§8✦ §6Bureau des Entreprises §8• §7Ouverture..."
-                );
-
                 if (!Bukkit.getPluginManager()
                         .isPluginEnabled("MoodBusiness")) {
 
@@ -115,9 +127,16 @@ public class MainMenuHandler implements GUIHandler {
 
                     p.sendMessage("");
                     p.sendMessage("§8----- §6✦ Bureau des Entreprises ✦ §8-----");
-                    p.sendMessage("§cModule indisponible.");
-                    p.sendMessage("§7Le service économique §aMood§6Craft §7n'est pas chargé.");
-                    p.sendMessage("§8Contactez l'administration du serveur.");
+                    p.sendMessage("");
+                    p.sendMessage("§c✘ §fModule indisponible.");
+                    p.sendMessage("");
+                    p.sendMessage("§7Le service économique");
+                    p.sendMessage("§7n'est pas chargé.");
+                    p.sendMessage("");
+                    p.sendMessage("§8• §7Contactez le staff");
+                    p.sendMessage("§8• §7ou réessayez plus tard");
+                    p.sendMessage("");
+                    p.sendMessage("§8-----------------------------");
                     p.sendMessage("");
 
                     p.playSound(
@@ -130,11 +149,21 @@ public class MainMenuHandler implements GUIHandler {
                     return;
                 }
 
+                quick(
+                        p,
+                        "Bureau des Entreprises",
+                        "Ouverture..."
+                );
+
                 openNext(
                         p,
                         () -> p.performCommand("entreprise")
                 );
             }
+
+            //
+            // 🧭 TÉLÉPORTATION
+            //
 
             case 16 -> {
 
@@ -146,8 +175,10 @@ public class MainMenuHandler implements GUIHandler {
                         1.6f
                 );
 
-                p.sendMessage(
-                        "§8✦ §bTéléportation §8• §7Choisis ta destination."
+                quick(
+                        p,
+                        "Téléportation",
+                        "Choisis ta destination."
                 );
 
                 openNext(
@@ -155,6 +186,10 @@ public class MainMenuHandler implements GUIHandler {
                         () -> TeleportGUI.open(p)
                 );
             }
+
+            //
+            // 🏘 VILLE
+            //
 
             case 21 -> {
 
@@ -166,8 +201,10 @@ public class MainMenuHandler implements GUIHandler {
                         1.5f
                 );
 
-                p.sendMessage(
-                        "§8✦ §aVille §8• §7Ouverture..."
+                quick(
+                        p,
+                        "Ville",
+                        "Ouverture du menu ville..."
                 );
 
                 openNext(
@@ -175,6 +212,10 @@ public class MainMenuHandler implements GUIHandler {
                         () -> p.performCommand("townmenu")
                 );
             }
+
+            //
+            // 🧰 MÉTIERS
+            //
 
             case 23 -> {
 
@@ -186,8 +227,10 @@ public class MainMenuHandler implements GUIHandler {
                         1.4f
                 );
 
-                p.sendMessage(
-                        "§8✦ §dMétiers §8• §7Chargement..."
+                quick(
+                        p,
+                        "Métiers",
+                        "Chargement..."
                 );
 
                 openNext(
@@ -195,6 +238,10 @@ public class MainMenuHandler implements GUIHandler {
                         () -> p.performCommand("jobs join")
                 );
             }
+
+            //
+            // ❌ FERMER
+            //
 
             case 31 -> {
 
@@ -214,6 +261,28 @@ public class MainMenuHandler implements GUIHandler {
             }
         }
     }
+
+    //
+    // 💬 MESSAGE COURT
+    //
+
+    private void quick(
+            Player p,
+            String module,
+            String message
+    ) {
+
+        p.sendMessage(
+                "§8✦ §6"
+                        + module
+                        + " §8• §7"
+                        + message
+        );
+    }
+
+    //
+    // 🔊 SOUND
+    //
 
     private void premiumClick(
             Player p,
@@ -237,6 +306,10 @@ public class MainMenuHandler implements GUIHandler {
                 secondPitch
         );
     }
+
+    //
+    // ⏳ OPEN NEXT TICK
+    //
 
     private void openNext(
             Player p,
