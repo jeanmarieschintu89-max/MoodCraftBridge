@@ -33,7 +33,7 @@ public class ProfileGUI {
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§8✦ §6Profil"
+                        "§8✦ §6Profil §aMood§6Craft"
                 );
 
         SafeGUI.fill(
@@ -46,8 +46,9 @@ public class ProfileGUI {
                 Bukkit.getOfflinePlayer(targetUUID)
                         .getName();
 
-        if (name == null)
+        if (name == null) {
             name = "Inconnu";
+        }
 
         double bank =
                 BankStorage.get(
@@ -187,10 +188,11 @@ public class ProfileGUI {
         List<String> identityLore =
                 new ArrayList<>();
 
-        identityLore.add("§8----- §6Identité §8-----");
-        identityLore.add("§7Joueur: §f" + name);
-        identityLore.add("§7Ville: §b" + townName);
-        identityLore.add("§7Nation: §6" + nationName);
+        identityLore.add("§8----- §6✦ Identité ✦ §8-----");
+        identityLore.add("");
+        identityLore.add("§7Joueur: §f" + shortText(name, 18));
+        identityLore.add("§7Ville: §b" + shortText(townName, 18));
+        identityLore.add("§7Nation: §6" + shortText(nationName, 18));
         identityLore.add("");
 
         if (source.equalsIgnoreCase("town")) {
@@ -203,8 +205,8 @@ public class ProfileGUI {
 
         } else {
 
-            identityLore.add("§7Aucun blason défini");
             identityLore.add("§7Profil joueur affiché");
+            identityLore.add("§8• §7Aucun blason défini");
         }
 
         identityLore.add("");
@@ -212,11 +214,26 @@ public class ProfileGUI {
         identityLore.add("§7Réputation: §a" + rep);
         identityLore.add("§7Rang: " + rank);
         identityLore.add("");
-        identityLore.add("§d✦ Métiers");
+
+        identityLore.add("§6✦ §fMétiers");
+
+        int added = 0;
 
         for (String line : jobsLore) {
 
-            identityLore.add("§8• " + line);
+            if (added >= 4) {
+                identityLore.add("§8• §7...");
+                break;
+            }
+
+            identityLore.add(
+                    "§8• §7" + shortText(
+                            cleanColor(line),
+                            24
+                    )
+            );
+
+            added++;
         }
 
         ItemMeta identityMeta =
@@ -225,7 +242,7 @@ public class ProfileGUI {
         if (identityMeta != null) {
 
             identityMeta.setDisplayName(
-                    "§6✦ " + name
+                    "§6✦ §f" + shortText(name, 18) + " §6✦"
             );
 
             identityMeta.setLore(
@@ -248,8 +265,8 @@ public class ProfileGUI {
         SafeGUI.safeSet(inv, 21,
                 button(
                         Material.GOLD_INGOT,
-                        "§6✦ Économie",
-                        "§7Résumé bancaire du joueur.",
+                        "§6✦ §fÉconomie §6✦",
+                        "§7Argent et réputation.",
                         "",
                         "§8• §7Banque: §6"
                                 + SafeGUI.money(bank)
@@ -257,20 +274,21 @@ public class ProfileGUI {
                         "§8• §7Réputation: §a"
                                 + rep,
                         "",
-                        "§e▶ Détails"
+                        "§eClique pour voir"
                 )
         );
 
         SafeGUI.safeSet(inv, 23,
                 button(
                         Material.BOOK,
-                        "§d✦ Réputation",
-                        "§7Influence sociale MoodCraft.",
+                        "§6✦ §fRéputation §6✦",
+                        "§7Montre ta place",
+                        "§7dans la communauté.",
                         "",
-                        "§8• §7Rang actuel:",
+                        "§8• §7Rang:",
                         rank,
                         "",
-                        "§e▶ Consulter"
+                        "§eClique pour consulter"
                 )
         );
 
@@ -280,7 +298,7 @@ public class ProfileGUI {
                         "§c✦ Retour",
                         "§7Retour au menu précédent.",
                         "",
-                        "§c▶ Retour"
+                        "§cClique pour revenir"
                 )
         );
 
@@ -317,6 +335,40 @@ public class ProfileGUI {
         }
 
         return item;
+    }
+
+    private static String shortText(
+            String text,
+            int max
+    ) {
+
+        if (text == null || text.isBlank()) {
+            return "Inconnu";
+        }
+
+        String clean =
+                text.replaceAll("§.", "")
+                        .trim();
+
+        if (clean.length() <= max) {
+            return clean;
+        }
+
+        return clean.substring(
+                0,
+                Math.max(1, max - 3)
+        ) + "...";
+    }
+
+    private static String cleanColor(
+            String text
+    ) {
+
+        if (text == null) {
+            return "";
+        }
+
+        return text.replaceAll("§.", "");
     }
 
     private static void hide(
