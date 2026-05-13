@@ -19,7 +19,7 @@ public class TransferTypeGUI {
                 Bukkit.createInventory(
                         null,
                         27,
-                        "§8✦ §eVirement"
+                        "§8✦ §6Virement §aMood§6Craft"
                 );
 
         SafeGUI.fill(
@@ -32,13 +32,15 @@ public class TransferTypeGUI {
                 SafeGUI.glow(
                         SafeGUI.item(
                                 Material.PAPER,
-                                "§6✦ Virement bancaire",
-                                "§8----- §6Banque §8-----",
-                                "§7Choisis le type de transfert.",
+                                "§6✦ §fVirement bancaire §6✦",
+                                "§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----",
                                 "",
-                                "§8• §7Sécurisé",
-                                "§8• §7Historique sauvegardé",
-                                "§8• §7Vérification active"
+                                "§7Choisis comment envoyer",
+                                "§7ton argent.",
+                                "",
+                                "§8• §7Joueur connecté",
+                                "§8• §7Ou IBAN",
+                                "§8• §7Confirmation finale"
                         )
                 )
         );
@@ -47,13 +49,14 @@ public class TransferTypeGUI {
                 SafeGUI.glow(
                         SafeGUI.item(
                                 Material.PLAYER_HEAD,
-                                "§a✦ Joueur",
-                                "§7Envoie à un joueur connecté.",
+                                "§6✦ §fJoueur connecté §6✦",
+                                "§7Envoyer à un joueur",
+                                "§7actuellement en ligne.",
                                 "",
-                                "§8• §7Rapide",
-                                "§8• §7Sélection visuelle",
+                                "§8• §7Choisis le joueur",
+                                "§8• §7Montant dans le chat",
                                 "",
-                                "§e▶ Choisir"
+                                "§eClique pour choisir"
                         )
                 )
         );
@@ -61,13 +64,14 @@ public class TransferTypeGUI {
         SafeGUI.safeSet(inv, 15,
                 SafeGUI.item(
                         Material.NAME_TAG,
-                        "§b✦ IBAN",
-                        "§7Envoie avec un IBAN MoodCraft.",
+                        "§6✦ §fIBAN §6✦",
+                        "§7Envoyer avec le code",
+                        "§7bancaire d'un joueur.",
                         "",
-                        "§8• §7Compatible hors ligne",
-                        "§8• §7Transaction sécurisée",
+                        "§8• §7Fonctionne hors ligne",
+                        "§8• §7Historique gardé",
                         "",
-                        "§e▶ Continuer"
+                        "§eClique pour continuer"
                 )
         );
 
@@ -77,7 +81,7 @@ public class TransferTypeGUI {
                         "§c✦ Retour",
                         "§7Retour à la banque.",
                         "",
-                        "§c▶ Retour"
+                        "§cClique pour revenir"
                 )
         );
 
