@@ -31,7 +31,7 @@ public class TargetPlayerGUI {
                 Bukkit.createInventory(
                         null,
                         54,
-                        "§8✦ §6Virement §aMood§6Craft"
+                        "§8✦ §6Choisir un joueur §8✦"
                 );
 
         slotMap.clear();
