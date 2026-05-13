@@ -54,7 +54,8 @@ public class BankGUI {
                                 Material.GOLD_BLOCK,
                                 "§6✦ §fCompte bancaire §6✦",
                                 "§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----",
-                                "§7Consulte tes fonds personnels.",
+                                "",
+                                "§7Ton argent personnel.",
                                 "",
                                 "§8• §7Liquide: §a"
                                         + SafeGUI.money(cash)
@@ -66,8 +67,8 @@ public class BankGUI {
                                         + SafeGUI.money(total)
                                         + "€",
                                 "",
-                                "§7Les gros paiements professionnels",
-                                "§7doivent passer par §e/contrat§7."
+                                "§8• §7Pour les gros paiements:",
+                                "§8• §e/contrat"
                         )
                 )
         );
@@ -76,15 +77,14 @@ public class BankGUI {
                 SafeGUI.glow(
                         SafeGUI.item(
                                 Material.CHEST,
-                                "§6✦ §fDéposer des fonds §6✦",
-                                "§7Transférer ton argent liquide",
-                                "§7vers ta banque personnelle.",
+                                "§6✦ §fDéposer §6✦",
+                                "§7Mettre ton argent liquide",
+                                "§7dans ta banque.",
                                 "",
-                                "§8• §7Saisie directe dans le chat",
+                                "§8• §7Montant dans le chat",
                                 "§8• §7Exemple: §e5000",
-                                "§8• §7Historique sauvegardé",
                                 "",
-                                "§a✔ Cliquer pour saisir"
+                                "§a✔ Clique pour saisir"
                         )
                 )
         );
@@ -92,15 +92,14 @@ public class BankGUI {
         SafeGUI.safeSet(inv, 12,
                 SafeGUI.item(
                         Material.HOPPER,
-                        "§6✦ §fRetirer des fonds §6✦",
-                        "§7Récupérer de l'argent",
-                        "§7depuis ta banque personnelle.",
+                        "§6✦ §fRetirer §6✦",
+                        "§7Sortir de l'argent",
+                        "§7de ta banque.",
                         "",
-                        "§8• §7Saisie directe dans le chat",
+                        "§8• §7Montant dans le chat",
                         "§8• §7Exemple: §e5000",
-                        "§8• §7Historique sauvegardé",
                         "",
-                        "§a✔ Cliquer pour saisir"
+                        "§a✔ Clique pour saisir"
                 )
         );
 
@@ -108,16 +107,15 @@ public class BankGUI {
                 SafeGUI.glow(
                         SafeGUI.item(
                                 Material.PAPER,
-                                "§6✦ §fVirement personnel §6✦",
-                                "§7Envoyer de l'argent à un joueur.",
+                                "§6✦ §fVirement §6✦",
+                                "§7Envoyer de l'argent",
+                                "§7à un joueur.",
                                 "",
                                 "§8• §7Choisir le joueur",
-                                "§8• §7Écrire le montant dans le chat",
-                                "§8• §7Confirmer le virement",
+                                "§8• §7Montant dans le chat",
+                                "§8• §7Confirmation finale",
                                 "",
-                                "§e⚠ Limite anti-fraude active",
-                                "§7Les paiements professionnels",
-                                "§7doivent passer par §e/contrat§7.",
+                                "§e⚠ Paiement pro: §f/contrat",
                                 "",
                                 "§a✔ Ouvrir"
                         )
@@ -128,13 +126,12 @@ public class BankGUI {
                 SafeGUI.item(
                         Material.NAME_TAG,
                         "§6✦ §fIBAN §6✦",
-                        "§7Consulte ton identité bancaire.",
+                        "§7Voir ton code bancaire.",
                         "",
-                        "§8• §7Nom du compte",
-                        "§8• §7Identifiant bancaire",
-                        "§8• §7Informations personnelles",
+                        "§8• §7Utile pour les virements",
+                        "§8• §7À partager avec prudence",
                         "",
-                        "§e▶ Ouvrir"
+                        "§eClique pour voir"
                 )
         );
 
@@ -142,28 +139,27 @@ public class BankGUI {
                 SafeGUI.item(
                         Material.BOOK,
                         "§6✦ §fHistorique §6✦",
-                        "§7Retrouve tes transactions.",
+                        "§7Voir les mouvements",
+                        "§7de ton compte.",
                         "",
                         "§8• §7Dépôts",
                         "§8• §7Retraits",
                         "§8• §7Virements",
-                        "§8• §7Paiements surveillés",
                         "",
-                        "§e▶ Ouvrir"
+                        "§eClique pour ouvrir"
                 )
         );
 
         SafeGUI.safeSet(inv, 23,
                 SafeGUI.item(
                         Material.AMETHYST_SHARD,
-                        "§6✦ §fActivité bancaire §6✦",
-                        "§7Statistiques économiques.",
+                        "§6✦ §fActivité §6✦",
+                        "§7Résumé de ton compte.",
                         "",
                         "§8• §7Volume bancaire",
                         "§8• §7Flux personnels",
-                        "§8• §7Activité du compte",
                         "",
-                        "§8▶ Bientôt"
+                        "§8Bientôt disponible"
                 )
         );
 
@@ -173,7 +169,7 @@ public class BankGUI {
                         "§c✦ Retour",
                         "§7Retour au menu principal.",
                         "",
-                        "§c▶ Retour"
+                        "§cClique pour revenir"
                 )
         );
 
