@@ -7,7 +7,6 @@ import fr.moodcraft.bridge.manager.GUIManager;
 import fr.moodcraft.bridge.util.SafeGUI;
 
 import org.bukkit.Bukkit;
-
 import org.bukkit.Material;
 
 import org.bukkit.entity.Player;
@@ -50,7 +49,7 @@ public class TransactionHistoryGUI {
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§8✦ §6Historique §8• §ePage " + page
+                        "§8✦ §6Historique §8• §e" + page + "/" + maxPage
                 );
 
         SafeGUI.fill(
@@ -73,19 +72,15 @@ public class TransactionHistoryGUI {
                                 "§6✦ §fHistorique bancaire §6✦",
                                 "§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----",
                                 "",
-                                "§7Transactions: §e"
-                                        + history.size(),
-                                "§7Page: §e"
-                                        + page
-                                        + "§8/§e"
-                                        + maxPage,
+                                "§7Mouvements: §e" + history.size(),
+                                "§7Page: §e" + page + "§8/§e" + maxPage,
                                 "",
                                 "§8• §7Dépôts",
                                 "§8• §7Retraits",
                                 "§8• §7Virements",
                                 "§8• §7Marché",
                                 "",
-                                "§eSélectionne une archive"
+                                "§eClique une archive"
                         )
                 )
         );
@@ -101,9 +96,11 @@ public class TransactionHistoryGUI {
             SafeGUI.safeSet(inv, 22,
                     SafeGUI.item(
                             Material.PAPER,
-                            "§7Aucune transaction",
-                            "§7Votre historique bancaire",
-                            "§7est vide pour le moment."
+                            "§6✦ §fAucun mouvement §6✦",
+                            "§7Votre historique est vide.",
+                            "",
+                            "§8• §7Les dépôts, retraits",
+                            "§8• §7et virements apparaîtront ici."
                     )
             );
 
@@ -121,32 +118,32 @@ public class TransactionHistoryGUI {
                         Material.PAPER;
 
                 String name =
-                        "§fTransaction";
+                        "§6✦ §fMouvement §6✦";
 
                 if (line.contains("[DEPOSIT]")) {
 
                     mat = Material.EMERALD;
-                    name = "§a✦ Dépôt";
+                    name = "§6✦ §aDépôt §6✦";
 
                 } else if (line.contains("[WITHDRAW]")) {
 
                     mat = Material.REDSTONE;
-                    name = "§c✦ Retrait";
+                    name = "§6✦ §cRetrait §6✦";
 
                 } else if (line.contains("[TRANSFER]")) {
 
                     mat = Material.WRITABLE_BOOK;
-                    name = "§e✦ Virement";
+                    name = "§6✦ §eVirement §6✦";
 
                 } else if (line.contains("[MARKET_BUY]")) {
 
                     mat = Material.CHEST_MINECART;
-                    name = "§6✦ Achat Marché";
+                    name = "§6✦ §fAchat marché §6✦";
 
                 } else if (line.contains("[MARKET_SELL]")) {
 
                     mat = Material.GOLD_INGOT;
-                    name = "§b✦ Vente Marché";
+                    name = "§6✦ §bVente marché §6✦";
                 }
 
                 SafeGUI.safeSet(
@@ -157,6 +154,7 @@ public class TransactionHistoryGUI {
                                 name,
                                 "§7" + crop(line),
                                 "",
+                                "§8• §7Mouvement enregistré",
                                 "§8• §7Archive bancaire"
                         )
                 );
@@ -168,10 +166,10 @@ public class TransactionHistoryGUI {
             SafeGUI.safeSet(inv, 27,
                     SafeGUI.item(
                             Material.SPECTRAL_ARROW,
-                            "§e✦ Page précédente",
-                            "§7Page: §e" + (page - 1),
+                            "§6✦ §fPage précédente §6✦",
+                            "§7Retour à la page §e" + (page - 1),
                             "",
-                            "§e▶ Ouvrir"
+                            "§eClique pour ouvrir"
                     )
             );
 
@@ -181,7 +179,7 @@ public class TransactionHistoryGUI {
                     SafeGUI.item(
                             Material.GRAY_DYE,
                             "§8✦ Première page",
-                            "§7Aucune page précédente."
+                            "§7Aucune page avant celle-ci."
                     )
             );
         }
@@ -191,10 +189,10 @@ public class TransactionHistoryGUI {
             SafeGUI.safeSet(inv, 35,
                     SafeGUI.item(
                             Material.SPECTRAL_ARROW,
-                            "§e✦ Page suivante",
-                            "§7Page: §e" + (page + 1),
+                            "§6✦ §fPage suivante §6✦",
+                            "§7Aller à la page §e" + (page + 1),
                             "",
-                            "§e▶ Ouvrir"
+                            "§eClique pour ouvrir"
                     )
             );
 
@@ -204,7 +202,7 @@ public class TransactionHistoryGUI {
                     SafeGUI.item(
                             Material.GRAY_DYE,
                             "§8✦ Dernière page",
-                            "§7Aucune page suivante."
+                            "§7Aucune page après celle-ci."
                     )
             );
         }
@@ -215,7 +213,7 @@ public class TransactionHistoryGUI {
                         "§c✦ Retour",
                         "§7Retour à la banque.",
                         "",
-                        "§c▶ Retour"
+                        "§cClique pour revenir"
                 )
         );
 
@@ -238,10 +236,10 @@ public class TransactionHistoryGUI {
                 text.replaceAll("§.", "")
                         .trim();
 
-        if (clean.length() <= 48) {
+        if (clean.length() <= 42) {
             return clean;
         }
 
-        return clean.substring(0, 45) + "...";
+        return clean.substring(0, 39) + "...";
     }
 }
