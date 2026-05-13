@@ -1,7 +1,6 @@
 package fr.moodcraft.bridge.command;
 
 import org.bukkit.Bukkit;
-
 import org.bukkit.Sound;
 
 import org.bukkit.command.Command;
@@ -15,13 +14,9 @@ public class SubventionCommand
 
     @Override
     public boolean onCommand(
-
             CommandSender sender,
-
             Command command,
-
             String label,
-
             String[] args
     ) {
 
@@ -46,29 +41,21 @@ public class SubventionCommand
                 "moodcraft.admin"
         )) {
 
+            header(p);
+
+            p.sendMessage("§c✘ §fAccès refusé.");
             p.sendMessage("");
+            p.sendMessage("§7Commande réservée à");
+            p.sendMessage("§7l'administration économique.");
 
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            footer(p);
+
+            p.playSound(
+                    p.getLocation(),
+                    Sound.ENTITY_VILLAGER_NO,
+                    1f,
+                    0.85f
             );
-
-            p.sendMessage(
-                    "§c✦ §fAccès refusé"
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§7Niveau d'autorisation insuffisant."
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage("");
 
             return true;
         }
@@ -79,39 +66,24 @@ public class SubventionCommand
 
         if (args.length < 2) {
 
+            header(p);
+
+            p.sendMessage("§fCommande de subvention.");
             p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage(
-                    "§6✦ §fAdministration Économique"
-            );
-
+            p.sendMessage("§7Utilisation:");
+            p.sendMessage("§e/subvention <ville> <montant>");
             p.sendMessage("");
+            p.sendMessage("§8• §7Exemple: §e/subvention Tokyo 50000");
+            p.sendMessage("§8• §7L'argent est versé à la banque de ville.");
 
-            p.sendMessage(
-                    "§7Utilisation:"
+            footer(p);
+
+            p.playSound(
+                    p.getLocation(),
+                    Sound.BLOCK_NOTE_BLOCK_BASS,
+                    0.8f,
+                    0.8f
             );
-
-            p.sendMessage(
-                    "§e/subvention <ville> <montant>"
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§8Exemple: §e/subvention Tokyo 50000"
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage("");
 
             return true;
         }
@@ -130,37 +102,26 @@ public class SubventionCommand
             amount =
                     Double.parseDouble(
                             args[1]
+                                    .replace(",", ".")
                     );
 
         } catch (Exception ex) {
 
+            header(p);
+
+            p.sendMessage("§c✘ §fMontant invalide.");
             p.sendMessage("");
+            p.sendMessage("§7Écris un nombre correct.");
+            p.sendMessage("§8• §7Exemple: §e50000");
 
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            footer(p);
+
+            p.playSound(
+                    p.getLocation(),
+                    Sound.ENTITY_VILLAGER_NO,
+                    1f,
+                    0.85f
             );
-
-            p.sendMessage(
-                    "§c✦ §fMontant invalide"
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§7Le terminal économique"
-            );
-
-            p.sendMessage(
-                    "§7refuse cette transaction."
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage("");
 
             return true;
         }
@@ -171,33 +132,21 @@ public class SubventionCommand
 
         if (amount <= 0) {
 
+            header(p);
+
+            p.sendMessage("§c✘ §fMontant invalide.");
             p.sendMessage("");
+            p.sendMessage("§7La subvention doit être");
+            p.sendMessage("§7supérieure à zéro.");
 
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            footer(p);
+
+            p.playSound(
+                    p.getLocation(),
+                    Sound.ENTITY_VILLAGER_NO,
+                    1f,
+                    0.85f
             );
-
-            p.sendMessage(
-                    "§c✦ §fMontant invalide"
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§7La subvention doit être"
-            );
-
-            p.sendMessage(
-                    "§7supérieure à zéro."
-            );
-
-            p.sendMessage("");
-
-            p.sendMessage(
-                    "§8━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            );
-
-            p.sendMessage("");
 
             return true;
         }
@@ -207,9 +156,7 @@ public class SubventionCommand
         //
 
         Bukkit.dispatchCommand(
-
                 Bukkit.getConsoleSender(),
-
                 "ta deposit "
                         + town
                         + " "
@@ -221,18 +168,20 @@ public class SubventionCommand
         //
 
         for (Player online :
-
                 Bukkit.getOnlinePlayers()) {
 
             online.playSound(
-
                     online.getLocation(),
-
                     Sound.UI_TOAST_CHALLENGE_COMPLETE,
-
                     0.7f,
-
                     1f
+            );
+
+            online.playSound(
+                    online.getLocation(),
+                    Sound.BLOCK_AMETHYST_BLOCK_CHIME,
+                    0.35f,
+                    1.25f
             );
         }
 
@@ -241,64 +190,81 @@ public class SubventionCommand
         //
 
         Bukkit.broadcastMessage("");
-
         Bukkit.broadcastMessage(
-                "§8§m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                "§8----- §6✦ Ministère de l’Économie ✦ §8-----"
         );
-
-        Bukkit.broadcastMessage(
-                "§6✦ §fMinistère de l’Économie MoodCraft"
-        );
-
         Bukkit.broadcastMessage("");
-
         Bukkit.broadcastMessage(
-                "§7Une opération financière exceptionnelle"
+                "§a✔ §fSubvention nationale accordée."
         );
-
-        Bukkit.broadcastMessage(
-                "§7vient d’être validée par le conseil"
-        );
-
-        Bukkit.broadcastMessage(
-                "§7économique national."
-        );
-
         Bukkit.broadcastMessage("");
-
         Bukkit.broadcastMessage(
-                "§e"
-                        + town
-                        + " §7bénéficie désormais"
+                "§7Ville: §b" + town
         );
-
         Bukkit.broadcastMessage(
-                "§7d’une injection de capitaux destinée"
+                "§7Montant: §e" + money(amount) + "€"
         );
-
-        Bukkit.broadcastMessage(
-                "§7à accélérer son développement."
-        );
-
         Bukkit.broadcastMessage("");
-
         Bukkit.broadcastMessage(
-                "§a✔ Fonds débloqués: §e"
-                        + String.format(
-                        "%,.0f",
-                        amount
-                ).replace(",", " ")
-                        + "€"
+                "§8• §7Fonds versés à la banque de ville"
         );
-
+        Bukkit.broadcastMessage(
+                "§8• §7Soutien au développement urbain"
+        );
         Bukkit.broadcastMessage("");
-
         Bukkit.broadcastMessage(
-                "§8§m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                "§aService officiel de §aMood§6Craft§a."
         );
-
+        Bukkit.broadcastMessage("");
+        Bukkit.broadcastMessage(
+                "§8-----------------------------"
+        );
         Bukkit.broadcastMessage("");
 
         return true;
+    }
+
+    //
+    // 🎨 HEADER
+    //
+
+    private void header(
+            Player p
+    ) {
+
+        p.sendMessage("");
+        p.sendMessage(
+                "§8----- §6✦ Ministère de l’Économie ✦ §8-----"
+        );
+        p.sendMessage("");
+    }
+
+    //
+    // 🎨 FOOTER
+    //
+
+    private void footer(
+            Player p
+    ) {
+
+        p.sendMessage("");
+        p.sendMessage(
+                "§8-----------------------------"
+        );
+        p.sendMessage("");
+    }
+
+    //
+    // 💶 MONEY
+    //
+
+    private String money(
+            double amount
+    ) {
+
+        return String.format(
+                "%,.0f",
+                amount
+        ).replace(",", " ");
     }
 }
