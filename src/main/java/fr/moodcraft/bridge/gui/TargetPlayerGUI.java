@@ -31,7 +31,7 @@ public class TargetPlayerGUI {
                 Bukkit.createInventory(
                         null,
                         54,
-                        "§8✦ §aDestinataire"
+                        "§8✦ §6Virement §aMood§6Craft"
                 );
 
         slotMap.clear();
@@ -46,13 +46,15 @@ public class TargetPlayerGUI {
                 SafeGUI.glow(
                         button(
                                 Material.PAPER,
-                                "§6✦ Choisir un joueur",
-                                "§8----- §6Virement §8-----",
-                                "§7Sélectionne un joueur connecté.",
+                                "§6✦ §fChoisir un joueur §6✦",
+                                "§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----",
                                 "",
-                                "§8• §7Instantané",
-                                "§8• §7Sécurisé",
-                                "§8• §7Historique sauvegardé"
+                                "§7Sélectionne un joueur",
+                                "§7connecté au serveur.",
+                                "",
+                                "§8• §7Choix du joueur",
+                                "§8• §7Montant dans le chat",
+                                "§8• §7Confirmation finale"
                         )
                 )
         );
@@ -61,20 +63,25 @@ public class TargetPlayerGUI {
 
         for (Player target : Bukkit.getOnlinePlayers()) {
 
-            if (target.equals(p))
+            if (target.equals(p)) {
                 continue;
+            }
 
-            if (slot == 17)
+            if (slot == 17) {
                 slot = 19;
+            }
 
-            if (slot == 26)
+            if (slot == 26) {
                 slot = 28;
+            }
 
-            if (slot == 35)
+            if (slot == 35) {
                 slot = 37;
+            }
 
-            if (slot >= 44)
+            if (slot >= 44) {
                 break;
+            }
 
             slotMap.put(
                     slot,
@@ -92,16 +99,16 @@ public class TargetPlayerGUI {
                 meta.setOwningPlayer(target);
 
                 meta.setDisplayName(
-                        "§a✦ " + target.getName()
+                        "§6✦ §f" + shortText(target.getName(), 18)
                 );
 
                 meta.setLore(java.util.List.of(
                         "§7Joueur connecté.",
                         "",
-                        "§8• §7Virement instantané",
-                        "§8• §7Transaction sécurisée",
+                        "§8• §7Clique pour choisir",
+                        "§8• §7Puis écris le montant",
                         "",
-                        "§e▶ Sélectionner"
+                        "§eSélectionner"
                 ));
 
                 hide(meta);
@@ -123,12 +130,14 @@ public class TargetPlayerGUI {
             SafeGUI.safeSet(inv, 22,
                     button(
                             Material.BARRIER,
-                            "§c✖ Aucun joueur",
-                            "§7Aucun autre joueur connecté.",
+                            "§c✦ Aucun joueur",
+                            "§7Aucun autre joueur",
+                            "§7n'est connecté.",
                             "",
-                            "§8• §7Utilise plutôt l'IBAN",
+                            "§8• §7Pour un joueur absent",
+                            "§8• §7utilise l'IBAN",
                             "",
-                            "§c▶ Retour"
+                            "§cRetour"
                     )
             );
         }
@@ -137,19 +146,22 @@ public class TargetPlayerGUI {
                 button(
                         Material.ARROW,
                         "§c✦ Retour",
-                        "§7Retour au type de virement.",
+                        "§7Retour au choix",
+                        "§7du virement.",
                         "",
-                        "§c▶ Retour"
+                        "§cClique pour revenir"
                 )
         );
 
         SafeGUI.safeSet(inv, 49,
                 button(
                         Material.NAME_TAG,
-                        "§b✦ IBAN",
-                        "§7Besoin d'envoyer hors ligne ?",
+                        "§6✦ §fIBAN §6✦",
+                        "§7Pour envoyer à",
+                        "§7un joueur absent.",
                         "",
-                        "§8• §7Retour puis choisis IBAN"
+                        "§8• §7Retour",
+                        "§8• §7puis choisis IBAN"
                 )
         );
 
@@ -189,6 +201,29 @@ public class TargetPlayerGUI {
         }
 
         return item;
+    }
+
+    private static String shortText(
+            String text,
+            int max
+    ) {
+
+        if (text == null || text.isBlank()) {
+            return "Inconnu";
+        }
+
+        String clean =
+                text.replaceAll("§.", "")
+                        .trim();
+
+        if (clean.length() <= max) {
+            return clean;
+        }
+
+        return clean.substring(
+                0,
+                Math.max(1, max - 3)
+        ) + "...";
     }
 
     private static void hide(
