@@ -168,9 +168,9 @@ public class MainMenuGUI {
         List<String> identityLore =
                 new ArrayList<>();
 
-        identityLore.add("§8----- §6Identité §8-----");
-        identityLore.add("§7Ville: §b" + townName);
-        identityLore.add("§7Nation: §6" + nationName);
+        identityLore.add("§8----- §6✦ Identité ✦ §8-----");
+        identityLore.add("§7Ville: §b" + shortText(townName, 18));
+        identityLore.add("§7Nation: §6" + shortText(nationName, 18));
         identityLore.add("");
 
         if (source.equalsIgnoreCase("town")) {
@@ -183,8 +183,8 @@ public class MainMenuGUI {
 
         } else {
 
-            identityLore.add("§7Aucun blason défini");
             identityLore.add("§7Profil joueur affiché");
+            identityLore.add("§8• §7Aucun blason défini");
         }
 
         identityLore.add("");
@@ -192,7 +192,7 @@ public class MainMenuGUI {
         identityLore.add("§7Banque: §6" + SafeGUI.money(bank) + "€");
         identityLore.add("§7Total: §e" + SafeGUI.money(total) + "€");
         identityLore.add("");
-        identityLore.add("§e▶ Voir le profil");
+        identityLore.add("§eClique pour voir");
 
         ItemMeta identityMeta =
                 identity.getItemMeta();
@@ -201,8 +201,8 @@ public class MainMenuGUI {
 
             identityMeta.setDisplayName(
                     source.equalsIgnoreCase("player")
-                            ? "§6✦ Ton Profil"
-                            : "§6✦ Ton Blason"
+                            ? "§6✦ §fTon profil §6✦"
+                            : "§6✦ §fTon blason §6✦"
             );
 
             identityMeta.setLore(
@@ -225,17 +225,21 @@ public class MainMenuGUI {
                 SafeGUI.glow(
                         button(
                                 Material.GOLD_INGOT,
-                                "§6✦ Banque",
-                                "§7Gère ton argent personnel.",
+                                "§6✦ §fBanque §6✦",
+                                "§7Gère ton argent.",
                                 "",
-                                "§8• §7Solde: §6"
+                                "§8• §7Déposer",
+                                "§8• §7Retirer",
+                                "§8• §7Virement",
+                                "",
+                                "§7Banque: §6"
                                         + SafeGUI.money(bank)
                                         + "€",
-                                "§8• §7Liquide: §a"
+                                "§7Liquide: §a"
                                         + SafeGUI.money(cash)
                                         + "€",
                                 "",
-                                "§e▶ Ouvrir"
+                                "§eClique pour ouvrir"
                         )
                 )
         );
@@ -243,38 +247,38 @@ public class MainMenuGUI {
         SafeGUI.safeSet(inv, 12,
                 button(
                         Material.EMERALD,
-                        "§e✦ Marché",
-                        "§7Suis les prix du serveur.",
+                        "§6✦ §fMarché §6✦",
+                        "§7Vends tes ressources.",
                         "",
-                        "§8• §7Prix dynamiques",
-                        "§8• §7Offre et demande",
+                        "§8• §7Prix qui bougent",
+                        "§8• §7Taxe du marché",
+                        "§8• §7Gain direct",
                         "",
-                        "§e▶ Ouvrir"
+                        "§eClique pour ouvrir"
                 )
         );
 
         /*
          * Ancien bouton Projets retiré.
-         * Les projets urbains doivent rester uniquement dans MoodTownMenu.
+         * Les projets urbains restent uniquement dans MoodTownMenu.
          */
 
         SafeGUI.safeSet(inv, 14,
                 SafeGUI.glow(
                         button(
                                 Material.LECTERN,
-                                "§6✦ Bureau des Entreprises",
-                                "§7Créer, rejoindre ou gérer",
-                                "§7une entreprise sur §aMood§6Craft§7.",
+                                "§6✦ §fBureau des Entreprises §6✦",
+                                "§7Crée ou gère",
+                                "§7une entreprise.",
                                 "",
-                                "§8• §7Entreprises officielles",
-                                "§8• §7Employés et rôles",
-                                "§8• §7Stages et apprentissages",
-                                "§8• §7Demandes et offres",
-                                "§8• §7Contrats sécurisés",
+                                "§8• §7Employés",
+                                "§8• §7Stages",
+                                "§8• §7Demandes",
+                                "§8• §7Contrats",
                                 "§8• §7Banque entreprise",
                                 "",
-                                "§a✔ Économie professionnelle",
-                                "§e▶ Ouvrir"
+                                "§a✔ Service §aMood§6Craft",
+                                "§eClique pour ouvrir"
                         )
                 )
         );
@@ -282,42 +286,46 @@ public class MainMenuGUI {
         SafeGUI.safeSet(inv, 16,
                 button(
                         Material.COMPASS,
-                        "§b✦ Téléportation",
-                        "§7Voyage rapidement.",
+                        "§6✦ §fTéléportation §6✦",
+                        "§7Va rapidement",
+                        "§7à un lieu utile.",
                         "",
                         "§8• §7Spawn",
                         "§8• §7Ville",
                         "§8• §7Exploration",
                         "",
-                        "§e▶ Voyager"
+                        "§eClique pour voyager"
                 )
         );
 
         SafeGUI.safeSet(inv, 21,
                 button(
                         Material.MAP,
-                        "§a✦ Ville",
-                        "§7Gère ton territoire.",
+                        "§6✦ §fVille §6✦",
+                        "§7Gère ta ville",
+                        "§7ou rejoins-en une.",
                         "",
+                        "§8• §7Ville",
                         "§8• §7Claims",
-                        "§8• §7Town",
                         "§8• §7Nation",
+                        "§8• §7Projets",
                         "",
-                        "§e▶ Gérer"
+                        "§eClique pour ouvrir"
                 )
         );
 
         SafeGUI.safeSet(inv, 23,
                 button(
                         Material.EXPERIENCE_BOTTLE,
-                        "§d✦ Métiers",
-                        "§7Progresse et gagne plus.",
+                        "§6✦ §fMétiers §6✦",
+                        "§7Progresse avec",
+                        "§7tes activités.",
                         "",
                         "§8• §7Niveaux",
                         "§8• §7Récompenses",
-                        "§8• §7Spécialisations",
+                        "§8• §7Progression",
                         "",
-                        "§e▶ Ouvrir"
+                        "§eClique pour ouvrir"
                 )
         );
 
@@ -327,7 +335,7 @@ public class MainMenuGUI {
                         "§c✦ Fermer",
                         "§7Quitter le menu.",
                         "",
-                        "§c▶ Fermer"
+                        "§cClique pour fermer"
                 )
         );
 
@@ -364,6 +372,29 @@ public class MainMenuGUI {
         }
 
         return item;
+    }
+
+    private static String shortText(
+            String text,
+            int max
+    ) {
+
+        if (text == null || text.isBlank()) {
+            return "Aucun";
+        }
+
+        String clean =
+                text.replaceAll("§.", "")
+                        .trim();
+
+        if (clean.length() <= max) {
+            return clean;
+        }
+
+        return clean.substring(
+                0,
+                Math.max(1, max - 3)
+        ) + "...";
     }
 
     private static void hide(
