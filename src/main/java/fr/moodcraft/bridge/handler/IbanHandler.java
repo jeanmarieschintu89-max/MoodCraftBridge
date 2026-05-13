@@ -1,4 +1,3 @@
-
 package fr.moodcraft.bridge.handler;
 
 import fr.moodcraft.bridge.gui.TransferTypeGUI;
@@ -29,7 +28,7 @@ public class IbanHandler implements GUIHandler {
 
                 InputManager.wait(
                         p,
-                        "iban_input"
+                        "transfer_iban"
                 );
 
                 header(p);
@@ -74,10 +73,6 @@ public class IbanHandler implements GUIHandler {
         }
     }
 
-    //
-    // 🎨 HEADER
-    //
-
     private void header(
             Player p
     ) {
@@ -87,10 +82,6 @@ public class IbanHandler implements GUIHandler {
         p.sendMessage("");
     }
 
-    //
-    // 🎨 FOOTER
-    //
-
     private void footer(
             Player p
     ) {
@@ -99,10 +90,6 @@ public class IbanHandler implements GUIHandler {
         p.sendMessage("§8-----------------------------");
         p.sendMessage("");
     }
-
-    //
-    // 🔊 SOUND
-    //
 
     private void premiumClick(
             Player p,
