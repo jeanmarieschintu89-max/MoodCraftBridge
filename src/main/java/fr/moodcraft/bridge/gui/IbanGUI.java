@@ -19,7 +19,7 @@ public class IbanGUI {
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§8✦ §6IBAN §8✦"
+                        "§6✦ §8IBAN §6✦"
                 );
 
         SafeGUI.fill(
