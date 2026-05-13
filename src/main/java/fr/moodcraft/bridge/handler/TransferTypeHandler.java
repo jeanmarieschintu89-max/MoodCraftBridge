@@ -27,6 +27,10 @@ public class TransferTypeHandler implements GUIHandler {
 
         switch (slot) {
 
+            //
+            // 👤 JOUEUR CONNECTÉ
+            //
+
             case 11 -> {
 
                 TransferBuilder.setAction(
@@ -34,11 +38,15 @@ public class TransferTypeHandler implements GUIHandler {
                         TransferBuilder.Action.PLAYER_TRANSFER
                 );
 
+                header(p);
+
+                p.sendMessage("§a✔ §fVirement vers joueur.");
                 p.sendMessage("");
-                p.sendMessage("§8----- §6Banque MoodCraft §8-----");
-                p.sendMessage("§a✔ Virement joueur sélectionné");
                 p.sendMessage("§7Choisis un joueur connecté.");
-                p.sendMessage("");
+                p.sendMessage("§8• §7Le montant sera demandé ensuite");
+                p.sendMessage("§8• §7Une confirmation sera affichée");
+
+                footer(p);
 
                 premiumClick(
                         p,
@@ -51,6 +59,10 @@ public class TransferTypeHandler implements GUIHandler {
                 TargetPlayerGUI.open(p);
             }
 
+            //
+            // 🏷 IBAN
+            //
+
             case 15 -> {
 
                 TransferBuilder.setAction(
@@ -58,11 +70,15 @@ public class TransferTypeHandler implements GUIHandler {
                         TransferBuilder.Action.IBAN_TRANSFER
                 );
 
+                header(p);
+
+                p.sendMessage("§a✔ §fVirement par IBAN.");
                 p.sendMessage("");
-                p.sendMessage("§8----- §6Banque MoodCraft §8-----");
-                p.sendMessage("§b✔ Virement IBAN sélectionné");
-                p.sendMessage("§7Entre un IBAN MoodCraft.");
-                p.sendMessage("");
+                p.sendMessage("§7Écris l'IBAN du joueur.");
+                p.sendMessage("§8• §7Fonctionne même si le joueur est hors ligne");
+                p.sendMessage("§8• §7Le montant sera demandé après");
+
+                footer(p);
 
                 premiumClick(
                         p,
@@ -74,6 +90,10 @@ public class TransferTypeHandler implements GUIHandler {
 
                 IbanGUI.open(p);
             }
+
+            //
+            // ↩ RETOUR
+            //
 
             case 22 -> {
 
@@ -89,6 +109,36 @@ public class TransferTypeHandler implements GUIHandler {
             }
         }
     }
+
+    //
+    // 🎨 HEADER
+    //
+
+    private void header(
+            Player p
+    ) {
+
+        p.sendMessage("");
+        p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----");
+        p.sendMessage("");
+    }
+
+    //
+    // 🎨 FOOTER
+    //
+
+    private void footer(
+            Player p
+    ) {
+
+        p.sendMessage("");
+        p.sendMessage("§8-----------------------------");
+        p.sendMessage("");
+    }
+
+    //
+    // 🔊 SOUND
+    //
 
     private void premiumClick(
             Player p,
