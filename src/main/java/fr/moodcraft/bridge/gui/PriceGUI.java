@@ -1,3 +1,4 @@
+
 package fr.moodcraft.bridge.gui;
 
 import fr.moodcraft.bridge.manager.GUIManager;
@@ -22,7 +23,7 @@ public class PriceGUI {
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§8✦ §eMarché"
+                        "§8✦ §6Marché §aMood§6Craft"
                 );
 
         try {
@@ -37,15 +38,17 @@ public class PriceGUI {
                     SafeGUI.glow(
                             SafeGUI.item(
                                     Material.BOOK,
-                                    "§6✦ Marché des minerais",
-                                    "§8----- §6Économie §8-----",
-                                    "§7Vends tes ressources au prix actuel.",
+                                    "§6✦ §fMarché des minerais §6✦",
+                                    "§8----- §6✦ §aMood§6Craft §fMarché §6✦ §8-----",
                                     "",
-                                    "§8• §7Prix dynamiques",
-                                    "§8• §7Offre et demande",
-                                    "§8• §7Synchronisé aux shops",
+                                    "§7Vends tes ressources",
+                                    "§7au prix du moment.",
                                     "",
-                                    "§e▶ Choisis un minerai"
+                                    "§8• §7Le prix peut monter",
+                                    "§8• §7ou baisser selon le serveur",
+                                    "§8• §7Vente instantanée",
+                                    "",
+                                    "§eClique un minerai"
                             )
                     )
             );
@@ -128,7 +131,7 @@ public class PriceGUI {
                             "§c✦ Retour",
                             "§7Retour au menu principal.",
                             "",
-                            "§c▶ Retour"
+                            "§cClique pour revenir"
                     )
             );
 
@@ -147,7 +150,9 @@ public class PriceGUI {
                             Material.BARRIER,
                             "§c✦ Erreur marché",
                             "§7Impossible de charger",
-                            "§7les données économiques."
+                            "§7les prix du marché.",
+                            "",
+                            "§8• §7Réessayez dans un instant"
                     )
             );
 
@@ -175,7 +180,7 @@ public class PriceGUI {
         String trend =
                 MarketState.trend.getOrDefault(
                         id,
-                        "§7▬ Stable"
+                        "§7Stable"
                 );
 
         String formattedPrice =
@@ -191,19 +196,19 @@ public class PriceGUI {
 
         if (stock <= -100) {
 
-            stockState = "§cTrès faible";
+            stockState = "§cTrès bas";
 
         } else if (stock <= 0) {
 
-            stockState = "§6Faible";
+            stockState = "§6Bas";
 
         } else if (stock <= 150) {
 
-            stockState = "§aStable";
+            stockState = "§aNormal";
 
         } else {
 
-            stockState = "§2Élevé";
+            stockState = "§2Haut";
         }
 
         SafeGUI.safeSet(inv, slot,
@@ -211,14 +216,27 @@ public class PriceGUI {
                         mat,
                         name,
                         "§7Prix: §6" + formattedPrice + "€",
-                        "§7Tendance: " + trend,
+                        "§7Tendance: " + cleanTrend(trend),
                         "§7Stock: " + stockState,
                         "",
-                        "§8• §7Vente instantanée",
-                        "§8• §7Marché dynamique",
+                        "§8• §7Vend tout ce minerai",
+                        "§8• §7dans ton inventaire",
                         "",
-                        "§e▶ Vendre"
+                        "§eClique pour vendre"
                 )
         );
+    }
+
+    private static String cleanTrend(
+            String trend
+    ) {
+
+        if (trend == null || trend.isBlank()) {
+            return "§7Stable";
+        }
+
+        return trend
+                .replace("▬", "")
+                .trim();
     }
 }
