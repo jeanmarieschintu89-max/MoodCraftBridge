@@ -26,7 +26,7 @@ public class TransferConfirmGUI {
                 Bukkit.createInventory(
                         null,
                         27,
-                        "§8✦ §6Confirmation §8✦"
+                        "§6✦ §8Confirmation §6✦"
                 );
 
         SafeGUI.fill(
