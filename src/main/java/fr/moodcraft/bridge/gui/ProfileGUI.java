@@ -33,7 +33,7 @@ public class ProfileGUI {
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§6✦ §8Profil §6✦"
+                        GuiTitle.of("Profil")
                 );
 
         SafeGUI.fill(
