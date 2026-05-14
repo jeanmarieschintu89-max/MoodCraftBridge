@@ -18,7 +18,7 @@ public class TeleportGUI {
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§6✦ §8Téléportation §6✦"
+                        GuiTitle.of("Téléportation")
                 );
 
         SafeGUI.fill(
@@ -41,80 +41,49 @@ public class TeleportGUI {
                 )
         );
 
-        SafeGUI.safeSet(inv, 10,
-                SafeGUI.glow(
-                        SafeGUI.item(
-                                Material.LODESTONE,
-                                "§6✦ §fSpawn §6✦",
-                                "§8• §7Centre de §aMood§6Craft",
-                                "§8• §7Banque et services",
-                                "§8• §7Retour sécurisé",
-                                "",
-                                "§e➜ §fSe téléporter"
-                        )
-                )
-        );
-
-        SafeGUI.safeSet(inv, 12,
+        SafeGUI.safeSet(inv, 11,
                 SafeGUI.item(
-                        Material.EMERALD_BLOCK,
-                        "§6✦ §fAdminShop §6✦",
-                        "§8• §7Boutique officielle",
-                        "§8• §7Items utiles",
-                        "§8• §7Prix fixes",
+                        Material.GRASS_BLOCK,
+                        "§6✦ §fSpawn §6✦",
+                        "§8• §7Retour au spawn",
                         "",
-                        "§e➜ §fOuvrir la boutique"
+                        "§e➜ §fTéléporter"
                 )
         );
 
-        SafeGUI.safeSet(inv, 14,
+        SafeGUI.safeSet(inv, 13,
                 SafeGUI.item(
-                        Material.NETHER_STAR,
-                        "§6✦ §fMini-jeux §6✦",
-                        "§8• §7Activités serveur",
-                        "§8• §7Events et défis",
-                        "§8• §7Récompenses",
-                        "",
-                        "§e➜ §fRejoindre"
-                )
-        );
-
-        SafeGUI.safeSet(inv, 16,
-                SafeGUI.item(
-                        Material.SPYGLASS,
-                        "§6✦ §fExploration §6✦",
-                        "§8• §7Zone sauvage",
-                        "§8• §7Ressources naturelles",
-                        "§8• §7Construction libre",
+                        Material.ENDER_PEARL,
+                        "§6✦ §fRTP §6✦",
+                        "§8• §7Téléportation aléatoire",
+                        "§8• §7Monde survie",
                         "",
                         "§e➜ §fPartir explorer"
                 )
         );
 
-        SafeGUI.safeSet(inv, 22,
+        SafeGUI.safeSet(inv, 15,
                 SafeGUI.item(
-                        Material.MAP,
+                        Material.BELL,
                         "§6✦ §fVille §6✦",
-                        "§8• §7Spawn de ville",
-                        "§8• §7Claims municipaux",
-                        "§8• §7Territoire Towny",
+                        "§8• §7Ouvrir le menu ville",
+                        "§8• §7Towny",
                         "",
-                        "§e➜ §fRetourner en ville"
+                        "§e➜ §fOuvrir"
                 )
         );
 
         SafeGUI.safeSet(inv, 31,
                 SafeGUI.item(
-                        Material.ARROW,
-                        "§6✦ §fRetour §6✦",
-                        "§8• §7Retour au menu principal"
+                        Material.BARRIER,
+                        "§c✦ §fRetour §c✦",
+                        "§8• §7Menu principal",
+                        "",
+                        "§c✖ §fRevenir"
                 )
         );
 
-        GUIManager.open(
-                p,
-                "teleport",
-                inv
-        );
+        p.openInventory(inv);
+        GUIManager.set(p, new fr.moodcraft.bridge.handler.TeleportHandler());
     }
 }
