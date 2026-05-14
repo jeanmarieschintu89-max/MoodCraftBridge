@@ -24,15 +24,11 @@ public class IbanCommand implements CommandExecutor {
         if (!(sender instanceof Player p)) {
 
             sender.sendMessage(
-                    "§cCommande joueur uniquement."
+                    "§c✖ §fCommande joueur uniquement."
             );
 
             return true;
         }
-
-        //
-        // 👤 /iban
-        //
 
         if (args.length == 0) {
 
@@ -61,10 +57,6 @@ public class IbanCommand implements CommandExecutor {
 
             return true;
         }
-
-        //
-        // 👑 /iban <joueur>
-        //
 
         if (args.length == 1) {
 
@@ -127,10 +119,6 @@ public class IbanCommand implements CommandExecutor {
         return true;
     }
 
-    //
-    // 🏦 IBAN DISPLAY
-    //
-
     private void sendIban(
             Player p,
             String name,
@@ -142,29 +130,19 @@ public class IbanCommand implements CommandExecutor {
 
         p.sendMessage(
                 staffView
-                        ? "§fConsultation bancaire staff."
-                        : "§fTon identité bancaire."
+                        ? "§e➜ §fConsultation bancaire staff."
+                        : "§e➜ §fTon identité bancaire."
         );
 
         p.sendMessage("");
 
-        p.sendMessage(
-                "§7Titulaire: §e" + name
-        );
-
-        p.sendMessage(
-                "§7IBAN: §b" + iban
-        );
+        p.sendMessage(detail("Titulaire : §e" + name));
+        p.sendMessage(detail("IBAN : §b" + iban));
 
         p.sendMessage("");
 
-        p.sendMessage(
-                "§8• §7Utilisable pour les virements"
-        );
-
-        p.sendMessage(
-                "§8• §7À partager uniquement si nécessaire"
-        );
+        p.sendMessage(detail("Utilisable pour les virements"));
+        p.sendMessage(detail("À partager uniquement si nécessaire"));
 
         footer(p);
 
@@ -176,25 +154,20 @@ public class IbanCommand implements CommandExecutor {
         );
     }
 
-    //
-    // 📘 USAGE
-    //
-
     private void sendUsage(
             Player p
     ) {
 
         header(p);
 
-        p.sendMessage("§fCommande bancaire.");
+        p.sendMessage("§e➜ §fCommande bancaire.");
         p.sendMessage("");
-        p.sendMessage("§7Utilisation:");
-        p.sendMessage("§8• §e/iban §7voir ton IBAN");
+        p.sendMessage(detail("/iban §7voir ton IBAN"));
 
         if (p.hasPermission("econ.admin")
                 || p.hasPermission("moodcraft.admin")) {
 
-            p.sendMessage("§8• §e/iban <joueur> §7voir l'IBAN d'un joueur");
+            p.sendMessage(detail("/iban <joueur> §7voir l'IBAN d'un joueur"));
         }
 
         footer(p);
@@ -207,10 +180,6 @@ public class IbanCommand implements CommandExecutor {
         );
     }
 
-    //
-    // ❌ ERROR
-    //
-
     private void sendError(
             Player p,
             String title,
@@ -219,9 +188,9 @@ public class IbanCommand implements CommandExecutor {
 
         header(p);
 
-        p.sendMessage("§c✘ §f" + title);
+        p.sendMessage("§c✖ §f" + title);
         p.sendMessage("");
-        p.sendMessage("§7" + detail);
+        p.sendMessage(detail(detail));
 
         footer(p);
 
@@ -233,22 +202,14 @@ public class IbanCommand implements CommandExecutor {
         );
     }
 
-    //
-    // 🎨 HEADER
-    //
-
     private void header(
             Player p
     ) {
 
         p.sendMessage("");
-        p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----");
+        p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque ✦ §8-----");
         p.sendMessage("");
     }
-
-    //
-    // 🎨 FOOTER
-    //
 
     private void footer(
             Player p
@@ -257,5 +218,9 @@ public class IbanCommand implements CommandExecutor {
         p.sendMessage("");
         p.sendMessage("§8-----------------------------");
         p.sendMessage("");
+    }
+
+    private String detail(String text) {
+        return "§8• §7" + text;
     }
 }
