@@ -40,10 +40,6 @@ public class BankChatInputListener
         TRANSFER_AMOUNT
     }
 
-    //
-    // 💰 DEPOT
-    //
-
     public static void startDeposit(
             Player p
     ) {
@@ -60,21 +56,17 @@ public class BankChatInputListener
 
         header(p);
 
-        p.sendMessage("§fÉcris le montant à déposer.");
+        p.sendMessage(info("Écris le montant à déposer."));
         p.sendMessage("");
-        p.sendMessage("§8• §7Exemple: §e5000");
-        p.sendMessage("§8• §7Liquide §8➜ §6Banque");
+        p.sendMessage(detail("Exemple : §e5000"));
+        p.sendMessage(detail("Liquide §8➜ §6Banque"));
         p.sendMessage("");
-        p.sendMessage("§7Tape §cannuler §7pour quitter.");
+        p.sendMessage(detail("Tape §cannuler §7pour quitter."));
 
         footer(p);
 
         soundClick(p);
     }
-
-    //
-    // 💸 RETRAIT
-    //
 
     public static void startWithdraw(
             Player p
@@ -92,21 +84,17 @@ public class BankChatInputListener
 
         header(p);
 
-        p.sendMessage("§fÉcris le montant à retirer.");
+        p.sendMessage(info("Écris le montant à retirer."));
         p.sendMessage("");
-        p.sendMessage("§8• §7Exemple: §e5000");
-        p.sendMessage("§8• §7Banque §8➜ §aLiquide");
+        p.sendMessage(detail("Exemple : §e5000"));
+        p.sendMessage(detail("Banque §8➜ §aLiquide"));
         p.sendMessage("");
-        p.sendMessage("§7Tape §cannuler §7pour quitter.");
+        p.sendMessage(detail("Tape §cannuler §7pour quitter."));
 
         footer(p);
 
         soundClick(p);
     }
-
-    //
-    // 🔁 VIREMENT MONTANT
-    //
 
     public static void startTransferAmount(
             Player p,
@@ -145,22 +133,18 @@ public class BankChatInputListener
 
         header(p);
 
-        p.sendMessage("§fÉcris le montant du virement.");
+        p.sendMessage(info("Écris le montant du virement."));
         p.sendMessage("");
-        p.sendMessage("§7Destinataire: §e" + targetName);
-        p.sendMessage("§8• §7Exemple: §e5000");
-        p.sendMessage("§8• §7Paiement pro: §e/contrat");
+        p.sendMessage(detail("Destinataire : §e" + targetName));
+        p.sendMessage(detail("Exemple : §e5000"));
+        p.sendMessage(detail("Paiement pro : §e/contrat"));
         p.sendMessage("");
-        p.sendMessage("§7Tape §cannuler §7pour quitter.");
+        p.sendMessage(detail("Tape §cannuler §7pour quitter."));
 
         footer(p);
 
         soundClick(p);
     }
-
-    //
-    // 💬 CHAT
-    //
 
     @EventHandler
     public void onChat(
@@ -194,10 +178,6 @@ public class BankChatInputListener
         );
     }
 
-    //
-    // 🧠 HANDLE
-    //
-
     private void handle(
             Player p,
             Draft draft,
@@ -215,7 +195,7 @@ public class BankChatInputListener
 
             header(p);
 
-            p.sendMessage("§7Opération bancaire annulée.");
+            p.sendMessage(info("Opération bancaire annulée."));
 
             footer(p);
 
@@ -231,10 +211,10 @@ public class BankChatInputListener
 
             header(p);
 
-            p.sendMessage("§c✘ §fMontant invalide.");
+            p.sendMessage(errorLine("Montant invalide."));
             p.sendMessage("");
-            p.sendMessage("§7Écris un nombre supérieur à zéro.");
-            p.sendMessage("§8Exemple: §e5000");
+            p.sendMessage(detail("Écris un nombre supérieur à zéro."));
+            p.sendMessage(detail("Exemple : §e5000"));
 
             footer(p);
 
@@ -273,10 +253,6 @@ public class BankChatInputListener
         }
     }
 
-    //
-    // 💰 DEPOT LOGIC
-    //
-
     private void deposit(
             Player p,
             double amount
@@ -307,8 +283,8 @@ public class BankChatInputListener
 
             header(p);
 
-            p.sendMessage("§7Liquide disponible: §a" + SafeGUI.money(cash) + "€");
-            p.sendMessage("§7Montant demandé: §e" + SafeGUI.money(amount) + "€");
+            p.sendMessage(detail("Liquide disponible : §a" + SafeGUI.money(cash) + "€"));
+            p.sendMessage(detail("Montant demandé : §e" + SafeGUI.money(amount) + "€"));
 
             footer(p);
 
@@ -342,10 +318,10 @@ public class BankChatInputListener
 
         header(p);
 
-        p.sendMessage("§a✔ §fDépôt effectué.");
+        p.sendMessage(successLine("Dépôt effectué."));
         p.sendMessage("");
-        p.sendMessage("§7Montant: §a+" + SafeGUI.money(amount) + "€");
-        p.sendMessage("§7Banque: §6" + SafeGUI.money(newBank) + "€");
+        p.sendMessage(detail("Montant : §a+" + SafeGUI.money(amount) + "€"));
+        p.sendMessage(detail("Banque : §6" + SafeGUI.money(newBank) + "€"));
 
         footer(p);
 
@@ -357,10 +333,6 @@ public class BankChatInputListener
 
         BankGUI.open(p);
     }
-
-    //
-    // 💸 RETRAIT LOGIC
-    //
 
     private void withdraw(
             Player p,
@@ -395,8 +367,8 @@ public class BankChatInputListener
 
             header(p);
 
-            p.sendMessage("§7Banque disponible: §6" + SafeGUI.money(bank) + "€");
-            p.sendMessage("§7Montant demandé: §e" + SafeGUI.money(amount) + "€");
+            p.sendMessage(detail("Banque disponible : §6" + SafeGUI.money(bank) + "€"));
+            p.sendMessage(detail("Montant demandé : §e" + SafeGUI.money(amount) + "€"));
 
             footer(p);
 
@@ -427,10 +399,10 @@ public class BankChatInputListener
 
         header(p);
 
-        p.sendMessage("§a✔ §fRetrait effectué.");
+        p.sendMessage(successLine("Retrait effectué."));
         p.sendMessage("");
-        p.sendMessage("§7Montant: §a+" + SafeGUI.money(amount) + "€");
-        p.sendMessage("§7Banque: §6" + SafeGUI.money(newBank) + "€");
+        p.sendMessage(detail("Montant : §a+" + SafeGUI.money(amount) + "€"));
+        p.sendMessage(detail("Banque : §6" + SafeGUI.money(newBank) + "€"));
 
         footer(p);
 
@@ -442,10 +414,6 @@ public class BankChatInputListener
 
         BankGUI.open(p);
     }
-
-    //
-    // 🔁 VIREMENT MONTANT LOGIC
-    //
 
     private void transferAmount(
             Player p,
@@ -527,12 +495,12 @@ public class BankChatInputListener
 
         header(p);
 
-        p.sendMessage("§a✔ §fMontant enregistré.");
+        p.sendMessage(successLine("Montant enregistré."));
         p.sendMessage("");
-        p.sendMessage("§7Destinataire: §e" + target.getName());
-        p.sendMessage("§7Montant: §e" + SafeGUI.money(amount) + "€");
+        p.sendMessage(detail("Destinataire : §e" + target.getName()));
+        p.sendMessage(detail("Montant : §e" + SafeGUI.money(amount) + "€"));
         p.sendMessage("");
-        p.sendMessage("§8• §7Une confirmation est nécessaire.");
+        p.sendMessage(detail("Une confirmation est nécessaire."));
 
         footer(p);
 
@@ -546,10 +514,6 @@ public class BankChatInputListener
         TransferConfirmGUI.open(p);
     }
 
-    //
-    // ❌ ERROR
-    //
-
     private void error(
             Player p,
             String msg
@@ -557,25 +521,21 @@ public class BankChatInputListener
 
         header(p);
 
-        p.sendMessage("§c✘ §fTransaction refusée.");
+        p.sendMessage(errorLine("Transaction refusée."));
         p.sendMessage("");
-        p.sendMessage("§7" + msg);
+        p.sendMessage(detail(msg));
 
         footer(p);
 
         fail(p);
     }
 
-    //
-    // 🎨 HEADER / FOOTER
-    //
-
     private static void header(
             Player p
     ) {
 
         p.sendMessage("");
-        p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----");
+        p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque ✦ §8-----");
         p.sendMessage("");
     }
 
@@ -588,9 +548,21 @@ public class BankChatInputListener
         p.sendMessage("");
     }
 
-    //
-    // 🔢 PARSE
-    //
+    private static String info(String text) {
+        return "§e➜ §f" + text;
+    }
+
+    private static String detail(String text) {
+        return "§8• §7" + text;
+    }
+
+    private static String successLine(String text) {
+        return "§a✔ §f" + text;
+    }
+
+    private static String errorLine(String text) {
+        return "§c✖ §f" + text;
+    }
 
     private double parseAmount(
             String text
@@ -607,10 +579,6 @@ public class BankChatInputListener
             return -1;
         }
     }
-
-    //
-    // 🔊 SOUNDS
-    //
 
     private static void soundClick(
             Player p
