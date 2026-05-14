@@ -22,7 +22,7 @@ public class BankGUI {
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§6✦ §8Banque §6✦"
+                        GuiTitle.of("Banque")
                 );
 
         SafeGUI.fill(
@@ -61,80 +61,62 @@ public class BankGUI {
                         SafeGUI.item(
                                 Material.EMERALD,
                                 "§6✦ §fDéposer §6✦",
-                                "§8• §7Liquide vers banque",
-                                "§8• §7Montant dans le chat",
-                                "§8• §7Exemple : §e5000",
+                                "§8• §7Mettre de l'argent en banque",
+                                "§8• §7Saisie dans le chat",
                                 "",
-                                "§e➜ §fSaisir un dépôt"
+                                "§e➜ §fClique pour déposer"
                         )
                 )
         );
 
         SafeGUI.safeSet(inv, 12,
                 SafeGUI.item(
-                        Material.HOPPER,
+                        Material.REDSTONE,
                         "§6✦ §fRetirer §6✦",
-                        "§8• §7Banque vers liquide",
-                        "§8• §7Montant dans le chat",
-                        "§8• §7Exemple : §e5000",
+                        "§8• §7Sortir de l'argent",
+                        "§8• §7Saisie dans le chat",
                         "",
-                        "§e➜ §fSaisir un retrait"
+                        "§e➜ §fClique pour retirer"
                 )
         );
 
         SafeGUI.safeSet(inv, 14,
-                SafeGUI.glow(
-                        SafeGUI.item(
-                                Material.PAPER,
-                                "§6✦ §fVirement §6✦",
-                                "§8• §7Envoyer à un joueur",
-                                "§8• §7Choix du joueur",
-                                "§8• §7Confirmation finale",
-                                "§8• §7Paiement pro : §e/contrat",
-                                "",
-                                "§e➜ §fPréparer un virement"
-                        )
+                SafeGUI.item(
+                        Material.PAPER,
+                        "§6✦ §fVirement §6✦",
+                        "§8• §7Envoyer de l'argent",
+                        "§8• §7Vers un autre joueur",
+                        "",
+                        "§e➜ §fOuvrir"
                 )
         );
 
         SafeGUI.safeSet(inv, 16,
                 SafeGUI.item(
-                        Material.NAME_TAG,
-                        "§6✦ §fIBAN §6✦",
-                        "§8• §7Code bancaire personnel",
-                        "§8• §7Utile pour les virements",
-                        "§8• §7À partager avec prudence",
-                        "",
-                        "§e➜ §fVoir mon IBAN"
-                )
-        );
-
-        SafeGUI.safeSet(inv, 22,
-                SafeGUI.item(
                         Material.BOOK,
                         "§6✦ §fHistorique §6✦",
-                        "§8• §7Dépôts",
-                        "§8• §7Retraits",
-                        "§8• §7Virements",
+                        "§8• §7Voir les mouvements",
+                        "§8• §7Dépôts, retraits, virements",
                         "",
-                        "§e➜ §fVoir les mouvements"
+                        "§e➜ §fConsulter"
                 )
         );
 
         SafeGUI.safeSet(inv, 31,
                 SafeGUI.item(
-                        Material.ARROW,
-                        "§6✦ §fRetour §6✦",
-                        "§8• §7Retour au menu principal",
+                        Material.BARRIER,
+                        "§c✦ §fRetour §c✦",
+                        "§8• §7Menu principal",
                         "",
-                        "§e➜ §fOuvrir /menu"
+                        "§c✖ §fRevenir"
                 )
         );
 
-        GUIManager.open(
+        p.openInventory(inv);
+
+        GUIManager.set(
                 p,
-                "bank_main",
-                inv
+                new fr.moodcraft.bridge.handler.BankHandler()
         );
     }
 }
