@@ -61,9 +61,10 @@
 
         <dependency>
             <groupId>quickshop</groupId>
-            <artifactId>quickshop</artifactId>
+            <artifactId>quickshop-hikari</artifactId>
             <version>1.0</version>
-            <scope>provided</scope>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/QuickShop-Hikari.jar</systemPath>
         </dependency>
 
     </dependencies>
