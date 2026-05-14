@@ -50,12 +50,11 @@ public class SyncCommand implements CommandExecutor {
     ) {
 
         sender.sendMessage("");
-        sender.sendMessage("§8----- §6✦ §aMood§6Craft §fÉconomie §6✦ §8-----");
+        sender.sendMessage("§8----- §6✦ §aMood§6Craft §fÉconomie ✦ §8-----");
         sender.sendMessage("");
         sender.sendMessage("§a✔ §fSynchronisation effectuée.");
         sender.sendMessage("");
-        sender.sendMessage("§7Items mis à jour: §e" + count);
-        sender.sendMessage("");
+        sender.sendMessage("§e➜ §fItems mis à jour : §e" + count);
         sender.sendMessage("§8• §7Prix envoyés aux shops");
         sender.sendMessage("§8• §7Marché actualisé");
         sender.sendMessage("");
@@ -69,11 +68,11 @@ public class SyncCommand implements CommandExecutor {
     ) {
 
         sender.sendMessage("");
-        sender.sendMessage("§8----- §6✦ §aMood§6Craft §fÉconomie §6✦ §8-----");
+        sender.sendMessage("§8----- §6✦ §aMood§6Craft §fÉconomie ✦ §8-----");
         sender.sendMessage("");
-        sender.sendMessage("§c✘ §fAction refusée.");
+        sender.sendMessage("§c✖ §fAction refusée.");
         sender.sendMessage("");
-        sender.sendMessage("§7" + message);
+        sender.sendMessage("§8• §7" + message);
         sender.sendMessage("");
         sender.sendMessage("§8-----------------------------");
         sender.sendMessage("");
