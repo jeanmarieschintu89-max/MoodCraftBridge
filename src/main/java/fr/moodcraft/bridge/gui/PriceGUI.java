@@ -1,4 +1,3 @@
-
 package fr.moodcraft.bridge.gui;
 
 import fr.moodcraft.bridge.manager.GUIManager;
@@ -23,7 +22,7 @@ public class PriceGUI {
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§6✦ §8Marché §aMood§6Craft §6✦"
+                        "§6✦ §8Bourses §aMood§6Craft §6✦"
                 );
 
         try {
@@ -38,17 +37,14 @@ public class PriceGUI {
                     SafeGUI.glow(
                             SafeGUI.item(
                                     Material.BOOK,
-                                    "§6✦ §fMarché des minerais §6✦",
-                                    "§8----- §6✦ §aMood§6Craft §fMarché §6✦ §8-----",
+                                    "§6✦ §fBourses des minerais §6✦",
+                                    "§8----- §6✦ Bourses §aMood§6Craft §6✦ §8-----",
                                     "",
-                                    "§7Vends tes ressources",
-                                    "§7au prix du moment.",
-                                    "",
-                                    "§8• §7Le prix peut monter",
-                                    "§8• §7ou baisser selon le serveur",
+                                    "§8• §7Vends tes ressources",
+                                    "§8• §7Prix dynamique du serveur",
                                     "§8• §7Vente instantanée",
                                     "",
-                                    "§eClique un minerai"
+                                    "§e➜ §fClique un minerai"
                             )
                     )
             );
@@ -129,9 +125,9 @@ public class PriceGUI {
                     SafeGUI.item(
                             Material.BARRIER,
                             "§c✦ Retour",
-                            "§7Retour au menu principal.",
+                            "§8• §7Retour au menu principal",
                             "",
-                            "§cClique pour revenir"
+                            "§c✖ Clique pour revenir"
                     )
             );
 
@@ -148,9 +144,8 @@ public class PriceGUI {
             SafeGUI.safeSet(inv, 13,
                     SafeGUI.item(
                             Material.BARRIER,
-                            "§c✦ Erreur marché",
-                            "§7Impossible de charger",
-                            "§7les prix du marché.",
+                            "§c✦ Erreur bourses",
+                            "§c✖ §fImpossible de charger les prix.",
                             "",
                             "§8• §7Réessayez dans un instant"
                     )
@@ -215,14 +210,14 @@ public class PriceGUI {
                 SafeGUI.item(
                         mat,
                         name,
-                        "§7Prix: §6" + formattedPrice + "€",
-                        "§7Tendance: " + cleanTrend(trend),
-                        "§7Stock: " + stockState,
+                        "§8• §7Prix: §6" + formattedPrice + "€",
+                        "§8• §7Tendance: " + cleanTrend(trend),
+                        "§8• §7Stock: " + stockState,
                         "",
                         "§8• §7Vend tout ce minerai",
                         "§8• §7dans ton inventaire",
                         "",
-                        "§eClique pour vendre"
+                        "§e➜ §fClique pour vendre"
                 )
         );
     }
