@@ -699,6 +699,10 @@ public class ChatInputListener implements Listener {
         p.sendMessage("");
     }
 
+    private String info(String text) {
+        return infoLine(text);
+    }
+
     private String infoLine(String text) {
         return "§e➜ §f" + text;
     }
