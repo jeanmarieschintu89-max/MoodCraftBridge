@@ -30,10 +30,6 @@ public class TargetPlayerHandler implements GUIHandler {
                 250
         )) return;
 
-        //
-        // ↩ RETOUR / NAVIGATION
-        //
-
         if (slot == 45
                 || slot == 49
                 || slot == 53) {
@@ -112,13 +108,13 @@ public class TargetPlayerHandler implements GUIHandler {
 
         p.sendMessage("§a✔ §fDestinataire sélectionné.");
         p.sendMessage("");
-        p.sendMessage("§7Joueur: §e" + target.getName());
-        p.sendMessage("§7Réputation: §a" + rep + " §8• " + rank);
+        p.sendMessage(detail("Joueur : §e" + target.getName()));
+        p.sendMessage(detail("Réputation : §a" + rep + " §8• " + rank));
         p.sendMessage("");
-        p.sendMessage("§fÉcris le montant du virement.");
+        p.sendMessage("§e➜ §fÉcris le montant du virement.");
         p.sendMessage("");
-        p.sendMessage("§8• §7Exemple: §e5000");
-        p.sendMessage("§8• §7Tape §cannuler §7pour quitter.");
+        p.sendMessage(detail("Exemple : §e5000"));
+        p.sendMessage(detail("Tape §cannuler §7pour quitter."));
 
         footer(p);
 
@@ -136,10 +132,6 @@ public class TargetPlayerHandler implements GUIHandler {
         );
     }
 
-    //
-    // ❌ ERROR
-    //
-
     private void error(
             Player p,
             String message
@@ -147,31 +139,23 @@ public class TargetPlayerHandler implements GUIHandler {
 
         header(p);
 
-        p.sendMessage("§c✘ §fAction refusée.");
+        p.sendMessage("§c✖ §fAction refusée.");
         p.sendMessage("");
-        p.sendMessage("§7" + message);
+        p.sendMessage(detail(message));
 
         footer(p);
 
         fail(p);
     }
 
-    //
-    // 🎨 HEADER
-    //
-
     private void header(
             Player p
     ) {
 
         p.sendMessage("");
-        p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----");
+        p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque ✦ §8-----");
         p.sendMessage("");
     }
-
-    //
-    // 🎨 FOOTER
-    //
 
     private void footer(
             Player p
@@ -182,9 +166,9 @@ public class TargetPlayerHandler implements GUIHandler {
         p.sendMessage("");
     }
 
-    //
-    // 🔊 FAIL
-    //
+    private String detail(String text) {
+        return "§8• §7" + text;
+    }
 
     private void fail(Player p) {
 
@@ -195,10 +179,6 @@ public class TargetPlayerHandler implements GUIHandler {
                 0.85f
         );
     }
-
-    //
-    // 🔊 CLICK PREMIUM
-    //
 
     private void premiumClick(
             Player p,
