@@ -43,6 +43,7 @@ jobs:
             Moodtownmenu
             MoodBusiness
             MoodEvent
+            MoodJobsGUI
           )
 
           for repo in "${repos[@]}"; do
@@ -73,6 +74,7 @@ jobs:
             Moodtownmenu
             MoodBusiness
             MoodEvent
+            MoodJobsGUI
           )
 
           failed=0
@@ -187,6 +189,7 @@ jobs:
           rm -f Moodtownmenu.jar
           rm -f MoodBusiness.jar
           rm -f MoodEvent.jar
+          rm -f MoodJobsGUI.jar
           EOF
 
           if [ "${CLEAN_OLD_JARS}" = "true" ]; then
@@ -200,6 +203,7 @@ jobs:
           glob -a rm -f Moodtownmenu-*.jar
           glob -a rm -f MoodBusiness-*.jar
           glob -a rm -f MoodEvent-*.jar
+          glob -a rm -f MoodJobsGUI-*.jar
           EOF
           fi
 
@@ -214,6 +218,7 @@ jobs:
           mv _moodcraft_upload_${RUN_ID}/Moodtownmenu.jar Moodtownmenu.jar
           mv _moodcraft_upload_${RUN_ID}/MoodBusiness.jar MoodBusiness.jar
           mv _moodcraft_upload_${RUN_ID}/MoodEvent.jar MoodEvent.jar
+          mv _moodcraft_upload_${RUN_ID}/MoodJobsGUI.jar MoodJobsGUI.jar
           rmdir "_moodcraft_upload_${RUN_ID}"
           cls -l *.jar
           bye
