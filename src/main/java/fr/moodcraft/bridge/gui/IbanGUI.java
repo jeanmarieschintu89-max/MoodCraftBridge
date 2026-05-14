@@ -22,22 +22,14 @@ public class IbanGUI {
                         "§6✦ §8IBAN §6✦"
                 );
 
-        SafeGUI.fill(
-                inv,
-                Material.BLACK_STAINED_GLASS_PANE,
-                " "
-        );
+        SafeGUI.fill(inv, Material.BLACK_STAINED_GLASS_PANE, " ");
 
         SafeGUI.safeSet(inv, 4,
                 SafeGUI.glow(
                         SafeGUI.item(
                                 Material.WRITABLE_BOOK,
                                 "§6✦ §fVirement par IBAN §6✦",
-                                "§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----",
-                                "",
-                                "§7Envoie de l'argent",
-                                "§7avec l'IBAN d'un joueur.",
-                                "",
+                                "§8• §7Envoie de l'argent avec l'IBAN",
                                 "§8• §7Fonctionne hors ligne",
                                 "§8• §7Historique sauvegardé",
                                 "§8• §7Confirmation avant envoi"
@@ -50,12 +42,11 @@ public class IbanGUI {
                         SafeGUI.item(
                                 Material.PAPER,
                                 "§6✦ §fEntrer un IBAN §6✦",
-                                "§7Écris l'IBAN dans le chat.",
-                                "",
-                                "§8• §7Exemple: §eMC-1234-ABCD",
+                                "§8• §7Écris l'IBAN dans le chat",
+                                "§8• §7Exemple : §eMC-1234-ABCD",
                                 "§8• §7Le compte sera vérifié",
                                 "",
-                                "§a✔ Cliquer pour saisir"
+                                "§e➜ §fSaisir"
                         )
                 )
         );
@@ -64,31 +55,24 @@ public class IbanGUI {
                 SafeGUI.item(
                         Material.BOOK,
                         "§6✦ §fInformations §6✦",
-                        "§7Un IBAN identifie",
-                        "§7un compte bancaire.",
-                        "",
                         "§8• §7Virement à distance",
                         "§8• §7Joueur connecté ou non",
                         "§8• §7Trace dans l'historique",
                         "",
-                        "§eUtilisez avec prudence"
+                        "§e➜ §fUtiliser avec prudence"
                 )
         );
 
         SafeGUI.safeSet(inv, 31,
                 SafeGUI.item(
-                        Material.ARROW,
-                        "§c✦ Retour",
-                        "§7Retour à la banque.",
+                        Material.BARRIER,
+                        "§c✦ §fRetour §c✦",
+                        "§8• §7Retour à la banque",
                         "",
-                        "§cClique pour revenir"
+                        "§c✖ §fRevenir"
                 )
         );
 
-        GUIManager.open(
-                p,
-                "iban_gui",
-                inv
-        );
+        GUIManager.open(p, "iban_gui", inv);
     }
 }
