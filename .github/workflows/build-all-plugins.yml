@@ -80,6 +80,13 @@ jobs:
           path: sources/MoodEvent
           token: ${{ secrets.GH_PAT || github.token }}
 
+      - name: Checkout MoodJobsGUI
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/MoodJobsGUI
+          path: sources/MoodJobsGUI
+          token: ${{ secrets.GH_PAT || github.token }}
+
       - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
@@ -103,6 +110,7 @@ jobs:
             Moodtownmenu
             MoodBusiness
             MoodEvent
+            MoodJobsGUI
           )
 
           failed=0
