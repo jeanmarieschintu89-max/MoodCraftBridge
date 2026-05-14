@@ -29,6 +29,7 @@ commands:
     description: Freeze un joueur
     usage: /freeze <joueur>
     permission: moodcraft.admin
+    permission-message: "§c✖ §fAccès réservé à l'administration MoodCraft."
 
   banque:
     description: Systeme bancaire complet
@@ -57,6 +58,7 @@ commands:
     description: Administration bancaire MoodCraft
     usage: /bankadmin
     permission: econ.admin
+    permission-message: "§c✖ §fAccès réservé à l'administration bancaire."
     aliases:
       - badmin
       - banqueadmin
@@ -78,6 +80,7 @@ commands:
     description: Administration du marché MoodCraft
     usage: /marketadmin
     permission: moodcraft.admin
+    permission-message: "§c✖ §fAccès réservé à l'administration MoodCraft."
     aliases:
       - madminmarket
       - marcheadmin
@@ -87,6 +90,7 @@ commands:
     description: Synchroniser les prix QuickShop
     usage: /sync
     permission: moodcraft.admin
+    permission-message: "§c✖ §fAccès réservé à l'administration MoodCraft."
 
   trend:
     description: Voir les tendances
@@ -96,25 +100,25 @@ commands:
     description: Recharger l'économie
     usage: /ecoreload
     permission: moodcraft.admin
+    permission-message: "§c✖ §fAccès réservé à l'administration MoodCraft."
 
   ecoreset:
     description: Reset économie
     usage: /ecoreset
     permission: moodcraft.admin
+    permission-message: "§c✖ §fAccès réservé à l'administration MoodCraft."
 
   ecotest:
     description: Test économie
     usage: /ecotest
     permission: moodcraft.admin
+    permission-message: "§c✖ §fAccès réservé à l'administration MoodCraft."
 
   reputation:
     description: Voir sa réputation
     usage: /reputation
-
-  rep:
-    description: Modifier la réputation
-    usage: /rep <joueur> <valeur>
-    permission: moodcraft.admin
+    aliases:
+      - rep
 
   toprep:
     description: Voir le classement réputation
@@ -124,6 +128,7 @@ commands:
     description: Gérer les subventions
     usage: /subvention
     permission: moodcraft.admin
+    permission-message: "§c✖ §fAccès réservé à l'administration MoodCraft."
 
 permissions:
 
