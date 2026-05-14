@@ -300,17 +300,13 @@ public class PayListener
 
         header(p);
 
-        p.sendMessage("§c✘ §fPaiement refusé.");
-        p.sendMessage("");
-        p.sendMessage("§7Montant: §e" + format(amount));
-        p.sendMessage("§7Limite personnelle: §e" + format(MAX_PERSONAL_PAY));
-        p.sendMessage("");
-        p.sendMessage("§7Paiement professionnel:");
-        p.sendMessage("§e/contrat");
-        p.sendMessage("");
+        p.sendMessage("§c✖ §fPaiement refusé.");
+        p.sendMessage("§8• §7Montant : §e" + format(amount));
+        p.sendMessage("§8• §7Limite personnelle : §e" + format(MAX_PERSONAL_PAY));
+        p.sendMessage("§e➜ §fUtilise §e/contrat §fpour un paiement professionnel.");
         p.sendMessage("§8• §7Argent bloqué");
         p.sendMessage("§8• §7Taxe 20%");
-        p.sendMessage("§8• §7Historique gardé");
+        p.sendMessage("§8• §7Logs gardés");
 
         footer(p);
 
@@ -329,14 +325,11 @@ public class PayListener
 
         header(p);
 
-        p.sendMessage("§c✘ §fPaiement refusé.");
-        p.sendMessage("");
-        p.sendMessage("§7Déjà envoyé: §e" + format(already));
-        p.sendMessage("§7Montant: §e" + format(amount));
-        p.sendMessage("§7Limite jour: §e" + format(MAX_DAILY_PERSONAL_PAY));
-        p.sendMessage("");
-        p.sendMessage("§7Paiement important:");
-        p.sendMessage("§e/contrat");
+        p.sendMessage("§c✖ §fPaiement refusé.");
+        p.sendMessage("§8• §7Déjà envoyé : §e" + format(already));
+        p.sendMessage("§8• §7Montant : §e" + format(amount));
+        p.sendMessage("§8• §7Limite jour : §e" + format(MAX_DAILY_PERSONAL_PAY));
+        p.sendMessage("§e➜ §fUtilise §e/contrat §fpour un paiement important.");
 
         footer(p);
 
@@ -352,8 +345,7 @@ public class PayListener
     ) {
 
         p.sendMessage("");
-        p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----");
-        p.sendMessage("");
+        p.sendMessage("§8----- §6✦ Banque §aMood§6Craft ✦ §8-----");
     }
 
     //
@@ -364,7 +356,6 @@ public class PayListener
             Player p
     ) {
 
-        p.sendMessage("");
         p.sendMessage("§8-----------------------------");
         p.sendMessage("");
     }
