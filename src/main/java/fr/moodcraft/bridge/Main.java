@@ -63,6 +63,7 @@ public class Main extends JavaPlugin {
         registerEvents(
                 new ChatInputListener(),
                 new BankChatInputListener(),
+                new TransferConfirmChatListener(),
                 new MineListener(),
                 new PayListener(),
                 new InventoryGuardListener(),
@@ -124,6 +125,7 @@ public class Main extends JavaPlugin {
         getLogger().info("✅ MoodCraftBridge chargé");
         getLogger().info("🏦 Banque: OK");
         getLogger().info("💬 Banque Chat Input: OK");
+        getLogger().info("✅ Confirmation virement chat: OK");
         getLogger().info("📊 Marché: OK");
         getLogger().info("🎮 GUI: OK");
         getLogger().info("🧠 Réputation: OK");
