@@ -53,6 +53,14 @@ commands:
     description: Effectuer un virement bancaire
     usage: /virement <iban> <montant>
 
+  bankadmin:
+    description: Administration bancaire MoodCraft
+    usage: /bankadmin
+    permission: econ.admin
+    aliases:
+      - badmin
+      - banqueadmin
+
   prix:
     description: Voir les prix du marché
     usage: /prix
@@ -65,6 +73,15 @@ commands:
       - vendre
       - vente
       - minerais
+
+  marketadmin:
+    description: Administration du marché MoodCraft
+    usage: /marketadmin
+    permission: moodcraft.admin
+    aliases:
+      - madminmarket
+      - marcheadmin
+      - bourseadmin
 
   sync:
     description: Synchroniser les prix QuickShop
