@@ -20,9 +20,7 @@ public class MenuCommand implements CommandExecutor {
 
         if (!(sender instanceof Player p)) {
 
-            sender.sendMessage(
-                    "§cCommande joueur uniquement."
-            );
+            sender.sendMessage("§c✖ §fCommande joueur uniquement.");
 
             return true;
         }
