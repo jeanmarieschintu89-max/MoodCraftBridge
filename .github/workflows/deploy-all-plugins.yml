@@ -1,0 +1,200 @@
+name: Build and deploy all MoodCraft plugins
+
+on:
+  workflow_dispatch:
+    inputs:
+      restart_server:
+        description: 'Restart server after upload'
+        required: true
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+jobs:
+  build-and-deploy:
+    name: Build and deploy plugin jars
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout MoodAuth
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/MoodAuth
+          path: sources/MoodAuth
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Checkout MoodCraftBridge
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/MoodCraftBridge
+          path: sources/MoodCraftBridge
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Checkout MoodTownGrade
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/MoodTownGrade
+          path: sources/MoodTownGrade
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Checkout MoodCraftMeteo
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/MoodCraftMeteo
+          path: sources/MoodCraftMeteo
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Checkout MoodcraftChestLock
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/MoodcraftChestLock
+          path: sources/MoodcraftChestLock
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Checkout MoodVilleDrapeau
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/MoodVilleDrapeau
+          path: sources/MoodVilleDrapeau
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Checkout Moodtownmenu
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/Moodtownmenu
+          path: sources/Moodtownmenu
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Checkout MoodBusiness
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/MoodBusiness
+          path: sources/MoodBusiness
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Build plugins and collect jars
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p dist logs
+
+          plugins=(
+            MoodAuth
+            MoodVilleDrapeau
+            MoodCraftBridge
+            MoodTownGrade
+            MoodCraftMeteo
+            MoodcraftChestLock
+            Moodtownmenu
+            MoodBusiness
+          )
+
+          failed=0
+          failed_plugins=()
+
+          for plugin in "${plugins[@]}"; do
+            echo "================================="
+            echo "Building ${plugin}"
+            echo "================================="
+
+            if [ ! -f "sources/${plugin}/pom.xml" ]; then
+              echo "MISSING_POM ${plugin}" | tee "logs/${plugin}.log"
+              failed=1
+              failed_plugins+=("${plugin}")
+              continue
+            fi
+
+            if (cd "sources/${plugin}" && mvn -B -DskipTests clean package > "../../logs/${plugin}.log" 2>&1); then
+              echo "OK ${plugin}"
+
+              jar_count=$(find "sources/${plugin}/target" -maxdepth 1 -type f -name '*.jar' ! -name '*original*' | wc -l)
+
+              if [ "${jar_count}" -eq 0 ]; then
+                echo "NO_JAR ${plugin}" | tee -a "logs/${plugin}.log"
+                failed=1
+                failed_plugins+=("${plugin}")
+                continue
+              fi
+
+              while IFS= read -r jar; do
+                base=$(basename "${jar}")
+                cp "${jar}" "dist/${plugin}-${base}"
+              done < <(find "sources/${plugin}/target" -maxdepth 1 -type f -name '*.jar' ! -name '*original*')
+
+            else
+              echo "FAILED ${plugin}"
+              failed=1
+              failed_plugins+=("${plugin}")
+              echo "----- ${plugin} build log tail -----"
+              tail -n 120 "logs/${plugin}.log" || true
+              echo "----- end ${plugin} build log tail -----"
+            fi
+          done
+
+          echo "================================="
+          echo "Collected jars"
+          echo "================================="
+          ls -lah dist || true
+
+          if [ "${failed}" -ne 0 ]; then
+            echo "================================="
+            echo "Failed plugins"
+            echo "================================="
+            printf '%s\n' "${failed_plugins[@]}"
+            exit 1
+          fi
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MoodCraft-all-plugin-jars
+          path: dist/*.jar
+          if-no-files-found: error
+
+      - name: Prepare SSH key
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/moodcraft_key
+          chmod 600 ~/.ssh/moodcraft_key
+          ssh-keyscan -p "${{ secrets.SERVER_PORT }}" "${{ secrets.SERVER_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Backup current server plugins
+        shell: bash
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/moodcraft_key -p "${{ secrets.SERVER_PORT }}" "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}" \
+            "mkdir -p '${{ secrets.SERVER_PLUGINS_PATH }}/_moodcraft_backups/$(date +%Y-%m-%d_%H-%M-%S)' && cp '${{ secrets.SERVER_PLUGINS_PATH }}'/*.jar '${{ secrets.SERVER_PLUGINS_PATH }}/_moodcraft_backups/$(date +%Y-%m-%d_%H-%M-%S)'/ 2>/dev/null || true"
+
+      - name: Upload jars to server
+        shell: bash
+        run: |
+          set -euo pipefail
+          scp -i ~/.ssh/moodcraft_key -P "${{ secrets.SERVER_PORT }}" dist/*.jar "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{ secrets.SERVER_PLUGINS_PATH }}/"
+
+      - name: Restart server
+        if: ${{ inputs.restart_server == 'true' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/moodcraft_key -p "${{ secrets.SERVER_PORT }}" "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}" \
+            "${{ secrets.SERVER_RESTART_COMMAND }}"
+
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MoodCraft-build-logs
+          path: logs/*.log
+          if-no-files-found: warn
