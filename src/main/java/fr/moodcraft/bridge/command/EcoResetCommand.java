@@ -58,15 +58,11 @@ public class EcoResetCommand implements CommandExecutor {
     ) {
 
         sender.sendMessage("");
-        sender.sendMessage("§8----- §6✦ §aMood§6Craft §fÉconomie §6✦ §8-----");
-        sender.sendMessage("");
+        sender.sendMessage("§8----- §6✦ Économie §aMood§6Craft ✦ §8-----");
         sender.sendMessage("§a✔ §fReset économique terminé.");
-        sender.sendMessage("");
-        sender.sendMessage("§7Items mis à jour: §e" + updated);
-        sender.sendMessage("");
+        sender.sendMessage("§8• §7Items mis à jour : §e" + updated);
         sender.sendMessage("§8• §7Marché remis à zéro");
         sender.sendMessage("§8• §7Shops resynchronisés");
-        sender.sendMessage("");
         sender.sendMessage("§8-----------------------------");
         sender.sendMessage("");
     }
@@ -77,12 +73,9 @@ public class EcoResetCommand implements CommandExecutor {
     ) {
 
         sender.sendMessage("");
-        sender.sendMessage("§8----- §6✦ §aMood§6Craft §fÉconomie §6✦ §8-----");
-        sender.sendMessage("");
-        sender.sendMessage("§c✘ §fAction refusée.");
-        sender.sendMessage("");
-        sender.sendMessage("§7" + message);
-        sender.sendMessage("");
+        sender.sendMessage("§8----- §6✦ Économie §aMood§6Craft ✦ §8-----");
+        sender.sendMessage("§c✖ §fAction refusée.");
+        sender.sendMessage("§8• §7" + message);
         sender.sendMessage("§8-----------------------------");
         sender.sendMessage("");
     }
