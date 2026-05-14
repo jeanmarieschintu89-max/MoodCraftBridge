@@ -223,12 +223,12 @@ public class MainMenuHandler implements GUIHandler {
                 quick(
                         p,
                         "Métiers",
-                        "Chargement..."
+                        "Ouverture du bureau des métiers..."
                 );
 
                 openNext(
                         p,
-                        () -> p.performCommand("jobs join")
+                        () -> p.performCommand("metiers")
                 );
             }
 
