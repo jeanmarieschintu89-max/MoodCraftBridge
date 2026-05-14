@@ -79,7 +79,7 @@ public class MainMenuHandler implements GUIHandler {
             }
 
             //
-            // 📊 MARCHÉ
+            // 📊 BOURSES
             //
 
             case 12 -> {
@@ -94,7 +94,7 @@ public class MainMenuHandler implements GUIHandler {
 
                 quick(
                         p,
-                        "Marché",
+                        "Bourses",
                         "Chargement des prix..."
                 );
 
@@ -125,19 +125,12 @@ public class MainMenuHandler implements GUIHandler {
 
                     p.closeInventory();
 
+                    header(p, "Bureau des Entreprises");
+                    p.sendMessage("§c✖ §fModule indisponible.");
                     p.sendMessage("");
-                    p.sendMessage("§8----- §6✦ Bureau des Entreprises ✦ §8-----");
-                    p.sendMessage("");
-                    p.sendMessage("§c✘ §fModule indisponible.");
-                    p.sendMessage("");
-                    p.sendMessage("§7Le service économique");
-                    p.sendMessage("§7n'est pas chargé.");
-                    p.sendMessage("");
-                    p.sendMessage("§8• §7Contactez le staff");
-                    p.sendMessage("§8• §7ou réessayez plus tard");
-                    p.sendMessage("");
-                    p.sendMessage("§8-----------------------------");
-                    p.sendMessage("");
+                    p.sendMessage("§8• §7Le service économique n'est pas chargé");
+                    p.sendMessage("§8• §7Contactez le staff ou réessayez plus tard");
+                    footer(p);
 
                     p.playSound(
                             p.getLocation(),
@@ -255,9 +248,9 @@ public class MainMenuHandler implements GUIHandler {
 
                 p.closeInventory();
 
-                p.sendMessage(
-                        "§8✦ §7Menu fermé."
-                );
+                p.sendMessage("§8----- §6✦ Menu §aMood§6Craft §6✦ §8-----");
+                p.sendMessage("§e➜ §fMenu fermé.");
+                p.sendMessage("§8-----------------------------");
             }
         }
     }
@@ -273,11 +266,30 @@ public class MainMenuHandler implements GUIHandler {
     ) {
 
         p.sendMessage(
-                "§8✦ §6"
+                "§6✦ §f"
                         + module
-                        + " §8• §7"
+                        + " §8• §e➜ §7"
                         + message
         );
+    }
+
+    private void header(
+            Player p,
+            String module
+    ) {
+
+        p.sendMessage("");
+        p.sendMessage("§8----- §6✦ " + module + " §6✦ §8-----");
+        p.sendMessage("");
+    }
+
+    private void footer(
+            Player p
+    ) {
+
+        p.sendMessage("");
+        p.sendMessage("§8-----------------------------");
+        p.sendMessage("");
     }
 
     //
