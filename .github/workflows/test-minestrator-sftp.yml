@@ -1,0 +1,65 @@
+name: Test Minestrator SFTP connection
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-sftp:
+    name: Test SFTP access
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - name: Install SFTP client
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lftp
+
+      - name: Test connection and plugins folder
+        shell: bash
+        env:
+          SFTP_HOST: ${{ secrets.MINESTRATOR_SFTP_HOST }}
+          SFTP_PORT: ${{ secrets.MINESTRATOR_SFTP_PORT }}
+          SFTP_USER: ${{ secrets.MINESTRATOR_SFTP_USER }}
+          SFTP_PASSWORD: ${{ secrets.MINESTRATOR_SFTP_PASSWORD }}
+          SFTP_PLUGINS_PATH: ${{ secrets.MINESTRATOR_PLUGINS_PATH }}
+        run: |
+          set -euo pipefail
+
+          SFTP_PORT="${SFTP_PORT:-22}"
+
+          missing=0
+          for var in SFTP_HOST SFTP_USER SFTP_PASSWORD SFTP_PLUGINS_PATH; do
+            if [ -z "${!var}" ]; then
+              echo "Missing secret: ${var}"
+              missing=1
+            fi
+          done
+
+          if [ "${missing}" -ne 0 ]; then
+            echo "SFTP test cancelled: missing secret."
+            exit 1
+          fi
+
+          echo "Testing Minestrator SFTP connection..."
+          echo "Port: ${SFTP_PORT}"
+          echo "Plugins path is configured."
+
+          cat > test.lftp <<EOF
+          set cmd:fail-exit yes
+          set sftp:auto-confirm yes
+          set net:timeout 10
+          set net:max-retries 1
+          cd "${SFTP_PLUGINS_PATH}"
+          pwd
+          cls -l
+          bye
+          EOF
+
+          timeout 40s lftp -u "${SFTP_USER}","${SFTP_PASSWORD}" -p "${SFTP_PORT}" "sftp://${SFTP_HOST}" < test.lftp
+
+          echo "SFTP connection OK. Plugins folder opened successfully."
