@@ -8,6 +8,9 @@ on:
     paths:
       - '.github/workflows/build-all-plugins.yml'
 
+permissions:
+  contents: read
+
 jobs:
   build-all:
     name: Build all plugin jars
@@ -19,6 +22,13 @@ jobs:
         with:
           repository: jeanmarieschintu89-max/MoodAuth
           path: sources/MoodAuth
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Checkout MoodVilleDrapeau
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/MoodVilleDrapeau
+          path: sources/MoodVilleDrapeau
           token: ${{ secrets.GH_PAT || github.token }}
 
       - name: Checkout MoodCraftBridge
@@ -49,13 +59,6 @@ jobs:
           path: sources/MoodcraftChestLock
           token: ${{ secrets.GH_PAT || github.token }}
 
-      - name: Checkout MoodVilleDrapeau
-        uses: actions/checkout@v4
-        with:
-          repository: jeanmarieschintu89-max/MoodVilleDrapeau
-          path: sources/MoodVilleDrapeau
-          token: ${{ secrets.GH_PAT || github.token }}
-
       - name: Checkout Moodtownmenu
         uses: actions/checkout@v4
         with:
@@ -82,12 +85,11 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-          cache: maven
 
-      - name: Build plugins and collect jars
+      - name: Build plugins and collect fixed jars
         shell: bash
         run: |
-          set -euo pipefail
+          set -u
 
           mkdir -p dist logs
 
@@ -107,9 +109,9 @@ jobs:
           failed_plugins=()
 
           for plugin in "${plugins[@]}"; do
-            echo "================================="
+            echo "========================================"
             echo "Building ${plugin}"
-            echo "================================="
+            echo "========================================"
 
             if [ ! -f "sources/${plugin}/pom.xml" ]; then
               echo "MISSING_POM ${plugin}" | tee "logs/${plugin}.log"
@@ -119,22 +121,17 @@ jobs:
             fi
 
             if (cd "sources/${plugin}" && mvn -B -DskipTests clean package > "../../logs/${plugin}.log" 2>&1); then
-              echo "OK ${plugin}"
+              jar="$(find "sources/${plugin}/target" -maxdepth 1 -type f -name '*.jar' ! -name '*original*' ! -name '*sources*' ! -name '*javadoc*' | sort | head -n 1)"
 
-              jar_count=$(find "sources/${plugin}/target" -maxdepth 1 -type f -name '*.jar' ! -name '*original*' | wc -l)
-
-              if [ "${jar_count}" -eq 0 ]; then
+              if [ -z "${jar}" ]; then
                 echo "NO_JAR ${plugin}" | tee -a "logs/${plugin}.log"
                 failed=1
                 failed_plugins+=("${plugin}")
                 continue
               fi
 
-              while IFS= read -r jar; do
-                base=$(basename "${jar}")
-                cp "${jar}" "dist/${plugin}-${base}"
-              done < <(find "sources/${plugin}/target" -maxdepth 1 -type f -name '*.jar' ! -name '*original*')
-
+              cp "${jar}" "dist/${plugin}.jar"
+              echo "OK ${plugin} -> dist/${plugin}.jar"
             else
               echo "FAILED ${plugin}"
               failed=1
@@ -145,17 +142,17 @@ jobs:
             fi
           done
 
-          echo "================================="
+          echo "========================================"
           echo "Collected jars"
-          echo "================================="
+          echo "========================================"
           ls -lah dist || true
 
           if [ "${failed}" -ne 0 ]; then
-            echo "================================="
+            echo "========================================"
             echo "Failed plugins"
-            echo "================================="
+            echo "========================================"
             printf '%s\n' "${failed_plugins[@]}"
-            echo "One or more plugin builds failed. Check the inline log above or the MoodCraft-build-logs artifact."
+            echo "One or more plugin builds failed. Check the MoodCraft-build-logs artifact."
             exit 1
           fi
 
