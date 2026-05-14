@@ -2,7 +2,6 @@ package fr.moodcraft.bridge.handler;
 
 import fr.moodcraft.bridge.bank.IbanManager;
 
-import fr.moodcraft.bridge.gui.BankGUI;
 import fr.moodcraft.bridge.gui.MainMenuGUI;
 import fr.moodcraft.bridge.gui.TransactionHistoryGUI;
 import fr.moodcraft.bridge.gui.TransferTypeGUI;
@@ -107,10 +106,9 @@ public class BankHandler implements GUIHandler {
 
                 header(p);
 
-                p.sendMessage("§fIdentité bancaire personnelle.");
+                p.sendMessage("§e➜ §fIdentité bancaire personnelle.");
                 p.sendMessage("");
-                p.sendMessage("§7IBAN: §e" + iban);
-                p.sendMessage("");
+                p.sendMessage("§8• §7IBAN: §e" + iban);
                 p.sendMessage("§8• §7Utile pour les virements");
                 p.sendMessage("§8• §7À partager avec prudence");
 
@@ -155,7 +153,7 @@ public class BankHandler implements GUIHandler {
 
                 header(p);
 
-                p.sendMessage("§eActivité bancaire en préparation.");
+                p.sendMessage("§e➜ §fActivité bancaire en préparation.");
                 p.sendMessage("");
                 p.sendMessage("§8• §7Volume personnel");
                 p.sendMessage("§8• §7Flux bancaires");
@@ -200,7 +198,7 @@ public class BankHandler implements GUIHandler {
     ) {
 
         p.sendMessage("");
-        p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----");
+        p.sendMessage("§8----- §6✦ Banque §aMood§6Craft §6✦ §8-----");
         p.sendMessage("");
     }
 
