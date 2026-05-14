@@ -1,0 +1,149 @@
+name: Build all MoodCraft plugins
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/build-all-plugins.yml'
+
+jobs:
+  build-all:
+    name: Build all plugin jars
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout MoodAuth
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/MoodAuth
+          path: sources/MoodAuth
+
+      - name: Checkout MoodCraftBridge
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/MoodCraftBridge
+          path: sources/MoodCraftBridge
+
+      - name: Checkout MoodTownGrade
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/MoodTownGrade
+          path: sources/MoodTownGrade
+
+      - name: Checkout MoodCraftMeteo
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/MoodCraftMeteo
+          path: sources/MoodCraftMeteo
+
+      - name: Checkout MoodcraftChestLock
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/MoodcraftChestLock
+          path: sources/MoodcraftChestLock
+
+      - name: Checkout MoodVilleDrapeau
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/MoodVilleDrapeau
+          path: sources/MoodVilleDrapeau
+
+      - name: Checkout Moodtownmenu
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/Moodtownmenu
+          path: sources/Moodtownmenu
+
+      - name: Checkout MoodBusiness
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/MoodBusiness
+          path: sources/MoodBusiness
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Build plugins and collect jars
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p dist logs
+
+          plugins=(
+            MoodAuth
+            MoodVilleDrapeau
+            MoodCraftBridge
+            MoodTownGrade
+            MoodCraftMeteo
+            MoodcraftChestLock
+            Moodtownmenu
+            MoodBusiness
+          )
+
+          failed=0
+
+          for plugin in "${plugins[@]}"; do
+            echo "================================="
+            echo "Building ${plugin}"
+            echo "================================="
+
+            if [ ! -f "sources/${plugin}/pom.xml" ]; then
+              echo "MISSING_POM ${plugin}" | tee "logs/${plugin}.log"
+              failed=1
+              continue
+            fi
+
+            if (cd "sources/${plugin}" && mvn -B -DskipTests clean package > "../../logs/${plugin}.log" 2>&1); then
+              echo "OK ${plugin}"
+
+              jar_count=$(find "sources/${plugin}/target" -maxdepth 1 -type f -name '*.jar' ! -name '*original*' | wc -l)
+
+              if [ "${jar_count}" -eq 0 ]; then
+                echo "NO_JAR ${plugin}" | tee -a "logs/${plugin}.log"
+                failed=1
+                continue
+              fi
+
+              while IFS= read -r jar; do
+                base=$(basename "${jar}")
+                cp "${jar}" "dist/${plugin}-${base}"
+              done < <(find "sources/${plugin}/target" -maxdepth 1 -type f -name '*.jar' ! -name '*original*')
+
+            else
+              echo "FAILED ${plugin}"
+              failed=1
+            fi
+          done
+
+          echo "================================="
+          echo "Collected jars"
+          echo "================================="
+          ls -lah dist || true
+
+          if [ "${failed}" -ne 0 ]; then
+            echo "One or more plugin builds failed. Check the build-logs artifact."
+            exit 1
+          fi
+
+      - name: Upload all plugin jars
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MoodCraft-all-plugin-jars
+          path: dist/*.jar
+          if-no-files-found: warn
+
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MoodCraft-build-logs
+          path: logs/*.log
+          if-no-files-found: warn
