@@ -1,0 +1,197 @@
+name: Build and upload plugins to Minestrator SFTP
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-upload:
+    name: Build and upload plugin jars
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout MoodAuth
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/MoodAuth
+          path: sources/MoodAuth
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Checkout MoodCraftBridge
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/MoodCraftBridge
+          path: sources/MoodCraftBridge
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Checkout MoodTownGrade
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/MoodTownGrade
+          path: sources/MoodTownGrade
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Checkout MoodCraftMeteo
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/MoodCraftMeteo
+          path: sources/MoodCraftMeteo
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Checkout MoodcraftChestLock
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/MoodcraftChestLock
+          path: sources/MoodcraftChestLock
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Checkout MoodVilleDrapeau
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/MoodVilleDrapeau
+          path: sources/MoodVilleDrapeau
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Checkout Moodtownmenu
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/Moodtownmenu
+          path: sources/Moodtownmenu
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Checkout MoodBusiness
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/MoodBusiness
+          path: sources/MoodBusiness
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Checkout MoodEvent
+        uses: actions/checkout@v4
+        with:
+          repository: jeanmarieschintu89-max/MoodEvent
+          path: sources/MoodEvent
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Build plugins and collect jars
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist logs
+
+          plugins=(
+            MoodAuth
+            MoodVilleDrapeau
+            MoodCraftBridge
+            MoodTownGrade
+            MoodCraftMeteo
+            MoodcraftChestLock
+            Moodtownmenu
+            MoodBusiness
+            MoodEvent
+          )
+
+          failed=0
+          failed_plugins=()
+
+          for plugin in "${plugins[@]}"; do
+            echo "================================="
+            echo "Building ${plugin}"
+            echo "================================="
+
+            if [ ! -f "sources/${plugin}/pom.xml" ]; then
+              echo "MISSING_POM ${plugin}" | tee "logs/${plugin}.log"
+              failed=1
+              failed_plugins+=("${plugin}")
+              continue
+            fi
+
+            if (cd "sources/${plugin}" && mvn -B -DskipTests clean package > "../../logs/${plugin}.log" 2>&1); then
+              echo "OK ${plugin}"
+              jar_count=$(find "sources/${plugin}/target" -maxdepth 1 -type f -name '*.jar' ! -name '*original*' | wc -l)
+
+              if [ "${jar_count}" -eq 0 ]; then
+                echo "NO_JAR ${plugin}" | tee -a "logs/${plugin}.log"
+                failed=1
+                failed_plugins+=("${plugin}")
+                continue
+              fi
+
+              while IFS= read -r jar; do
+                base=$(basename "${jar}")
+                cp "${jar}" "dist/${plugin}-${base}"
+              done < <(find "sources/${plugin}/target" -maxdepth 1 -type f -name '*.jar' ! -name '*original*')
+            else
+              echo "FAILED ${plugin}"
+              failed=1
+              failed_plugins+=("${plugin}")
+              echo "----- ${plugin} build log tail -----"
+              tail -n 120 "logs/${plugin}.log" || true
+              echo "----- end ${plugin} build log tail -----"
+            fi
+          done
+
+          echo "================================="
+          echo "Collected jars"
+          echo "================================="
+          ls -lah dist || true
+
+          if [ "${failed}" -ne 0 ]; then
+            echo "================================="
+            echo "Failed plugins"
+            echo "================================="
+            printf '%s\n' "${failed_plugins[@]}"
+            exit 1
+          fi
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MoodCraft-all-plugin-jars
+          path: dist/*.jar
+          if-no-files-found: error
+
+      - name: Install lftp
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lftp
+
+      - name: Upload jars to Minestrator SFTP
+        shell: bash
+        env:
+          SFTP_HOST: ${{ secrets.MINESTRATOR_SFTP_HOST }}
+          SFTP_PORT: ${{ secrets.MINESTRATOR_SFTP_PORT }}
+          SFTP_USER: ${{ secrets.MINESTRATOR_SFTP_USER }}
+          SFTP_PASSWORD: ${{ secrets.MINESTRATOR_SFTP_PASSWORD }}
+          SFTP_PLUGINS_PATH: ${{ secrets.MINESTRATOR_PLUGINS_PATH }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${SFTP_HOST}" ] || [ -z "${SFTP_PORT}" ] || [ -z "${SFTP_USER}" ] || [ -z "${SFTP_PASSWORD}" ] || [ -z "${SFTP_PLUGINS_PATH}" ]; then
+            echo "Missing Minestrator SFTP secrets."
+            exit 1
+          fi
+
+          lftp -u "${SFTP_USER}","${SFTP_PASSWORD}" -p "${SFTP_PORT}" "sftp://${SFTP_HOST}" <<EOF
+          set sftp:auto-confirm yes
+          set net:timeout 20
+          set net:max-retries 2
+          cd "${SFTP_PLUGINS_PATH}"
+          mput dist/*.jar
+          bye
+          EOF
+
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MoodCraft-build-logs
+          path: logs/*.log
+          if-no-files-found: warn
