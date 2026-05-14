@@ -2,6 +2,16 @@ name: Test Minestrator SFTP connection
 
 on:
   workflow_dispatch:
+    inputs:
+      sftp_port:
+        description: 'Port SFTP a tester'
+        required: true
+        default: '22'
+        type: choice
+        options:
+          - '22'
+          - '2022'
+          - 'secret'
 
 permissions:
   contents: read
@@ -23,14 +33,13 @@ jobs:
         shell: bash
         env:
           SFTP_HOST: ${{ secrets.MINESTRATOR_SFTP_HOST }}
-          SFTP_PORT: ${{ secrets.MINESTRATOR_SFTP_PORT }}
+          SECRET_SFTP_PORT: ${{ secrets.MINESTRATOR_SFTP_PORT }}
           SFTP_USER: ${{ secrets.MINESTRATOR_SFTP_USER }}
           SFTP_PASSWORD: ${{ secrets.MINESTRATOR_SFTP_PASSWORD }}
           SFTP_PLUGINS_PATH: ${{ secrets.MINESTRATOR_PLUGINS_PATH }}
+          INPUT_PORT: ${{ inputs.sftp_port }}
         run: |
           set -euo pipefail
-
-          SFTP_PORT="${SFTP_PORT:-22}"
 
           missing=0
           for var in SFTP_HOST SFTP_USER SFTP_PASSWORD SFTP_PLUGINS_PATH; do
@@ -45,14 +54,20 @@ jobs:
             exit 1
           fi
 
+          if [ "${INPUT_PORT}" = "secret" ]; then
+            SFTP_PORT="${SECRET_SFTP_PORT:-22}"
+          else
+            SFTP_PORT="${INPUT_PORT}"
+          fi
+
           echo "Testing Minestrator SFTP connection..."
-          echo "Port: ${SFTP_PORT}"
+          echo "Selected port: ${SFTP_PORT}"
           echo "Plugins path is configured."
 
           cat > test.lftp <<EOF
           set cmd:fail-exit yes
           set sftp:auto-confirm yes
-          set net:timeout 10
+          set net:timeout 8
           set net:max-retries 1
           cd "${SFTP_PLUGINS_PATH}"
           pwd
@@ -60,6 +75,6 @@ jobs:
           bye
           EOF
 
-          timeout 40s lftp -u "${SFTP_USER}","${SFTP_PASSWORD}" -p "${SFTP_PORT}" "sftp://${SFTP_HOST}" < test.lftp
+          timeout 25s lftp -u "${SFTP_USER}","${SFTP_PASSWORD}" -p "${SFTP_PORT}" "sftp://${SFTP_HOST}" < test.lftp
 
           echo "SFTP connection OK. Plugins folder opened successfully."
