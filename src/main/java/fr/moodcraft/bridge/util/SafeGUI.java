@@ -91,14 +91,69 @@ public class SafeGUI {
             for (String line : lore) {
 
                 fixed.add(
-                        line == null
-                                ? ""
-                                : "§7" + line
+                        normalizeLoreLine(line)
                 );
             }
         }
 
         return fixed;
+    }
+
+    private static String normalizeLoreLine(String line) {
+
+        if (line == null || line.isBlank()) {
+            return "";
+        }
+
+        String trimmed =
+                line.trim()
+                        .replace("§c✘", "§c✖");
+
+        if (trimmed.startsWith("§8•")
+                || trimmed.startsWith("§e➜")
+                || trimmed.startsWith("§a✔")
+                || trimmed.startsWith("§c✖")) {
+
+            return trimmed;
+        }
+
+        if (trimmed.startsWith("§eClique")
+                || trimmed.startsWith("§eOuvrir")
+                || trimmed.startsWith("§eConfirmer")) {
+
+            return "§e➜ §f" + cleanPrefix(trimmed);
+        }
+
+        if (trimmed.startsWith("§a")) {
+            return "§a✔ §f" + cleanPrefix(trimmed);
+        }
+
+        if (trimmed.startsWith("§c")) {
+            return "§c✖ §f" + cleanPrefix(trimmed);
+        }
+
+        if (trimmed.startsWith("§7")
+                || trimmed.startsWith("§8")) {
+            return "§8• §7" + cleanPrefix(trimmed);
+        }
+
+        return "§8• §7" + cleanPrefix(trimmed);
+    }
+
+    private static String cleanPrefix(String text) {
+
+        if (text == null) {
+            return "";
+        }
+
+        return text
+                .replaceFirst("^§[0-9a-fk-or]", "")
+                .replaceFirst("^➜\\s*", "")
+                .replaceFirst("^✔\\s*", "")
+                .replaceFirst("^✘\\s*", "")
+                .replaceFirst("^✖\\s*", "")
+                .replaceFirst("^•\\s*", "")
+                .trim();
     }
 
     private static void hideAll(ItemMeta meta) {
