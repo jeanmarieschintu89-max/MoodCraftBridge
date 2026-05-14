@@ -22,48 +22,32 @@ import java.util.UUID;
 
 public class TargetPlayerGUI {
 
-    private static final Map<Integer, UUID> slotMap =
-            new HashMap<>();
+    private static final Map<Integer, UUID> slotMap = new HashMap<>();
 
     public static void open(Player p) {
 
-        Inventory inv =
-                Bukkit.createInventory(
-                        null,
-                        54,
-                        "§6✦ §8Choisir un joueur §6✦"
-                );
+        Inventory inv = Bukkit.createInventory(null, 54, "§6✦ §8Choisir un joueur §6✦");
 
         slotMap.clear();
 
-        SafeGUI.fill(
-                inv,
-                Material.BLACK_STAINED_GLASS_PANE,
-                " "
-        );
+        SafeGUI.fill(inv, Material.BLACK_STAINED_GLASS_PANE, " ");
 
         SafeGUI.safeSet(inv, 4,
                 SafeGUI.glow(
                         button(
                                 Material.PAPER,
                                 "§6✦ §fChoisir un joueur §6✦",
-                                "§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----",
-                                "",
-                                "§7Sélectionne un joueur",
-                                "§7connecté au serveur.",
-                                "",
-                                "§8• §7Choix du joueur",
+                                "§8• §7Sélectionne un joueur connecté",
                                 "§8• §7Montant dans le chat",
-                                "§8• §7Confirmation finale"
+                                "§8• §7Confirmation finale",
+                                "",
+                                "§e➜ §fClique sur une tête"
                         )
                 )
         );
 
-        int slot =
-                10;
-
-        boolean found =
-                false;
+        int slot = 10;
+        boolean found = false;
 
         for (Player target : Bukkit.getOnlinePlayers()) {
 
@@ -87,52 +71,29 @@ public class TargetPlayerGUI {
                 break;
             }
 
-            slotMap.put(
-                    slot,
-                    target.getUniqueId()
-            );
+            slotMap.put(slot, target.getUniqueId());
 
-            ItemStack head =
-                    new ItemStack(
-                            Material.PLAYER_HEAD
-                    );
+            ItemStack head = new ItemStack(Material.PLAYER_HEAD);
 
-            if (head.getItemMeta()
-                    instanceof SkullMeta meta) {
+            if (head.getItemMeta() instanceof SkullMeta meta) {
 
                 meta.setOwningPlayer(target);
-
-                meta.setDisplayName(
-                        "§6✦ §f"
-                                + shortText(
-                                target.getName(),
-                                16
-                        )
-                );
-
+                meta.setDisplayName("§6✦ §f" + shortText(target.getName(), 16) + " §6✦");
                 meta.setLore(java.util.List.of(
-                        "§7Joueur connecté.",
-                        "",
+                        "§8• §7Joueur connecté",
                         "§8• §7Clique pour choisir",
                         "§8• §7puis écris le montant",
                         "",
-                        "§eSélectionner"
+                        "§e➜ §fSélectionner"
                 ));
 
                 hide(meta);
-
                 head.setItemMeta(meta);
             }
 
-            SafeGUI.safeSet(
-                    inv,
-                    slot,
-                    SafeGUI.glow(head)
-            );
+            SafeGUI.safeSet(inv, slot, SafeGUI.glow(head));
 
-            found =
-                    true;
-
+            found = true;
             slot++;
         }
 
@@ -141,26 +102,23 @@ public class TargetPlayerGUI {
             SafeGUI.safeSet(inv, 22,
                     button(
                             Material.BARRIER,
-                            "§c✦ Aucun joueur",
-                            "§7Aucun autre joueur",
-                            "§7n'est connecté.",
-                            "",
+                            "§c✦ §fAucun joueur §c✦",
+                            "§8• §7Aucun autre joueur connecté",
                             "§8• §7Pour envoyer hors ligne",
                             "§8• §7utilise l'IBAN",
                             "",
-                            "§cAucun choix disponible"
+                            "§c✖ §fAucun choix disponible"
                     )
             );
         }
 
         SafeGUI.safeSet(inv, 45,
                 button(
-                        Material.ARROW,
-                        "§c✦ Retour",
-                        "§7Retour au choix",
-                        "§7du virement.",
+                        Material.BARRIER,
+                        "§c✦ §fRetour §c✦",
+                        "§8• §7Retour au choix du virement",
                         "",
-                        "§cClique pour revenir"
+                        "§c✖ §fRevenir"
                 )
         );
 
@@ -168,78 +126,50 @@ public class TargetPlayerGUI {
                 button(
                         Material.NAME_TAG,
                         "§6✦ §fIBAN §6✦",
-                        "§7Pour envoyer à",
-                        "§7un joueur absent.",
+                        "§8• §7Pour envoyer à un joueur absent",
+                        "§8• §7Retourne au choix du virement",
+                        "§8• §7puis choisis IBAN",
                         "",
-                        "§8• §7Retour",
-                        "§8• §7puis choisis IBAN"
+                        "§e➜ §fUtiliser l'IBAN"
                 )
         );
 
-        GUIManager.open(
-                p,
-                "transfer_target",
-                inv
-        );
+        GUIManager.open(p, "transfer_target", inv);
     }
 
     public static UUID getTarget(int slot) {
-
         return slotMap.get(slot);
     }
 
-    private static ItemStack button(
-            Material material,
-            String name,
-            String... lore
-    ) {
+    private static ItemStack button(Material material, String name, String... lore) {
 
-        ItemStack item =
-                SafeGUI.item(
-                        material,
-                        name,
-                        lore
-                );
-
-        ItemMeta meta =
-                item.getItemMeta();
+        ItemStack item = SafeGUI.item(material, name, lore);
+        ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
-
             hide(meta);
-
             item.setItemMeta(meta);
         }
 
         return item;
     }
 
-    private static String shortText(
-            String text,
-            int max
-    ) {
+    private static String shortText(String text, int max) {
 
         if (text == null || text.isBlank()) {
             return "Inconnu";
         }
 
-        String clean =
-                text.replaceAll("§.", "")
-                        .trim();
+        String clean = text.replaceAll("§.", "").trim();
 
         if (clean.length() <= max) {
             return clean;
         }
 
-        return clean.substring(
-                0,
-                Math.max(1, max - 3)
-        ) + "...";
+        return clean.substring(0, Math.max(1, max - 3)) + "...";
     }
 
-    private static void hide(
-            ItemMeta meta
-    ) {
+    private static void hide(ItemMeta meta) {
 
         meta.addItemFlags(
                 ItemFlag.HIDE_ATTRIBUTES,
@@ -251,14 +181,9 @@ public class TargetPlayerGUI {
         );
 
         try {
-
-            ItemFlag flag =
-                    ItemFlag.valueOf(
-                            "HIDE_ITEM_SPECIFICS"
-                    );
-
+            ItemFlag flag = ItemFlag.valueOf("HIDE_ITEM_SPECIFICS");
             meta.addItemFlags(flag);
-
-        } catch (IllegalArgumentException ignored) {}
+        } catch (IllegalArgumentException ignored) {
+        }
     }
 }
