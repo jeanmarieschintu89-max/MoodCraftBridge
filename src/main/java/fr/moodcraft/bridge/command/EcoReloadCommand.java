@@ -33,34 +33,23 @@ public class EcoReloadCommand implements CommandExecutor {
         }
 
         MarketEngine.reload();
-
         ShopIndex.rebuild();
 
-        int updated =
-                0;
+        int updated = 0;
 
         for (String item : MarketState.price.keySet()) {
-
             PriceUpdater.updateItem(item);
-
             updated++;
         }
 
-        sendSuccess(
-                sender,
-                updated
-        );
+        sendSuccess(sender, updated);
 
         Bukkit.broadcastMessage("");
         Bukkit.broadcastMessage("§8----- §6✦ §aMood§6Craft §fÉconomie §6✦ §8-----");
-        Bukkit.broadcastMessage("");
         Bukkit.broadcastMessage("§a✔ §fMarché rechargé.");
-        Bukkit.broadcastMessage("");
-        Bukkit.broadcastMessage("§8• §7Prix mis à jour");
-        Bukkit.broadcastMessage("§8• §7Shops resynchronisés");
-        Bukkit.broadcastMessage("");
+        Bukkit.broadcastMessage("§e➜ §7Prix mis à jour");
+        Bukkit.broadcastMessage("§e➜ §7Shops resynchronisés");
         Bukkit.broadcastMessage("§8-----------------------------");
-        Bukkit.broadcastMessage("");
 
         return true;
     }
@@ -72,16 +61,11 @@ public class EcoReloadCommand implements CommandExecutor {
 
         sender.sendMessage("");
         sender.sendMessage("§8----- §6✦ §aMood§6Craft §fÉconomie §6✦ §8-----");
-        sender.sendMessage("");
         sender.sendMessage("§a✔ §fReload effectué.");
-        sender.sendMessage("");
-        sender.sendMessage("§7Items mis à jour: §e" + updated);
-        sender.sendMessage("");
-        sender.sendMessage("§8• §7Marché rechargé");
-        sender.sendMessage("§8• §7Shops resynchronisés");
-        sender.sendMessage("");
+        sender.sendMessage("§e➜ §7Items mis à jour : §e" + updated);
+        sender.sendMessage("§e➜ §7Marché rechargé");
+        sender.sendMessage("§e➜ §7Shops resynchronisés");
         sender.sendMessage("§8-----------------------------");
-        sender.sendMessage("");
     }
 
     private void sendError(
@@ -91,12 +75,8 @@ public class EcoReloadCommand implements CommandExecutor {
 
         sender.sendMessage("");
         sender.sendMessage("§8----- §6✦ §aMood§6Craft §fÉconomie §6✦ §8-----");
-        sender.sendMessage("");
-        sender.sendMessage("§c✘ §fAction refusée.");
-        sender.sendMessage("");
-        sender.sendMessage("§7" + message);
-        sender.sendMessage("");
+        sender.sendMessage("§c✖ §fAction refusée.");
+        sender.sendMessage("§e➜ §7" + message);
         sender.sendMessage("§8-----------------------------");
-        sender.sendMessage("");
     }
 }
