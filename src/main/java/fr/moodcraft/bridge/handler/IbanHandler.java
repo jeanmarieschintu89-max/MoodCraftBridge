@@ -11,38 +11,23 @@ import org.bukkit.entity.Player;
 public class IbanHandler implements GUIHandler {
 
     @Override
-    public void onClick(
-            Player p,
-            int slot
-    ) {
+    public void onClick(Player p, int slot) {
 
         switch (slot) {
-
-            //
-            // 🏦 SAISIE IBAN
-            //
 
             case 13 -> {
 
                 p.closeInventory();
 
-                InputManager.wait(
-                        p,
-                        "transfer_iban"
-                );
+                InputManager.wait(p, "transfer_iban");
 
                 header(p);
-
-                p.sendMessage("§a✔ §fSaisie IBAN.");
-                p.sendMessage("");
-                p.sendMessage("§fÉcris l'IBAN dans le chat.");
-                p.sendMessage("");
-                p.sendMessage("§8• §7Exemple: §eMC-1234-ABCD");
-                p.sendMessage("§8• §7Le joueur peut être hors ligne");
-                p.sendMessage("§8• §7Le montant sera demandé ensuite");
-                p.sendMessage("");
-                p.sendMessage("§7Tape §cannuler §7pour quitter.");
-
+                p.sendMessage("§a✔ §fSaisie IBAN ouverte.");
+                p.sendMessage("§e➜ §fÉcris l'IBAN dans le chat.");
+                p.sendMessage("§8• §7Exemple : §eMC-1234-ABCD");
+                p.sendMessage("§8• §7Le joueur peut être hors ligne.");
+                p.sendMessage("§8• §7Le montant sera demandé ensuite.");
+                p.sendMessage("§8• §7Tape §cannuler §7pour quitter.");
                 footer(p);
 
                 premiumClick(
@@ -53,10 +38,6 @@ public class IbanHandler implements GUIHandler {
                         1.2f
                 );
             }
-
-            //
-            // ↩ RETOUR
-            //
 
             case 31 -> {
 
@@ -73,44 +54,18 @@ public class IbanHandler implements GUIHandler {
         }
     }
 
-    private void header(
-            Player p
-    ) {
-
+    private void header(Player p) {
         p.sendMessage("");
-        p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----");
-        p.sendMessage("");
+        p.sendMessage("§8----- §6✦ Banque §aMood§6Craft ✦ §8-----");
     }
 
-    private void footer(
-            Player p
-    ) {
-
-        p.sendMessage("");
+    private void footer(Player p) {
         p.sendMessage("§8-----------------------------");
         p.sendMessage("");
     }
 
-    private void premiumClick(
-            Player p,
-            Sound main,
-            float mainPitch,
-            Sound second,
-            float secondPitch
-    ) {
-
-        p.playSound(
-                p.getLocation(),
-                main,
-                0.75f,
-                mainPitch
-        );
-
-        p.playSound(
-                p.getLocation(),
-                second,
-                0.35f,
-                secondPitch
-        );
+    private void premiumClick(Player p, Sound main, float mainPitch, Sound second, float secondPitch) {
+        p.playSound(p.getLocation(), main, 0.75f, mainPitch);
+        p.playSound(p.getLocation(), second, 0.35f, secondPitch);
     }
 }
