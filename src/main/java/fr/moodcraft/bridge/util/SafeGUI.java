@@ -20,28 +20,18 @@ public class SafeGUI {
                                  String name,
                                  String... lore) {
 
-        if (mat == null)
-            mat = Material.BARRIER;
+        Material finalMaterial = normalizeMaterial(mat, name);
 
-        ItemStack it =
-                new ItemStack(mat);
+        ItemStack it = new ItemStack(finalMaterial);
 
-        ItemMeta meta =
-                it.getItemMeta();
+        ItemMeta meta = it.getItemMeta();
 
         if (meta == null)
             return it;
 
-        meta.setDisplayName(
-                "§r" + (name == null ? "" : name)
-        );
-
-        meta.setLore(
-                formatLore(lore)
-        );
-
+        meta.setDisplayName("§r" + (name == null ? "" : name));
+        meta.setLore(formatLore(lore));
         hideAll(meta);
-
         it.setItemMeta(meta);
 
         return it;
@@ -52,30 +42,22 @@ public class SafeGUI {
                                  String... lore) {
 
         if (base == null)
-            return item(
-                    Material.BARRIER,
-                    " "
-            );
+            return item(Material.BARRIER, " ");
 
-        ItemStack it =
-                base.clone();
+        ItemStack it = base.clone();
 
-        ItemMeta meta =
-                it.getItemMeta();
+        if (isReturnButton(name)) {
+            it.setType(Material.BARRIER);
+        }
+
+        ItemMeta meta = it.getItemMeta();
 
         if (meta == null)
             return it;
 
-        meta.setDisplayName(
-                "§r" + (name == null ? "" : name)
-        );
-
-        meta.setLore(
-                formatLore(lore)
-        );
-
+        meta.setDisplayName("§r" + (name == null ? "" : name));
+        meta.setLore(formatLore(lore));
         hideAll(meta);
-
         it.setItemMeta(meta);
 
         return it;
@@ -83,16 +65,11 @@ public class SafeGUI {
 
     private static List<String> formatLore(String... lore) {
 
-        List<String> fixed =
-                new ArrayList<>();
+        List<String> fixed = new ArrayList<>();
 
         if (lore != null) {
-
             for (String line : lore) {
-
-                fixed.add(
-                        normalizeLoreLine(line)
-                );
+                fixed.add(normalizeLoreLine(line));
             }
         }
 
@@ -105,22 +82,18 @@ public class SafeGUI {
             return "";
         }
 
-        String trimmed =
-                line.trim()
-                        .replace("§c✘", "§c✖");
+        String trimmed = line.trim().replace("§c✘", "§c✖");
 
         if (trimmed.startsWith("§8•")
                 || trimmed.startsWith("§e➜")
                 || trimmed.startsWith("§a✔")
                 || trimmed.startsWith("§c✖")) {
-
             return trimmed;
         }
 
         if (trimmed.startsWith("§eClique")
                 || trimmed.startsWith("§eOuvrir")
                 || trimmed.startsWith("§eConfirmer")) {
-
             return "§e➜ §f" + cleanPrefix(trimmed);
         }
 
@@ -132,12 +105,40 @@ public class SafeGUI {
             return "§c✖ §f" + cleanPrefix(trimmed);
         }
 
-        if (trimmed.startsWith("§7")
-                || trimmed.startsWith("§8")) {
+        if (trimmed.startsWith("§7") || trimmed.startsWith("§8")) {
             return "§8• §7" + cleanPrefix(trimmed);
         }
 
         return "§8• §7" + cleanPrefix(trimmed);
+    }
+
+    private static Material normalizeMaterial(Material material, String name) {
+
+        if (isReturnButton(name)) {
+            return Material.BARRIER;
+        }
+
+        return material == null ? Material.BARRIER : material;
+    }
+
+    private static boolean isReturnButton(String name) {
+
+        if (name == null) {
+            return false;
+        }
+
+        String clean = name
+                .replaceAll("§.", "")
+                .replace("✦", "")
+                .trim()
+                .toLowerCase();
+
+        return clean.equals("retour")
+                || clean.equals("fermer")
+                || clean.equals("revenir")
+                || clean.equals("annuler")
+                || clean.contains("retour au menu")
+                || clean.contains("fermer le menu");
     }
 
     private static String cleanPrefix(String text) {
@@ -157,7 +158,6 @@ public class SafeGUI {
     }
 
     private static void hideAll(ItemMeta meta) {
-
         meta.addItemFlags(
                 ItemFlag.HIDE_ATTRIBUTES,
                 ItemFlag.HIDE_ENCHANTS,
@@ -174,23 +174,14 @@ public class SafeGUI {
         if (item == null)
             return null;
 
-        ItemStack clone =
-                item.clone();
-
-        ItemMeta meta =
-                clone.getItemMeta();
+        ItemStack clone = item.clone();
+        ItemMeta meta = clone.getItemMeta();
 
         if (meta == null)
             return clone;
 
-        meta.addEnchant(
-                Enchantment.UNBREAKING,
-                1,
-                true
-        );
-
+        meta.addEnchant(Enchantment.UNBREAKING, 1, true);
         hideAll(meta);
-
         clone.setItemMeta(meta);
 
         return clone;
@@ -201,19 +192,13 @@ public class SafeGUI {
         if (item == null)
             return null;
 
-        ItemStack clone =
-                item.clone();
-
-        ItemMeta meta =
-                clone.getItemMeta();
+        ItemStack clone = item.clone();
+        ItemMeta meta = clone.getItemMeta();
 
         if (meta == null)
             return clone;
 
-        meta.getEnchants()
-                .keySet()
-                .forEach(meta::removeEnchant);
-
+        meta.getEnchants().keySet().forEach(meta::removeEnchant);
         clone.setItemMeta(meta);
 
         return clone;
@@ -227,20 +212,9 @@ public class SafeGUI {
             return;
 
         try {
-
-            inv.setItem(
-                    slot,
-                    item == null
-                            ? new ItemStack(Material.BARRIER)
-                            : item
-            );
-
+            inv.setItem(slot, item == null ? new ItemStack(Material.BARRIER) : item);
         } catch (Exception e) {
-
-            inv.setItem(
-                    slot,
-                    new ItemStack(Material.BARRIER)
-            );
+            inv.setItem(slot, new ItemStack(Material.BARRIER));
         }
     }
 
@@ -250,23 +224,12 @@ public class SafeGUI {
         if (inv == null)
             return;
 
-        ItemStack pane =
-                item(mat, " ");
-
-        int size =
-                inv.getSize();
+        ItemStack pane = item(mat, " ");
+        int size = inv.getSize();
 
         for (int i = 0; i < size; i++) {
-
-            if (i < 9
-                    || i >= size - 9
-                    || i % 9 == 0
-                    || i % 9 == 8) {
-
-                inv.setItem(
-                        i,
-                        pane.clone()
-                );
+            if (i < 9 || i >= size - 9 || i % 9 == 0 || i % 9 == 8) {
+                inv.setItem(i, pane.clone());
             }
         }
     }
@@ -278,23 +241,16 @@ public class SafeGUI {
         if (inv == null)
             return;
 
-        ItemStack fill =
-                item(mat, name);
+        ItemStack fill = item(mat, name);
 
         for (int i = 0; i < inv.getSize(); i++) {
-
             if (inv.getItem(i) == null) {
-
-                inv.setItem(
-                        i,
-                        fill.clone()
-                );
+                inv.setItem(i, fill.clone());
             }
         }
     }
 
     public static String money(double v) {
-
         return MONEY_FORMAT.format(v);
     }
 }
