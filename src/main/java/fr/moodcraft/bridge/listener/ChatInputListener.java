@@ -34,10 +34,6 @@ import java.util.UUID;
 
 public class ChatInputListener implements Listener {
 
-    //
-    // 🔒 LIMITES VIREMENT IBAN
-    //
-
     private static final double MAX_PERSONAL_TRANSFER =
             10000.0;
 
@@ -58,10 +54,6 @@ public class ChatInputListener implements Listener {
         Player p =
                 e.getPlayer();
 
-        //
-        // 💰 AMOUNT INPUT
-        //
-
         if (AmountInputManager.has(p)) {
 
             e.setCancelled(true);
@@ -79,10 +71,6 @@ public class ChatInputListener implements Listener {
 
             return;
         }
-
-        //
-        // 💳 TEXT INPUT
-        //
 
         if (InputManager.has(p)) {
 
@@ -106,10 +94,6 @@ public class ChatInputListener implements Listener {
             );
         }
     }
-
-    //
-    // 💰 HANDLE AMOUNT
-    //
 
     private void handleAmountInput(
             Player p,
@@ -165,10 +149,6 @@ public class ChatInputListener implements Listener {
 
         switch (type) {
 
-            //
-            // 💰 DEPOT
-            //
-
             case DEPOSIT -> {
 
                 double cash =
@@ -205,10 +185,6 @@ public class ChatInputListener implements Listener {
                         "§a+" + SafeGUI.money(amount) + "€"
                 );
             }
-
-            //
-            // 💸 RETRAIT
-            //
 
             case WITHDRAW -> {
 
@@ -249,10 +225,6 @@ public class ChatInputListener implements Listener {
                         "§a+" + SafeGUI.money(amount) + "€"
                 );
             }
-
-            //
-            // 💸 VIREMENT IBAN
-            //
 
             case PLAYER_TRANSFER -> {
 
@@ -439,10 +411,10 @@ public class ChatInputListener implements Listener {
 
                 header(p);
 
-                p.sendMessage("§a✔ §fVirement effectué.");
+                p.sendMessage(successLine("Virement effectué."));
                 p.sendMessage("");
-                p.sendMessage("§7Destinataire: §e" + targetName);
-                p.sendMessage("§7Montant: §c-" + SafeGUI.money(amount) + "€");
+                p.sendMessage(detail("Destinataire : §e" + targetName));
+                p.sendMessage(detail("Montant : §c-" + SafeGUI.money(amount) + "€"));
 
                 footer(p);
 
@@ -457,10 +429,10 @@ public class ChatInputListener implements Listener {
 
                     header(target);
 
-                    target.sendMessage("§a✔ §fVirement reçu.");
+                    target.sendMessage(successLine("Virement reçu."));
                     target.sendMessage("");
-                    target.sendMessage("§7Expéditeur: §e" + p.getName());
-                    target.sendMessage("§7Montant: §a+" + SafeGUI.money(amount) + "€");
+                    target.sendMessage(detail("Expéditeur : §e" + p.getName()));
+                    target.sendMessage(detail("Montant : §a+" + SafeGUI.money(amount) + "€"));
 
                     footer(target);
 
@@ -480,10 +452,6 @@ public class ChatInputListener implements Listener {
         BankGUI.open(p);
     }
 
-    //
-    // 💳 HANDLE TEXT
-    //
-
     private void handleTextInput(
             Player p,
             String context,
@@ -502,10 +470,6 @@ public class ChatInputListener implements Listener {
 
             return;
         }
-
-        //
-        // 🏦 SET IBAN
-        //
 
         if (context.equals("set_iban")) {
 
@@ -550,10 +514,6 @@ public class ChatInputListener implements Listener {
 
             return;
         }
-
-        //
-        // 💸 VIREMENT IBAN
-        //
 
         if (context.equals("transfer_iban")) {
 
@@ -603,14 +563,14 @@ public class ChatInputListener implements Listener {
 
             header(p);
 
-            p.sendMessage("§a✔ §fIBAN détecté.");
+            p.sendMessage(successLine("IBAN détecté."));
             p.sendMessage("");
-            p.sendMessage("§7Destinataire: §e" + targetName);
+            p.sendMessage(detail("Destinataire : §e" + targetName));
             p.sendMessage("");
-            p.sendMessage("§fÉcris maintenant le montant.");
+            p.sendMessage(info("Écris maintenant le montant."));
             p.sendMessage("");
-            p.sendMessage("§8• §7Exemple: §e5000");
-            p.sendMessage("§8• §7Tape §cannuler §7pour quitter.");
+            p.sendMessage(detail("Exemple : §e5000"));
+            p.sendMessage(detail("Tape §cannuler §7pour quitter."));
 
             footer(p);
 
@@ -623,10 +583,6 @@ public class ChatInputListener implements Listener {
         }
     }
 
-    //
-    // ❌ VIREMENT PRO REFUSÉ
-    //
-
     private void denyProfessionalTransfer(
             Player p,
             String targetName,
@@ -635,27 +591,22 @@ public class ChatInputListener implements Listener {
 
         header(p);
 
-        p.sendMessage("§c✘ §fVirement refusé.");
+        p.sendMessage(errorLine("Virement refusé."));
         p.sendMessage("");
-        p.sendMessage("§7Destinataire: §e" + targetName);
-        p.sendMessage("§7Montant: §e" + SafeGUI.money(amount) + "€");
-        p.sendMessage("§7Limite personnelle: §e" + SafeGUI.money(MAX_PERSONAL_TRANSFER) + "€");
+        p.sendMessage(detail("Destinataire : §e" + targetName));
+        p.sendMessage(detail("Montant : §e" + SafeGUI.money(amount) + "€"));
+        p.sendMessage(detail("Limite personnelle : §e" + SafeGUI.money(MAX_PERSONAL_TRANSFER) + "€"));
         p.sendMessage("");
-        p.sendMessage("§7Paiement professionnel:");
-        p.sendMessage("§e/contrat");
+        p.sendMessage(info("Paiement professionnel conseillé : §e/contrat"));
         p.sendMessage("");
-        p.sendMessage("§8• §7Argent bloqué");
-        p.sendMessage("§8• §7Taxe 20%");
-        p.sendMessage("§8• §7Historique gardé");
+        p.sendMessage(detail("Argent bloqué"));
+        p.sendMessage(detail("Taxe 20%"));
+        p.sendMessage(detail("Logs gardés"));
 
         footer(p);
 
         fail(p);
     }
-
-    //
-    // ❌ LIMITE JOUR
-    //
 
     private void denyDailyLimit(
             Player p,
@@ -666,24 +617,19 @@ public class ChatInputListener implements Listener {
 
         header(p);
 
-        p.sendMessage("§c✘ §fVirement refusé.");
+        p.sendMessage(errorLine("Virement refusé."));
         p.sendMessage("");
-        p.sendMessage("§7Destinataire: §e" + targetName);
-        p.sendMessage("§7Déjà envoyé: §e" + SafeGUI.money(already) + "€");
-        p.sendMessage("§7Montant: §e" + SafeGUI.money(amount) + "€");
-        p.sendMessage("§7Limite jour: §e" + SafeGUI.money(MAX_DAILY_PERSONAL_TRANSFER) + "€");
+        p.sendMessage(detail("Destinataire : §e" + targetName));
+        p.sendMessage(detail("Déjà envoyé : §e" + SafeGUI.money(already) + "€"));
+        p.sendMessage(detail("Montant : §e" + SafeGUI.money(amount) + "€"));
+        p.sendMessage(detail("Limite jour : §e" + SafeGUI.money(MAX_DAILY_PERSONAL_TRANSFER) + "€"));
         p.sendMessage("");
-        p.sendMessage("§7Paiement important:");
-        p.sendMessage("§e/contrat");
+        p.sendMessage(info("Paiement important conseillé : §e/contrat"));
 
         footer(p);
 
         fail(p);
     }
-
-    //
-    // ❌ ERROR
-    //
 
     private void error(
             Player p,
@@ -692,18 +638,14 @@ public class ChatInputListener implements Listener {
 
         header(p);
 
-        p.sendMessage("§c✘ §fAction refusée.");
+        p.sendMessage(errorLine("Action refusée."));
         p.sendMessage("");
-        p.sendMessage("§7" + msg);
+        p.sendMessage(detail(msg));
 
         footer(p);
 
         fail(p);
     }
-
-    //
-    // ✅ SUCCESS
-    //
 
     private void success(
             Player p,
@@ -713,9 +655,9 @@ public class ChatInputListener implements Listener {
 
         header(p);
 
-        p.sendMessage("§a✔ §f" + title + ".");
+        p.sendMessage(successLine(title + "."));
         p.sendMessage("");
-        p.sendMessage("§7" + value);
+        p.sendMessage(detail(value));
 
         footer(p);
 
@@ -727,10 +669,6 @@ public class ChatInputListener implements Listener {
         );
     }
 
-    //
-    // ℹ INFO
-    //
-
     private void info(
             Player p,
             String message
@@ -738,21 +676,17 @@ public class ChatInputListener implements Listener {
 
         header(p);
 
-        p.sendMessage("§7" + message);
+        p.sendMessage(infoLine(message));
 
         footer(p);
     }
-
-    //
-    // 🎨 HEADER / FOOTER
-    //
 
     private void header(
             Player p
     ) {
 
         p.sendMessage("");
-        p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----");
+        p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque ✦ §8-----");
         p.sendMessage("");
     }
 
@@ -765,9 +699,21 @@ public class ChatInputListener implements Listener {
         p.sendMessage("");
     }
 
-    //
-    // 🔢 PARSE
-    //
+    private String infoLine(String text) {
+        return "§e➜ §f" + text;
+    }
+
+    private String detail(String text) {
+        return "§8• §7" + text;
+    }
+
+    private String successLine(String text) {
+        return "§a✔ §f" + text;
+    }
+
+    private String errorLine(String text) {
+        return "§c✖ §f" + text;
+    }
 
     private boolean isCancel(
             String text
@@ -776,10 +722,6 @@ public class ChatInputListener implements Listener {
         return text.equalsIgnoreCase("annuler")
                 || text.equalsIgnoreCase("cancel");
     }
-
-    //
-    // 📅 DAILY RESET
-    //
 
     private void resetDailyIfNeeded(
             UUID uuid
@@ -805,10 +747,6 @@ public class ChatInputListener implements Listener {
         }
     }
 
-    //
-    // 🔒 BYPASS
-    //
-
     private boolean canBypassLimit(
             Player p
     ) {
@@ -816,10 +754,6 @@ public class ChatInputListener implements Listener {
         return p.hasPermission("moodcraftbridge.transfer.bypass")
                 || p.hasPermission("moodbusiness.bypass");
     }
-
-    //
-    // 🔊 FAIL
-    //
 
     private void fail(
             Player p
