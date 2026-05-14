@@ -219,4 +219,4 @@ jobs:
           bye
           EOF
 
-          lftp -u "${SFTP_USER}","${SFTP_PASSWORD}" -p "${SFTP_PORT}" "sftp://${SFTP_HOST}" -f upload.lftp
+          lftp -u "${SFTP_USER}","${SFTP_PASSWORD}" -p "${SFTP_PORT}" "sftp://${SFTP_HOST}" < upload.lftp
