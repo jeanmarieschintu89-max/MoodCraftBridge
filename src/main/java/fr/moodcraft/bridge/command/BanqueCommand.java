@@ -264,8 +264,7 @@ public class BanqueCommand implements CommandExecutor {
 
                 p.sendMessage("§a✔ §fAdministration bancaire active.");
                 p.sendMessage("");
-                p.sendMessage("§8• §7Utilisez les sous-commandes");
-                p.sendMessage("§8• §7réservées au staff.");
+                p.sendMessage(detail("Utilisez les sous-commandes réservées au staff."));
 
                 footer(p);
 
@@ -596,9 +595,9 @@ public class BanqueCommand implements CommandExecutor {
 
         p.sendMessage("§a✔ §fVirement effectué.");
         p.sendMessage("");
-        p.sendMessage("§7Destinataire: §e" + targetName);
-        p.sendMessage("§7Réputation: §a" + targetRep + " §8• " + targetRank);
-        p.sendMessage("§7Montant: §c-" + SafeGUI.money(amount) + "€");
+        p.sendMessage(detail("Destinataire : §e" + targetName));
+        p.sendMessage(detail("Réputation : §a" + targetRep + " §8• " + targetRank));
+        p.sendMessage(detail("Montant : §c-" + SafeGUI.money(amount) + "€"));
 
         footer(p);
 
@@ -619,9 +618,9 @@ public class BanqueCommand implements CommandExecutor {
 
             target.sendMessage("§a✔ §fVirement reçu.");
             target.sendMessage("");
-            target.sendMessage("§7Expéditeur: §e" + p.getName());
-            target.sendMessage("§7Réputation: §a" + senderRep + " §8• " + senderRank);
-            target.sendMessage("§7Montant: §a+" + SafeGUI.money(amount) + "€");
+            target.sendMessage(detail("Expéditeur : §e" + p.getName()));
+            target.sendMessage(detail("Réputation : §a" + senderRep + " §8• " + senderRank));
+            target.sendMessage(detail("Montant : §a+" + SafeGUI.money(amount) + "€"));
 
             footer(target);
 
@@ -651,12 +650,12 @@ public class BanqueCommand implements CommandExecutor {
 
         header(p);
 
-        p.sendMessage("§fCompte bancaire personnel.");
+        p.sendMessage("§e➜ §fCompte bancaire personnel.");
         p.sendMessage("");
-        p.sendMessage("§7IBAN: §e" + iban);
+        p.sendMessage(detail("IBAN : §e" + iban));
         p.sendMessage("");
-        p.sendMessage("§8• §7Utilisable pour les virements");
-        p.sendMessage("§8• §7Ne le partagez qu'aux joueurs de confiance");
+        p.sendMessage(detail("Utilisable pour les virements"));
+        p.sendMessage(detail("À partager seulement aux joueurs de confiance"));
 
         footer(p);
 
@@ -694,20 +693,20 @@ public class BanqueCommand implements CommandExecutor {
 
         header(p);
 
-        p.sendMessage("§fHistorique bancaire.");
+        p.sendMessage("§e➜ §fHistorique bancaire.");
         p.sendMessage("");
-        p.sendMessage("§7Page: §e" + page);
-        p.sendMessage("§7Entrées: §e" + list.size());
+        p.sendMessage(detail("Page : §e" + page));
+        p.sendMessage(detail("Entrées : §e" + list.size()));
         p.sendMessage("");
 
         if (pageData.isEmpty()) {
 
-            p.sendMessage("§7Aucune transaction.");
+            p.sendMessage(detail("Aucune transaction."));
 
         } else {
 
             pageData.forEach(
-                    line -> p.sendMessage("§8• §7" + line)
+                    line -> p.sendMessage(detail(line))
             );
         }
 
@@ -724,9 +723,9 @@ public class BanqueCommand implements CommandExecutor {
 
         header(p);
 
-        p.sendMessage("§fLogs bancaires.");
+        p.sendMessage("§e➜ §fLogs bancaires.");
         p.sendMessage("");
-        p.sendMessage("§7Dernières lignes:");
+        p.sendMessage(detail("Dernières lignes :"));
 
         p.sendMessage("");
 
@@ -734,7 +733,7 @@ public class BanqueCommand implements CommandExecutor {
                 .stream()
                 .limit(10)
                 .forEach(
-                        line -> p.sendMessage("§8• §7" + line)
+                        line -> p.sendMessage(detail(line))
                 );
 
         footer(p);
@@ -752,18 +751,17 @@ public class BanqueCommand implements CommandExecutor {
 
         header(p);
 
-        p.sendMessage("§c✘ §fVirement refusé.");
+        p.sendMessage("§c✖ §fVirement refusé.");
         p.sendMessage("");
-        p.sendMessage("§7Destinataire: §e" + targetName);
-        p.sendMessage("§7Montant: §e" + SafeGUI.money(amount) + "€");
-        p.sendMessage("§7Limite personnelle: §e" + SafeGUI.money(MAX_PERSONAL_TRANSFER) + "€");
+        p.sendMessage(detail("Destinataire : §e" + targetName));
+        p.sendMessage(detail("Montant : §e" + SafeGUI.money(amount) + "€"));
+        p.sendMessage(detail("Limite personnelle : §e" + SafeGUI.money(MAX_PERSONAL_TRANSFER) + "€"));
         p.sendMessage("");
-        p.sendMessage("§7Paiement professionnel:");
-        p.sendMessage("§e/contrat");
+        p.sendMessage("§e➜ §fPaiement professionnel conseillé : §e/contrat");
         p.sendMessage("");
-        p.sendMessage("§8• §7Fonds sécurisés");
-        p.sendMessage("§8• §7Taxe économique 20%");
-        p.sendMessage("§8• §7Historique officiel");
+        p.sendMessage(detail("Argent bloqué"));
+        p.sendMessage(detail("Taxe économique 20%"));
+        p.sendMessage(detail("Logs officiels"));
 
         footer(p);
 
@@ -790,15 +788,14 @@ public class BanqueCommand implements CommandExecutor {
 
         header(p);
 
-        p.sendMessage("§c✘ §fVirement refusé.");
+        p.sendMessage("§c✖ §fVirement refusé.");
         p.sendMessage("");
-        p.sendMessage("§7Destinataire: §e" + targetName);
-        p.sendMessage("§7Déjà envoyé: §e" + SafeGUI.money(already) + "€");
-        p.sendMessage("§7Montant: §e" + SafeGUI.money(amount) + "€");
-        p.sendMessage("§7Limite jour: §e" + SafeGUI.money(MAX_DAILY_PERSONAL_TRANSFER) + "€");
+        p.sendMessage(detail("Destinataire : §e" + targetName));
+        p.sendMessage(detail("Déjà envoyé : §e" + SafeGUI.money(already) + "€"));
+        p.sendMessage(detail("Montant : §e" + SafeGUI.money(amount) + "€"));
+        p.sendMessage(detail("Limite jour : §e" + SafeGUI.money(MAX_DAILY_PERSONAL_TRANSFER) + "€"));
         p.sendMessage("");
-        p.sendMessage("§7Pour un paiement important:");
-        p.sendMessage("§e/contrat");
+        p.sendMessage("§e➜ §fPaiement important conseillé : §e/contrat");
 
         footer(p);
 
@@ -869,9 +866,9 @@ public class BanqueCommand implements CommandExecutor {
 
         header(p);
 
-        p.sendMessage("§c✘ §fAction refusée.");
+        p.sendMessage("§c✖ §fAction refusée.");
         p.sendMessage("");
-        p.sendMessage("§7" + msg);
+        p.sendMessage(detail(msg));
 
         footer(p);
 
@@ -899,8 +896,8 @@ public class BanqueCommand implements CommandExecutor {
 
         p.sendMessage("§a✔ §fTransaction bancaire.");
         p.sendMessage("");
-        p.sendMessage("§7Type: §e" + type);
-        p.sendMessage("§7Montant: " + amount);
+        p.sendMessage(detail("Type : §e" + type));
+        p.sendMessage(detail("Montant : " + amount));
 
         footer(p);
 
@@ -925,9 +922,9 @@ public class BanqueCommand implements CommandExecutor {
 
         header(p);
 
-        p.sendMessage("§fCommande bancaire.");
+        p.sendMessage("§e➜ §fCommande bancaire.");
         p.sendMessage("");
-        p.sendMessage("§7Usage: §e" + msg);
+        p.sendMessage(detail("Usage : §e" + msg));
 
         footer(p);
 
@@ -950,7 +947,7 @@ public class BanqueCommand implements CommandExecutor {
     ) {
 
         p.sendMessage("");
-        p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----");
+        p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque ✦ §8-----");
         p.sendMessage("");
     }
 
@@ -961,6 +958,10 @@ public class BanqueCommand implements CommandExecutor {
         p.sendMessage("");
         p.sendMessage("§8-----------------------------");
         p.sendMessage("");
+    }
+
+    private String detail(String text) {
+        return "§8• §7" + text;
     }
 
     //
