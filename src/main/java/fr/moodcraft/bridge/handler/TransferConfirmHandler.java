@@ -289,26 +289,24 @@ public class TransferConfirmHandler implements GUIHandler {
                             BankStorage.get(targetId);
 
                     //
-                    // 📩 MESSAGES PREMIUM
+                    // 📩 MESSAGES MOODCRAFT
                     //
 
                     header(p);
 
                     p.sendMessage("§a✔ §fVirement envoyé.");
-                    p.sendMessage("");
-                    p.sendMessage("§7Destinataire: §e" + target.getName());
-                    p.sendMessage("§7Montant: §c-" + SafeGUI.money(amount) + "€");
-                    p.sendMessage("§7Banque: §6" + SafeGUI.money(senderNew) + "€");
+                    p.sendMessage("§8• §7Destinataire : §e" + target.getName());
+                    p.sendMessage("§8• §7Montant : §c-" + SafeGUI.money(amount) + "€");
+                    p.sendMessage("§8• §7Banque : §6" + SafeGUI.money(senderNew) + "€");
 
                     footer(p);
 
                     header(target);
 
                     target.sendMessage("§a✔ §fVirement reçu.");
-                    target.sendMessage("");
-                    target.sendMessage("§7Expéditeur: §e" + p.getName());
-                    target.sendMessage("§7Montant: §a+" + SafeGUI.money(amount) + "€");
-                    target.sendMessage("§7Banque: §6" + SafeGUI.money(targetNew) + "€");
+                    target.sendMessage("§8• §7Expéditeur : §e" + p.getName());
+                    target.sendMessage("§8• §7Montant : §a+" + SafeGUI.money(amount) + "€");
+                    target.sendMessage("§8• §7Banque : §6" + SafeGUI.money(targetNew) + "€");
 
                     footer(target);
 
@@ -409,18 +407,14 @@ public class TransferConfirmHandler implements GUIHandler {
 
         header(p);
 
-        p.sendMessage("§c✘ §fVirement refusé.");
-        p.sendMessage("");
-        p.sendMessage("§7Destinataire: §e" + target.getName());
-        p.sendMessage("§7Montant: §e" + SafeGUI.money(amount) + "€");
-        p.sendMessage("§7Limite personnelle: §e" + SafeGUI.money(MAX_PERSONAL_TRANSFER) + "€");
-        p.sendMessage("");
-        p.sendMessage("§7Paiement professionnel:");
-        p.sendMessage("§e/contrat");
-        p.sendMessage("");
+        p.sendMessage("§c✖ §fVirement refusé.");
+        p.sendMessage("§8• §7Destinataire : §e" + target.getName());
+        p.sendMessage("§8• §7Montant : §e" + SafeGUI.money(amount) + "€");
+        p.sendMessage("§8• §7Limite personnelle : §e" + SafeGUI.money(MAX_PERSONAL_TRANSFER) + "€");
+        p.sendMessage("§e➜ §fUtilise §e/contrat §fpour un paiement professionnel.");
         p.sendMessage("§8• §7Argent bloqué");
         p.sendMessage("§8• §7Taxe 20%");
-        p.sendMessage("§8• §7Historique gardé");
+        p.sendMessage("§8• §7Logs gardés");
 
         footer(p);
 
@@ -440,15 +434,12 @@ public class TransferConfirmHandler implements GUIHandler {
 
         header(p);
 
-        p.sendMessage("§c✘ §fVirement refusé.");
-        p.sendMessage("");
-        p.sendMessage("§7Destinataire: §e" + target.getName());
-        p.sendMessage("§7Déjà envoyé: §e" + SafeGUI.money(already) + "€");
-        p.sendMessage("§7Montant: §e" + SafeGUI.money(amount) + "€");
-        p.sendMessage("§7Limite jour: §e" + SafeGUI.money(MAX_DAILY_PERSONAL_TRANSFER) + "€");
-        p.sendMessage("");
-        p.sendMessage("§7Paiement important:");
-        p.sendMessage("§e/contrat");
+        p.sendMessage("§c✖ §fVirement refusé.");
+        p.sendMessage("§8• §7Destinataire : §e" + target.getName());
+        p.sendMessage("§8• §7Déjà envoyé : §e" + SafeGUI.money(already) + "€");
+        p.sendMessage("§8• §7Montant : §e" + SafeGUI.money(amount) + "€");
+        p.sendMessage("§8• §7Limite jour : §e" + SafeGUI.money(MAX_DAILY_PERSONAL_TRANSFER) + "€");
+        p.sendMessage("§e➜ §fUtilise §e/contrat §fpour un paiement important.");
 
         footer(p);
 
@@ -494,9 +485,8 @@ public class TransferConfirmHandler implements GUIHandler {
 
         header(p);
 
-        p.sendMessage("§c✘ §fVirement refusé.");
-        p.sendMessage("");
-        p.sendMessage("§7" + msg);
+        p.sendMessage("§c✖ §fVirement refusé.");
+        p.sendMessage("§8• §7" + msg);
 
         footer(p);
 
@@ -512,15 +502,13 @@ public class TransferConfirmHandler implements GUIHandler {
     ) {
 
         p.sendMessage("");
-        p.sendMessage("§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----");
-        p.sendMessage("");
+        p.sendMessage("§8----- §6✦ Banque §aMood§6Craft ✦ §8-----");
     }
 
     private void footer(
             Player p
     ) {
 
-        p.sendMessage("");
         p.sendMessage("§8-----------------------------");
         p.sendMessage("");
     }
