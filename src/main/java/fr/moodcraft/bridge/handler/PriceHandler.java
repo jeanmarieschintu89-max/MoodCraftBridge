@@ -79,8 +79,8 @@ public class PriceHandler implements GUIHandler {
             header(p);
 
             p.sendMessage("§c✖ §fAucune ressource détectée.");
-            p.sendMessage("§8• §7Ressource : §e" + display);
-            p.sendMessage("§8• §7Place cette ressource dans ton inventaire.");
+            p.sendMessage("§8• §7Objet demandé : §e" + display);
+            p.sendMessage("§8• §7Mets-en dans ton inventaire puis réessaie.");
 
             footer(p);
 
@@ -112,7 +112,7 @@ public class PriceHandler implements GUIHandler {
         header(p);
 
         p.sendMessage("§a✔ §fVente effectuée.");
-        p.sendMessage("§8• §7Ressource : §e" + amount + "x " + display);
+        p.sendMessage("§8• §7Objet vendu : §e" + amount + "x " + display);
         p.sendMessage("§8• §7Prix unité : §6" + SafeGUI.money(unit) + "€");
         p.sendMessage("§8• §7Tendance : " + cleanTrend(trend));
         p.sendMessage("§8• §7Brut : §e" + SafeGUI.money(gross) + "€");
