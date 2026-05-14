@@ -29,19 +29,11 @@ public class ReputationCommand implements CommandExecutor {
             String[] args
     ) {
 
-        //
-        // 🏆 ALIAS /toprep
-        //
-
         if (label.equalsIgnoreCase("toprep")) {
 
             args =
                     new String[]{"classement"};
         }
-
-        //
-        // 👤 /rep
-        //
 
         if (args.length == 0) {
 
@@ -59,13 +51,12 @@ public class ReputationCommand implements CommandExecutor {
                     "Réputation"
             );
 
-            p.sendMessage("§fVotre réputation sur §aMood§6Craft§f.");
+            p.sendMessage(info("Votre réputation sur §aMood§6Craft§f."));
             p.sendMessage("");
-            p.sendMessage("§7Points: §e" + rep);
-            p.sendMessage("§7Rang: " + ReputationManager.getRank(rep));
+            p.sendMessage(detail("Points : §e" + rep));
+            p.sendMessage(detail("Rang : " + ReputationManager.getRank(rep)));
             p.sendMessage("");
-            p.sendMessage("§8• §7Votre réputation montre");
-            p.sendMessage("§8• §7votre place dans la communauté.");
+            p.sendMessage(detail("Votre réputation montre votre place dans la communauté."));
 
             footer(p);
 
@@ -78,10 +69,6 @@ public class ReputationCommand implements CommandExecutor {
 
             return true;
         }
-
-        //
-        // 📜 /rep historique
-        //
 
         if (args[0].equalsIgnoreCase("historique")) {
 
@@ -111,17 +98,18 @@ public class ReputationCommand implements CommandExecutor {
                     "Historique Réputation"
             );
 
-            p.sendMessage("§7Page: §e" + page);
+            p.sendMessage(info("Historique de réputation."));
+            p.sendMessage(detail("Page : §e" + page));
             p.sendMessage("");
 
             if (list.isEmpty()) {
 
-                p.sendMessage("§7Aucune action enregistrée.");
+                p.sendMessage(detail("Aucune action enregistrée."));
 
             } else {
 
                 list.forEach(
-                        line -> p.sendMessage("§8• §7" + line)
+                        line -> p.sendMessage(detail(line))
                 );
             }
 
@@ -129,10 +117,6 @@ public class ReputationCommand implements CommandExecutor {
 
             return true;
         }
-
-        //
-        // 👤 /rep <joueur>
-        //
 
         if (args.length == 1
                 && !args[0].equalsIgnoreCase("classement")
@@ -151,21 +135,17 @@ public class ReputationCommand implements CommandExecutor {
                     "Réputation Joueur"
             );
 
-            sender.sendMessage("§7Joueur: §e" + safeName(target));
-            sender.sendMessage("§7Points: §e" + rep);
-            sender.sendMessage("§7Rang: " + ReputationManager.getRank(rep));
+            sender.sendMessage(info("Dossier réputation joueur."));
+            sender.sendMessage(detail("Joueur : §e" + safeName(target)));
+            sender.sendMessage(detail("Points : §e" + rep));
+            sender.sendMessage(detail("Rang : " + ReputationManager.getRank(rep)));
             sender.sendMessage("");
-            sender.sendMessage("§8• §7La réputation aide à reconnaître");
-            sender.sendMessage("§8• §7les joueurs actifs et fiables.");
+            sender.sendMessage(detail("La réputation aide à reconnaître les joueurs actifs et fiables."));
 
             footer(sender);
 
             return true;
         }
-
-        //
-        // 🏆 /toprep
-        //
 
         if (args[0].equalsIgnoreCase("classement")) {
 
@@ -174,12 +154,15 @@ public class ReputationCommand implements CommandExecutor {
                     "Classement Réputation"
             );
 
+            sender.sendMessage(info("Top réputation de §aMood§6Craft§f."));
+            sender.sendMessage("");
+
             Map<String, Integer> top =
                     ReputationManager.getTop(10);
 
             if (top.isEmpty()) {
 
-                sender.sendMessage("§7Aucune réputation enregistrée.");
+                sender.sendMessage(detail("Aucune réputation enregistrée."));
 
             } else {
 
@@ -201,7 +184,7 @@ public class ReputationCommand implements CommandExecutor {
                             ReputationManager.getRank(rep);
 
                     sender.sendMessage(
-                            "§e#"
+                            "§8• §e#"
                                     + i
                                     + " §f"
                                     + shortText(name, 14)
@@ -220,10 +203,6 @@ public class ReputationCommand implements CommandExecutor {
             return true;
         }
 
-        //
-        // 🔒 ADMIN CHECK
-        //
-
         if (!args[0].equalsIgnoreCase("admin")) {
 
             error(
@@ -241,10 +220,9 @@ public class ReputationCommand implements CommandExecutor {
                     "Réputation"
             );
 
-            sender.sendMessage("§c✘ §fAccès refusé.");
+            sender.sendMessage(errorLine("Accès refusé."));
             sender.sendMessage("");
-            sender.sendMessage("§7Cette commande est réservée");
-            sender.sendMessage("§7à l'administration.");
+            sender.sendMessage(detail("Commande réservée à l'administration."));
 
             footer(sender);
 
@@ -260,10 +238,6 @@ public class ReputationCommand implements CommandExecutor {
 
         String action =
                 args[1].toLowerCase();
-
-        //
-        // 📜 /rep admin historique <joueur>
-        //
 
         if (action.equals("historique")) {
 
@@ -302,18 +276,19 @@ public class ReputationCommand implements CommandExecutor {
                     "Historique Réputation"
             );
 
-            sender.sendMessage("§7Joueur: §e" + safeName(target));
-            sender.sendMessage("§7Page: §e" + page);
+            sender.sendMessage(info("Historique administratif."));
+            sender.sendMessage(detail("Joueur : §e" + safeName(target)));
+            sender.sendMessage(detail("Page : §e" + page));
             sender.sendMessage("");
 
             if (list.isEmpty()) {
 
-                sender.sendMessage("§7Aucune action enregistrée.");
+                sender.sendMessage(detail("Aucune action enregistrée."));
 
             } else {
 
                 list.forEach(
-                        line -> sender.sendMessage("§8• §7" + line)
+                        line -> sender.sendMessage(detail(line))
                 );
             }
 
@@ -321,10 +296,6 @@ public class ReputationCommand implements CommandExecutor {
 
             return true;
         }
-
-        //
-        // ADMIN ACTIONS
-        //
 
         if (args.length < 3) {
 
@@ -343,10 +314,6 @@ public class ReputationCommand implements CommandExecutor {
                 target.getUniqueId().toString();
 
         switch (action) {
-
-            //
-            // ➕ AJOUTER
-            //
 
             case "ajouter" -> {
 
@@ -384,17 +351,13 @@ public class ReputationCommand implements CommandExecutor {
                         "Réputation"
                 );
 
-                sender.sendMessage("§a✔ §fRéputation ajoutée.");
+                sender.sendMessage(successLine("Réputation ajoutée."));
                 sender.sendMessage("");
-                sender.sendMessage("§7Joueur: §e" + safeName(target));
-                sender.sendMessage("§7Points: §a+" + value);
+                sender.sendMessage(detail("Joueur : §e" + safeName(target)));
+                sender.sendMessage(detail("Points : §a+" + value));
 
                 footer(sender);
             }
-
-            //
-            // ➖ RETIRER
-            //
 
             case "retirer" -> {
 
@@ -432,17 +395,13 @@ public class ReputationCommand implements CommandExecutor {
                         "Réputation"
                 );
 
-                sender.sendMessage("§c✘ §fRéputation retirée.");
+                sender.sendMessage(errorLine("Réputation retirée."));
                 sender.sendMessage("");
-                sender.sendMessage("§7Joueur: §e" + safeName(target));
-                sender.sendMessage("§7Points: §c-" + value);
+                sender.sendMessage(detail("Joueur : §e" + safeName(target)));
+                sender.sendMessage(detail("Points : §c-" + value));
 
                 footer(sender);
             }
-
-            //
-            // ✏ DEFINIR
-            //
 
             case "definir" -> {
 
@@ -473,18 +432,14 @@ public class ReputationCommand implements CommandExecutor {
                         "Réputation"
                 );
 
-                sender.sendMessage("§a✔ §fRéputation définie.");
+                sender.sendMessage(successLine("Réputation définie."));
                 sender.sendMessage("");
-                sender.sendMessage("§7Joueur: §e" + safeName(target));
-                sender.sendMessage("§7Nouveau total: §e" + value);
-                sender.sendMessage("§7Rang: " + ReputationManager.getRank(value));
+                sender.sendMessage(detail("Joueur : §e" + safeName(target)));
+                sender.sendMessage(detail("Nouveau total : §e" + value));
+                sender.sendMessage(detail("Rang : " + ReputationManager.getRank(value)));
 
                 footer(sender);
             }
-
-            //
-            // 🔄 RESET
-            //
 
             case "reset" -> {
 
@@ -501,16 +456,12 @@ public class ReputationCommand implements CommandExecutor {
                         "Réputation"
                 );
 
-                sender.sendMessage("§c✘ §fRéputation réinitialisée.");
+                sender.sendMessage(errorLine("Réputation réinitialisée."));
                 sender.sendMessage("");
-                sender.sendMessage("§7Joueur: §e" + safeName(target));
+                sender.sendMessage(detail("Joueur : §e" + safeName(target)));
 
                 footer(sender);
             }
-
-            //
-            // ❌ UNKNOWN
-            //
 
             default -> error(
                     sender,
@@ -521,10 +472,6 @@ public class ReputationCommand implements CommandExecutor {
         return true;
     }
 
-    //
-    // 📘 HELP ADMIN
-    //
-
     private void sendAdminHelp(
             CommandSender sender
     ) {
@@ -534,20 +481,16 @@ public class ReputationCommand implements CommandExecutor {
                 "Commande Réputation"
         );
 
-        sender.sendMessage("§fActions disponibles.");
+        sender.sendMessage(info("Actions disponibles."));
         sender.sendMessage("");
-        sender.sendMessage("§8• §e/reputation admin ajouter <joueur> <points>");
-        sender.sendMessage("§8• §e/reputation admin retirer <joueur> <points>");
-        sender.sendMessage("§8• §e/reputation admin definir <joueur> <points>");
-        sender.sendMessage("§8• §e/reputation admin reset <joueur>");
-        sender.sendMessage("§8• §e/reputation admin historique <joueur>");
+        sender.sendMessage(detail("/reputation admin ajouter <joueur> <points>"));
+        sender.sendMessage(detail("/reputation admin retirer <joueur> <points>"));
+        sender.sendMessage(detail("/reputation admin definir <joueur> <points>"));
+        sender.sendMessage(detail("/reputation admin reset <joueur>"));
+        sender.sendMessage(detail("/reputation admin historique <joueur>"));
 
         footer(sender);
     }
-
-    //
-    // 🎨 HEADER
-    //
 
     private void header(
             CommandSender sender,
@@ -558,14 +501,10 @@ public class ReputationCommand implements CommandExecutor {
         sender.sendMessage(
                 "§8----- §6✦ §aMood§6Craft §f"
                         + cleanTitle(title)
-                        + " §6✦ §8-----"
+                        + " ✦ §8-----"
         );
         sender.sendMessage("");
     }
-
-    //
-    // 🎨 FOOTER
-    //
 
     private void footer(
             CommandSender sender
@@ -575,10 +514,6 @@ public class ReputationCommand implements CommandExecutor {
         sender.sendMessage("§8-----------------------------");
         sender.sendMessage("");
     }
-
-    //
-    // ❌ ERROR
-    //
 
     private void error(
             CommandSender sender,
@@ -590,16 +525,12 @@ public class ReputationCommand implements CommandExecutor {
                 "Réputation"
         );
 
-        sender.sendMessage("§c✘ §fAction refusée.");
+        sender.sendMessage(errorLine("Action refusée."));
         sender.sendMessage("");
-        sender.sendMessage("§7" + message);
+        sender.sendMessage(detail(message));
 
         footer(sender);
     }
-
-    //
-    // 📘 USAGE
-    //
 
     private void usage(
             CommandSender sender,
@@ -611,16 +542,12 @@ public class ReputationCommand implements CommandExecutor {
                 "Réputation"
         );
 
-        sender.sendMessage("§fCommande incorrecte.");
+        sender.sendMessage(info("Commande incorrecte."));
         sender.sendMessage("");
-        sender.sendMessage("§7Utilisation: §e" + usage);
+        sender.sendMessage(detail("Utilisation : §e" + usage));
 
         footer(sender);
     }
-
-    //
-    // 🔢 PARSE
-    //
 
     private int parse(
             CommandSender sender,
@@ -645,10 +572,6 @@ public class ReputationCommand implements CommandExecutor {
         }
     }
 
-    //
-    // 🔢 NUMBER
-    //
-
     private boolean isNumber(
             String s
     ) {
@@ -664,10 +587,6 @@ public class ReputationCommand implements CommandExecutor {
             return false;
         }
     }
-
-    //
-    // 🧠 NAME FROM ID
-    //
 
     private String getNameFromId(
             String id
@@ -688,10 +607,6 @@ public class ReputationCommand implements CommandExecutor {
         }
     }
 
-    //
-    // 🧠 SAFE NAME
-    //
-
     private String safeName(
             OfflinePlayer p
     ) {
@@ -700,10 +615,6 @@ public class ReputationCommand implements CommandExecutor {
                 ? p.getName()
                 : "Inconnu";
     }
-
-    //
-    // ✂ SHORT TEXT
-    //
 
     private String shortText(
             String text,
@@ -728,10 +639,6 @@ public class ReputationCommand implements CommandExecutor {
         ) + "...";
     }
 
-    //
-    // 🧼 TITLE CLEANER
-    //
-
     private String cleanTitle(
             String title
     ) {
@@ -747,5 +654,21 @@ public class ReputationCommand implements CommandExecutor {
                 .replace("§c", "")
                 .replace("✦", "")
                 .trim();
+    }
+
+    private String info(String text) {
+        return "§e➜ §f" + text;
+    }
+
+    private String detail(String text) {
+        return "§8• §7" + text;
+    }
+
+    private String successLine(String text) {
+        return "§a✔ §f" + text;
+    }
+
+    private String errorLine(String text) {
+        return "§c✖ §f" + text;
     }
 }
