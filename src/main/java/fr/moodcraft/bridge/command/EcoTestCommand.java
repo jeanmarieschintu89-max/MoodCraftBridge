@@ -116,18 +116,18 @@ public class EcoTestCommand implements CommandExecutor {
     ) {
 
         sender.sendMessage("");
-        sender.sendMessage("§8----- §6✦ §aMood§6Craft §fÉconomie §6✦ §8-----");
+        sender.sendMessage(header());
         sender.sendMessage("");
         sender.sendMessage("§a✔ §fTest marché effectué.");
         sender.sendMessage("");
-        sender.sendMessage("§7Type: §e" + type);
-        sender.sendMessage("§7Item: §e" + item);
-        sender.sendMessage("§7Quantité: §e" + amount);
-        sender.sendMessage("§7Prix actuel: §6" + String.format("%.2f", price) + "€");
-        sender.sendMessage("§7Total estimé: §e" + String.format("%.2f", price * amount) + "€");
+        sender.sendMessage(detail("Type : §e" + type));
+        sender.sendMessage(detail("Item : §e" + item));
+        sender.sendMessage(detail("Quantité : §e" + amount));
+        sender.sendMessage(detail("Prix actuel : §6" + String.format("%.2f", price) + "€"));
+        sender.sendMessage(detail("Total estimé : §e" + String.format("%.2f", price * amount) + "€"));
         sender.sendMessage("");
-        sender.sendMessage("§8• §7Aucune transaction réelle");
-        sender.sendMessage("§8• §7Test réservé au staff");
+        sender.sendMessage(detail("Aucune transaction réelle"));
+        sender.sendMessage(detail("Test réservé au staff"));
         sender.sendMessage("");
         sender.sendMessage("§8-----------------------------");
         sender.sendMessage("");
@@ -138,15 +138,13 @@ public class EcoTestCommand implements CommandExecutor {
     ) {
 
         sender.sendMessage("");
-        sender.sendMessage("§8----- §6✦ §aMood§6Craft §fÉconomie §6✦ §8-----");
+        sender.sendMessage(header());
         sender.sendMessage("");
-        sender.sendMessage("§fCommande de test marché.");
+        sender.sendMessage("§e➜ §fCommande de test marché.");
         sender.sendMessage("");
-        sender.sendMessage("§7Utilisation:");
-        sender.sendMessage("§e/ecotest <buy/sell> <item> <quantité>");
-        sender.sendMessage("");
-        sender.sendMessage("§8• §7Exemple: §e/ecotest sell diamond 64");
-        sender.sendMessage("§8• §7Aucune transaction réelle");
+        sender.sendMessage(detail("Utilisation : §e/ecotest <buy/sell> <item> <quantité>"));
+        sender.sendMessage(detail("Exemple : §e/ecotest sell diamond 64"));
+        sender.sendMessage(detail("Aucune transaction réelle"));
         sender.sendMessage("");
         sender.sendMessage("§8-----------------------------");
         sender.sendMessage("");
@@ -158,13 +156,21 @@ public class EcoTestCommand implements CommandExecutor {
     ) {
 
         sender.sendMessage("");
-        sender.sendMessage("§8----- §6✦ §aMood§6Craft §fÉconomie §6✦ §8-----");
+        sender.sendMessage(header());
         sender.sendMessage("");
-        sender.sendMessage("§c✘ §fAction refusée.");
+        sender.sendMessage("§c✖ §fAction refusée.");
         sender.sendMessage("");
-        sender.sendMessage("§7" + message);
+        sender.sendMessage(detail(message));
         sender.sendMessage("");
         sender.sendMessage("§8-----------------------------");
         sender.sendMessage("");
+    }
+
+    private String header() {
+        return "§8----- §6✦ §aMood§6Craft §fÉconomie ✦ §8-----";
+    }
+
+    private String detail(String text) {
+        return "§8• §7" + text;
     }
 }
