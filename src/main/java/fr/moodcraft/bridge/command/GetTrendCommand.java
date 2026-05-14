@@ -56,15 +56,14 @@ public class GetTrendCommand implements CommandExecutor {
     ) {
 
         sender.sendMessage("");
-        sender.sendMessage("§8----- §6✦ §aMood§6Craft §fMarché §6✦ §8-----");
+        sender.sendMessage(header());
         sender.sendMessage("");
-        sender.sendMessage("§fTendance du marché.");
+        sender.sendMessage(info("Tendance du marché."));
         sender.sendMessage("");
-        sender.sendMessage("§7Ressource: §e" + item);
-        sender.sendMessage("§7Tendance: " + cleanTrend(trend));
+        sender.sendMessage(detail("Ressource : §e" + item));
+        sender.sendMessage(detail("Tendance : " + cleanTrend(trend)));
         sender.sendMessage("");
-        sender.sendMessage("§8• §7La tendance peut changer");
-        sender.sendMessage("§8• §7selon les achats et ventes");
+        sender.sendMessage(detail("La tendance peut changer selon les achats et ventes."));
         sender.sendMessage("");
         sender.sendMessage("§8-----------------------------");
         sender.sendMessage("");
@@ -75,12 +74,12 @@ public class GetTrendCommand implements CommandExecutor {
     ) {
 
         sender.sendMessage("");
-        sender.sendMessage("§8----- §6✦ §aMood§6Craft §fMarché §6✦ §8-----");
+        sender.sendMessage(header());
         sender.sendMessage("");
-        sender.sendMessage("§fCommande de tendance.");
+        sender.sendMessage(info("Commande de tendance."));
         sender.sendMessage("");
-        sender.sendMessage("§7Utilisation: §e/trend <item>");
-        sender.sendMessage("§8• §7Exemple: §e/trend diamond");
+        sender.sendMessage(detail("Utilisation : §e/trend <item>"));
+        sender.sendMessage(detail("Exemple : §e/trend diamond"));
         sender.sendMessage("");
         sender.sendMessage("§8-----------------------------");
         sender.sendMessage("");
@@ -92,14 +91,30 @@ public class GetTrendCommand implements CommandExecutor {
     ) {
 
         sender.sendMessage("");
-        sender.sendMessage("§8----- §6✦ §aMood§6Craft §fMarché §6✦ §8-----");
+        sender.sendMessage(header());
         sender.sendMessage("");
-        sender.sendMessage("§c✘ §fAction refusée.");
+        sender.sendMessage(errorLine("Action refusée."));
         sender.sendMessage("");
-        sender.sendMessage("§7" + message);
+        sender.sendMessage(detail(message));
         sender.sendMessage("");
         sender.sendMessage("§8-----------------------------");
         sender.sendMessage("");
+    }
+
+    private String header() {
+        return "§8----- §6✦ §aMood§6Craft §fMarché ✦ §8-----";
+    }
+
+    private String info(String text) {
+        return "§e➜ §f" + text;
+    }
+
+    private String detail(String text) {
+        return "§8• §7" + text;
+    }
+
+    private String errorLine(String text) {
+        return "§c✖ §f" + text;
     }
 
     private String cleanTrend(
