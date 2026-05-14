@@ -22,7 +22,7 @@ public class BankGUI {
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§6✦ §8Banque §aMood§6Craft §6✦"
+                        "§6✦ §8Banque §6✦"
                 );
 
         SafeGUI.fill(
@@ -31,44 +31,27 @@ public class BankGUI {
                 " "
         );
 
-        double bank =
-                BankStorage.get(
-                        p.getUniqueId().toString()
-                );
+        double bank = BankStorage.get(p.getUniqueId().toString());
 
         double cash = 0;
 
         try {
+            cash = VaultHook.getBalance(p);
+        } catch (Exception ignored) {
+        }
 
-            cash =
-                    VaultHook.getBalance(p);
-
-        } catch (Exception ignored) {}
-
-        double total =
-                bank + cash;
+        double total = bank + cash;
 
         SafeGUI.safeSet(inv, 4,
                 SafeGUI.glow(
                         SafeGUI.item(
                                 Material.GOLD_BLOCK,
                                 "§6✦ §fCompte bancaire §6✦",
-                                "§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----",
+                                "§8• §7Liquide : §a" + SafeGUI.money(cash) + "€",
+                                "§8• §7Banque : §6" + SafeGUI.money(bank) + "€",
+                                "§8• §7Total : §e" + SafeGUI.money(total) + "€",
                                 "",
-                                "§7Ton argent personnel.",
-                                "",
-                                "§8• §7Liquide: §a"
-                                        + SafeGUI.money(cash)
-                                        + "€",
-                                "§8• §7Banque: §6"
-                                        + SafeGUI.money(bank)
-                                        + "€",
-                                "§8• §7Total: §e"
-                                        + SafeGUI.money(total)
-                                        + "€",
-                                "",
-                                "§8• §7Pour les gros paiements:",
-                                "§8• §e/contrat"
+                                "§e➜ §fGère ton argent personnel"
                         )
                 )
         );
@@ -76,15 +59,13 @@ public class BankGUI {
         SafeGUI.safeSet(inv, 10,
                 SafeGUI.glow(
                         SafeGUI.item(
-                                Material.CHEST,
+                                Material.EMERALD,
                                 "§6✦ §fDéposer §6✦",
-                                "§7Mettre ton argent liquide",
-                                "§7dans ta banque.",
-                                "",
+                                "§8• §7Liquide vers banque",
                                 "§8• §7Montant dans le chat",
-                                "§8• §7Exemple: §e5000",
+                                "§8• §7Exemple : §e5000",
                                 "",
-                                "§a✔ Clique pour saisir"
+                                "§e➜ §fSaisir un dépôt"
                         )
                 )
         );
@@ -93,13 +74,11 @@ public class BankGUI {
                 SafeGUI.item(
                         Material.HOPPER,
                         "§6✦ §fRetirer §6✦",
-                        "§7Sortir de l'argent",
-                        "§7de ta banque.",
-                        "",
+                        "§8• §7Banque vers liquide",
                         "§8• §7Montant dans le chat",
-                        "§8• §7Exemple: §e5000",
+                        "§8• §7Exemple : §e5000",
                         "",
-                        "§a✔ Clique pour saisir"
+                        "§e➜ §fSaisir un retrait"
                 )
         );
 
@@ -108,16 +87,12 @@ public class BankGUI {
                         SafeGUI.item(
                                 Material.PAPER,
                                 "§6✦ §fVirement §6✦",
-                                "§7Envoyer de l'argent",
-                                "§7à un joueur.",
-                                "",
-                                "§8• §7Choisir le joueur",
-                                "§8• §7Montant dans le chat",
+                                "§8• §7Envoyer à un joueur",
+                                "§8• §7Choix du joueur",
                                 "§8• §7Confirmation finale",
+                                "§8• §7Paiement pro : §e/contrat",
                                 "",
-                                "§e⚠ Paiement pro: §f/contrat",
-                                "",
-                                "§a✔ Ouvrir"
+                                "§e➜ §fPréparer un virement"
                         )
                 )
         );
@@ -126,50 +101,33 @@ public class BankGUI {
                 SafeGUI.item(
                         Material.NAME_TAG,
                         "§6✦ §fIBAN §6✦",
-                        "§7Voir ton code bancaire.",
-                        "",
+                        "§8• §7Code bancaire personnel",
                         "§8• §7Utile pour les virements",
                         "§8• §7À partager avec prudence",
                         "",
-                        "§eClique pour voir"
+                        "§e➜ §fVoir mon IBAN"
                 )
         );
 
-        SafeGUI.safeSet(inv, 21,
+        SafeGUI.safeSet(inv, 22,
                 SafeGUI.item(
                         Material.BOOK,
                         "§6✦ §fHistorique §6✦",
-                        "§7Voir les mouvements",
-                        "§7de ton compte.",
-                        "",
                         "§8• §7Dépôts",
                         "§8• §7Retraits",
                         "§8• §7Virements",
                         "",
-                        "§eClique pour ouvrir"
-                )
-        );
-
-        SafeGUI.safeSet(inv, 23,
-                SafeGUI.item(
-                        Material.AMETHYST_SHARD,
-                        "§6✦ §fActivité §6✦",
-                        "§7Résumé de ton compte.",
-                        "",
-                        "§8• §7Volume bancaire",
-                        "§8• §7Flux personnels",
-                        "",
-                        "§8Bientôt disponible"
+                        "§e➜ §fVoir les mouvements"
                 )
         );
 
         SafeGUI.safeSet(inv, 31,
                 SafeGUI.item(
-                        Material.BARRIER,
-                        "§c✦ Retour",
-                        "§7Retour au menu principal.",
+                        Material.ARROW,
+                        "§6✦ §fRetour §6✦",
+                        "§8• §7Retour au menu principal",
                         "",
-                        "§cClique pour revenir"
+                        "§e➜ §fOuvrir /menu"
                 )
         );
 
