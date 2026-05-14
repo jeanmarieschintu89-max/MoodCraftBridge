@@ -18,7 +18,7 @@ public class TeleportGUI {
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§6✦ §8Téléportation §aMood§6Craft §6✦"
+                        "§6✦ §8Téléportation §6✦"
                 );
 
         SafeGUI.fill(
@@ -32,15 +32,11 @@ public class TeleportGUI {
                         SafeGUI.item(
                                 Material.COMPASS,
                                 "§6✦ §fVoyage rapide §6✦",
-                                "§8----- §6✦ §aMood§6Craft §fTéléportation §6✦ §8-----",
+                                "§8• §7Déplacements utiles",
+                                "§8• §7Java et Bedrock",
+                                "§8• §7Menu compact",
                                 "",
-                                "§7Choisis où aller.",
-                                "",
-                                "§8• §7Spawn",
-                                "§8• §7Boutique",
-                                "§8• §7Mini-jeux",
-                                "§8• §7Exploration",
-                                "§8• §7Ville"
+                                "§e➜ §fChoisis une destination"
                         )
                 )
         );
@@ -50,14 +46,11 @@ public class TeleportGUI {
                         SafeGUI.item(
                                 Material.LODESTONE,
                                 "§6✦ §fSpawn §6✦",
-                                "§7Retour au centre",
-                                "§7de §aMood§6Craft§7.",
+                                "§8• §7Centre de §aMood§6Craft",
+                                "§8• §7Banque et services",
+                                "§8• §7Retour sécurisé",
                                 "",
-                                "§8• §7Banque",
-                                "§8• §7Marché",
-                                "§8• §7Services",
-                                "",
-                                "§eClique pour y aller"
+                                "§e➜ §fSe téléporter"
                         )
                 )
         );
@@ -66,13 +59,11 @@ public class TeleportGUI {
                 SafeGUI.item(
                         Material.EMERALD_BLOCK,
                         "§6✦ §fAdminShop §6✦",
-                        "§7Boutique officielle",
-                        "§7du serveur.",
-                        "",
+                        "§8• §7Boutique officielle",
                         "§8• §7Items utiles",
                         "§8• §7Prix fixes",
                         "",
-                        "§eClique pour ouvrir"
+                        "§e➜ §fOuvrir la boutique"
                 )
         );
 
@@ -80,14 +71,11 @@ public class TeleportGUI {
                 SafeGUI.item(
                         Material.NETHER_STAR,
                         "§6✦ §fMini-jeux §6✦",
-                        "§7Rejoins les activités",
-                        "§7du serveur.",
-                        "",
-                        "§8• §7Défis",
-                        "§8• §7Events",
+                        "§8• §7Activités serveur",
+                        "§8• §7Events et défis",
                         "§8• §7Récompenses",
                         "",
-                        "§eClique pour jouer"
+                        "§e➜ §fRejoindre"
                 )
         );
 
@@ -95,14 +83,11 @@ public class TeleportGUI {
                 SafeGUI.item(
                         Material.SPYGLASS,
                         "§6✦ §fExploration §6✦",
-                        "§7Pars loin du spawn",
-                        "§7pour commencer l'aventure.",
-                        "",
                         "§8• §7Zone sauvage",
-                        "§8• §7Ressources",
+                        "§8• §7Ressources naturelles",
                         "§8• §7Construction libre",
                         "",
-                        "§eClique pour explorer"
+                        "§e➜ §fPartir explorer"
                 )
         );
 
@@ -110,24 +95,19 @@ public class TeleportGUI {
                 SafeGUI.item(
                         Material.MAP,
                         "§6✦ §fVille §6✦",
-                        "§7Retourne dans",
-                        "§7ta ville.",
-                        "",
                         "§8• §7Spawn de ville",
-                        "§8• §7Claims",
-                        "§8• §7Nation",
+                        "§8• §7Claims municipaux",
+                        "§8• §7Territoire Towny",
                         "",
-                        "§eClique pour y aller"
+                        "§e➜ §fRetourner en ville"
                 )
         );
 
         SafeGUI.safeSet(inv, 31,
                 SafeGUI.item(
                         Material.ARROW,
-                        "§c✦ Retour",
-                        "§7Retour au menu principal.",
-                        "",
-                        "§cClique pour revenir"
+                        "§6✦ §fRetour §6✦",
+                        "§8• §7Retour au menu principal"
                 )
         );
 
