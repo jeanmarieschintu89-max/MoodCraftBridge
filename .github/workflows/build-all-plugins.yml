@@ -96,6 +96,7 @@ jobs:
           )
 
           failed=0
+          failed_plugins=()
 
           for plugin in "${plugins[@]}"; do
             echo "================================="
@@ -105,6 +106,7 @@ jobs:
             if [ ! -f "sources/${plugin}/pom.xml" ]; then
               echo "MISSING_POM ${plugin}" | tee "logs/${plugin}.log"
               failed=1
+              failed_plugins+=("${plugin}")
               continue
             fi
 
@@ -116,6 +118,7 @@ jobs:
               if [ "${jar_count}" -eq 0 ]; then
                 echo "NO_JAR ${plugin}" | tee -a "logs/${plugin}.log"
                 failed=1
+                failed_plugins+=("${plugin}")
                 continue
               fi
 
@@ -127,6 +130,10 @@ jobs:
             else
               echo "FAILED ${plugin}"
               failed=1
+              failed_plugins+=("${plugin}")
+              echo "----- ${plugin} build log tail -----"
+              tail -n 120 "logs/${plugin}.log" || true
+              echo "----- end ${plugin} build log tail -----"
             fi
           done
 
@@ -136,7 +143,11 @@ jobs:
           ls -lah dist || true
 
           if [ "${failed}" -ne 0 ]; then
-            echo "One or more plugin builds failed. Check the build-logs artifact."
+            echo "================================="
+            echo "Failed plugins"
+            echo "================================="
+            printf '%s\n' "${failed_plugins[@]}"
+            echo "One or more plugin builds failed. Check the inline log above or the MoodCraft-build-logs artifact."
             exit 1
           fi
 
