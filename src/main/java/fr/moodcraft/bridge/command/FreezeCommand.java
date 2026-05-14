@@ -82,7 +82,7 @@ public class FreezeCommand
 
             sendError(
                     sender,
-                    "Contrôle Staff",
+                    "Sécurité Staff",
                     "Permission refusée."
             );
 
@@ -97,8 +97,8 @@ public class FreezeCommand
 
             sendInfo(
                     sender,
-                    "Contrôle Staff",
-                    "Utilisation: §e/freeze <joueur>"
+                    "Sécurité Staff",
+                    "Utilisation : §e/freeze <joueur>"
             );
 
             return true;
@@ -115,7 +115,7 @@ public class FreezeCommand
 
             sendError(
                     sender,
-                    "Contrôle Staff",
+                    "Sécurité Staff",
                     "Joueur introuvable ou hors ligne."
             );
 
@@ -136,8 +136,8 @@ public class FreezeCommand
 
             sendSuccess(
                     sender,
-                    "Contrôle Staff",
-                    "Joueur défreeze: §e" + target.getName()
+                    "Sécurité Staff",
+                    "Joueur défreeze : §e" + target.getName()
             );
 
             return true;
@@ -151,8 +151,8 @@ public class FreezeCommand
 
         sendSuccess(
                 sender,
-                "Contrôle Staff",
-                "Joueur freeze: §e" + target.getName()
+                "Sécurité Staff",
+                "Joueur freeze : §e" + target.getName()
         );
 
         return true;
@@ -175,14 +175,11 @@ public class FreezeCommand
         );
 
         target.sendMessage("");
-        target.sendMessage("§8----- §6✦ Sécurité §aMood§6Craft §6✦ §8-----");
-        target.sendMessage("");
-        target.sendMessage("§c✘ §fTu as été freeze.");
-        target.sendMessage("");
+        target.sendMessage("§8----- §6✦ Sécurité §aMood§6Craft ✦ §8-----");
+        target.sendMessage("§c✖ §fTu as été freeze.");
         target.sendMessage("§8• §7Ne quitte pas le serveur");
         target.sendMessage("§8• §7Attends les consignes du staff");
         target.sendMessage("§8• §7Reste calme pendant la vérification");
-        target.sendMessage("");
         target.sendMessage("§8-----------------------------");
         target.sendMessage("");
 
@@ -211,13 +208,10 @@ public class FreezeCommand
         );
 
         target.sendMessage("");
-        target.sendMessage("§8----- §6✦ Sécurité §aMood§6Craft §6✦ §8-----");
-        target.sendMessage("");
+        target.sendMessage("§8----- §6✦ Sécurité §aMood§6Craft ✦ §8-----");
         target.sendMessage("§a✔ §fTu n'es plus freeze.");
-        target.sendMessage("");
         target.sendMessage("§8• §7Tu peux à nouveau bouger");
         target.sendMessage("§8• §7Merci d'avoir patienté");
-        target.sendMessage("");
         target.sendMessage("§8-----------------------------");
         target.sendMessage("");
 
@@ -240,10 +234,8 @@ public class FreezeCommand
     ) {
 
         sender.sendMessage("");
-        sender.sendMessage("§8----- §6✦ " + title + " §6✦ §8-----");
-        sender.sendMessage("");
+        sender.sendMessage("§8----- §6✦ " + title + " ✦ §8-----");
         sender.sendMessage("§a✔ §f" + message);
-        sender.sendMessage("");
         sender.sendMessage("§8-----------------------------");
         sender.sendMessage("");
     }
@@ -259,12 +251,9 @@ public class FreezeCommand
     ) {
 
         sender.sendMessage("");
-        sender.sendMessage("§8----- §6✦ " + title + " §6✦ §8-----");
-        sender.sendMessage("");
-        sender.sendMessage("§c✘ §fAction refusée.");
-        sender.sendMessage("");
-        sender.sendMessage("§7" + message);
-        sender.sendMessage("");
+        sender.sendMessage("§8----- §6✦ " + title + " ✦ §8-----");
+        sender.sendMessage("§c✖ §fAction refusée.");
+        sender.sendMessage("§8• §7" + message);
         sender.sendMessage("§8-----------------------------");
         sender.sendMessage("");
     }
@@ -280,10 +269,8 @@ public class FreezeCommand
     ) {
 
         sender.sendMessage("");
-        sender.sendMessage("§8----- §6✦ " + title + " §6✦ §8-----");
-        sender.sendMessage("");
-        sender.sendMessage("§7" + message);
-        sender.sendMessage("");
+        sender.sendMessage("§8----- §6✦ " + title + " ✦ §8-----");
+        sender.sendMessage("§e➜ §f" + message);
         sender.sendMessage("§8-----------------------------");
         sender.sendMessage("");
     }
