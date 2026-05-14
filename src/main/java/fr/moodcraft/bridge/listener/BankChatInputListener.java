@@ -496,11 +496,10 @@ public class BankChatInputListener
         header(p);
 
         p.sendMessage(successLine("Montant enregistré."));
-        p.sendMessage("");
-        p.sendMessage(detail("Destinataire : §e" + target.getName()));
-        p.sendMessage(detail("Montant : §e" + SafeGUI.money(amount) + "€"));
-        p.sendMessage("");
-        p.sendMessage(detail("Une confirmation est nécessaire."));
+        p.sendMessage("§8• §7Destinataire : §e" + target.getName());
+        p.sendMessage("§8• §7Montant : §e" + SafeGUI.money(amount) + "€");
+        p.sendMessage("§e➜ §fOuverture du menu de confirmation.");
+        p.sendMessage("§8• §7Aucun argent n'a encore été envoyé.");
 
         footer(p);
 
@@ -511,7 +510,18 @@ public class BankChatInputListener
                 1.25f
         );
 
-        TransferConfirmGUI.open(p);
+        Bukkit.getScheduler().runTaskLater(
+                fr.moodcraft.bridge.Main.getInstance(),
+                () -> {
+
+                    if (!p.isOnline()) {
+                        return;
+                    }
+
+                    TransferConfirmGUI.open(p);
+                },
+                2L
+        );
     }
 
     private void error(
