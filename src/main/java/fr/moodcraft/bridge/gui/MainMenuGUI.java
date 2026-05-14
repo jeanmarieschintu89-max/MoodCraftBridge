@@ -169,30 +169,30 @@ public class MainMenuGUI {
                 new ArrayList<>();
 
         identityLore.add("§8----- §6✦ Identité ✦ §8-----");
-        identityLore.add("§7Ville: §b" + shortText(townName, 18));
-        identityLore.add("§7Nation: §6" + shortText(nationName, 18));
+        identityLore.add("§8• §7Ville: §b" + shortText(townName, 18));
+        identityLore.add("§8• §7Nation: §6" + shortText(nationName, 18));
         identityLore.add("");
 
         if (source.equalsIgnoreCase("town")) {
 
-            identityLore.add("§a✔ Blason de ville");
+            identityLore.add("§a✔ §fBlason de ville");
 
         } else if (source.equalsIgnoreCase("nation")) {
 
-            identityLore.add("§a✔ Blason de nation");
+            identityLore.add("§a✔ §fBlason de nation");
 
         } else {
 
-            identityLore.add("§7Profil joueur affiché");
+            identityLore.add("§e➜ §fProfil joueur affiché");
             identityLore.add("§8• §7Aucun blason défini");
         }
 
         identityLore.add("");
-        identityLore.add("§7Liquide: §a" + SafeGUI.money(cash) + "€");
-        identityLore.add("§7Banque: §6" + SafeGUI.money(bank) + "€");
-        identityLore.add("§7Total: §e" + SafeGUI.money(total) + "€");
+        identityLore.add("§8• §7Liquide: §a" + SafeGUI.money(cash) + "€");
+        identityLore.add("§8• §7Banque: §6" + SafeGUI.money(bank) + "€");
+        identityLore.add("§8• §7Total: §e" + SafeGUI.money(total) + "€");
         identityLore.add("");
-        identityLore.add("§eClique pour voir");
+        identityLore.add("§e➜ §fClique pour voir");
 
         ItemMeta identityMeta =
                 identity.getItemMeta();
@@ -226,20 +226,20 @@ public class MainMenuGUI {
                         button(
                                 Material.GOLD_INGOT,
                                 "§6✦ §fBanque §6✦",
-                                "§7Gère ton argent.",
+                                "§e➜ §fGère ton argent.",
                                 "",
                                 "§8• §7Déposer",
                                 "§8• §7Retirer",
                                 "§8• §7Virement",
                                 "",
-                                "§7Banque: §6"
+                                "§8• §7Banque: §6"
                                         + SafeGUI.money(bank)
                                         + "€",
-                                "§7Liquide: §a"
+                                "§8• §7Liquide: §a"
                                         + SafeGUI.money(cash)
                                         + "€",
                                 "",
-                                "§eClique pour ouvrir"
+                                "§e➜ §fClique pour ouvrir"
                         )
                 )
         );
@@ -247,14 +247,14 @@ public class MainMenuGUI {
         SafeGUI.safeSet(inv, 12,
                 button(
                         Material.EMERALD,
-                        "§6✦ §fMarché §6✦",
-                        "§7Vends tes ressources.",
+                        "§6✦ §fBourses §6✦",
+                        "§e➜ §fVends tes ressources.",
                         "",
                         "§8• §7Prix qui bougent",
-                        "§8• §7Taxe du marché",
+                        "§8• §7Taxe des bourses",
                         "§8• §7Gain direct",
                         "",
-                        "§eClique pour ouvrir"
+                        "§e➜ §fClique pour ouvrir"
                 )
         );
 
@@ -268,8 +268,7 @@ public class MainMenuGUI {
                         button(
                                 Material.LECTERN,
                                 "§6✦ §fBureau des Entreprises §6✦",
-                                "§7Crée ou gère",
-                                "§7une entreprise.",
+                                "§e➜ §fCrée ou gère une entreprise.",
                                 "",
                                 "§8• §7Employés",
                                 "§8• §7Stages",
@@ -277,8 +276,8 @@ public class MainMenuGUI {
                                 "§8• §7Contrats",
                                 "§8• §7Banque entreprise",
                                 "",
-                                "§a✔ Service §aMood§6Craft",
-                                "§eClique pour ouvrir"
+                                "§a✔ §fService §aMood§6Craft",
+                                "§e➜ §fClique pour ouvrir"
                         )
                 )
         );
@@ -287,14 +286,13 @@ public class MainMenuGUI {
                 button(
                         Material.COMPASS,
                         "§6✦ §fTéléportation §6✦",
-                        "§7Va rapidement",
-                        "§7à un lieu utile.",
+                        "§e➜ §fVa rapidement à un lieu utile.",
                         "",
                         "§8• §7Spawn",
                         "§8• §7Ville",
                         "§8• §7Exploration",
                         "",
-                        "§eClique pour voyager"
+                        "§e➜ §fClique pour voyager"
                 )
         );
 
@@ -302,15 +300,14 @@ public class MainMenuGUI {
                 button(
                         Material.MAP,
                         "§6✦ §fVille §6✦",
-                        "§7Gère ta ville",
-                        "§7ou rejoins-en une.",
+                        "§e➜ §fGère ta ville ou rejoins-en une.",
                         "",
                         "§8• §7Ville",
                         "§8• §7Claims",
                         "§8• §7Nation",
                         "§8• §7Projets",
                         "",
-                        "§eClique pour ouvrir"
+                        "§e➜ §fClique pour ouvrir"
                 )
         );
 
@@ -318,14 +315,13 @@ public class MainMenuGUI {
                 button(
                         Material.EXPERIENCE_BOTTLE,
                         "§6✦ §fMétiers §6✦",
-                        "§7Progresse avec",
-                        "§7tes activités.",
+                        "§e➜ §fProgresse avec tes activités.",
                         "",
                         "§8• §7Niveaux",
                         "§8• §7Récompenses",
                         "§8• §7Progression",
                         "",
-                        "§eClique pour ouvrir"
+                        "§e➜ §fClique pour ouvrir"
                 )
         );
 
@@ -333,9 +329,9 @@ public class MainMenuGUI {
                 button(
                         Material.BARRIER,
                         "§c✦ Fermer",
-                        "§7Quitter le menu.",
+                        "§8• §7Quitter le menu",
                         "",
-                        "§cClique pour fermer"
+                        "§c✖ §fClique pour fermer"
                 )
         );
 
