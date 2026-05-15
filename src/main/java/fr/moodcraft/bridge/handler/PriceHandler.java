@@ -3,6 +3,7 @@ package fr.moodcraft.bridge.handler;
 import fr.moodcraft.bridge.bank.TransactionManager;
 
 import fr.moodcraft.bridge.gui.MainMenuGUI;
+import fr.moodcraft.bridge.gui.PriceGUI;
 
 import fr.moodcraft.bridge.market.MarketEngine;
 import fr.moodcraft.bridge.market.MarketState;
@@ -26,38 +27,40 @@ public class PriceHandler implements GUIHandler {
             int slot
     ) {
 
-        switch (slot) {
+        if (slot == PriceGUI.RETURN_SLOT) {
 
-            case 31 -> {
+            p.closeInventory();
 
-                p.closeInventory();
+            premiumClick(
+                    p,
+                    Sound.UI_BUTTON_CLICK,
+                    0.8f,
+                    Sound.BLOCK_CHEST_CLOSE,
+                    1.2f
+            );
 
-                premiumClick(
-                        p,
-                        Sound.UI_BUTTON_CLICK,
-                        0.8f,
-                        Sound.BLOCK_CHEST_CLOSE,
-                        1.2f
-                );
+            MainMenuGUI.open(p);
 
-                MainMenuGUI.open(p);
-
-                return;
-            }
-
-            case 10 -> sell(p, "netherite", Material.NETHERITE_INGOT, "Netherite");
-            case 11 -> sell(p, "emerald", Material.EMERALD, "Émeraude");
-            case 12 -> sell(p, "diamond", Material.DIAMOND, "Diamant");
-            case 13 -> sell(p, "gold", Material.GOLD_INGOT, "Or");
-            case 14 -> sell(p, "copper", Material.COPPER_INGOT, "Cuivre");
-            case 15 -> sell(p, "iron", Material.IRON_INGOT, "Fer");
-            case 16 -> sell(p, "glowstone", Material.GLOWSTONE_DUST, "Glowstone");
-            case 20 -> sell(p, "quartz", Material.QUARTZ, "Quartz");
-            case 21 -> sell(p, "amethyst", Material.AMETHYST_SHARD, "Améthyste");
-            case 22 -> sell(p, "redstone", Material.REDSTONE, "Redstone");
-            case 23 -> sell(p, "lapis", Material.LAPIS_LAZULI, "Lapis");
-            case 24 -> sell(p, "coal", Material.COAL, "Charbon");
+            return;
         }
+
+        PriceGUI.MarketItem item = PriceGUI.getMarketItemBySlot(slot);
+
+        if (item == null) {
+            return;
+        }
+
+        if (!PriceGUI.isKnown(item)) {
+            header(p);
+            p.sendMessage("§c✖ §fPrix indisponible.");
+            p.sendMessage("§8• §7Ressource : §e" + item.displayName());
+            p.sendMessage("§8• §7Le marché n'a pas encore chargé cette valeur.");
+            footer(p);
+            fail(p);
+            return;
+        }
+
+        sell(p, item.id(), item.material(), item.displayName());
     }
 
     private void sell(
