@@ -19,7 +19,7 @@ public class IbanGUI {
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§6✦ §8IBAN §6✦"
+                        GuiTitle.of("IBAN")
                 );
 
         SafeGUI.fill(inv, Material.BLACK_STAINED_GLASS_PANE, " ");
