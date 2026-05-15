@@ -49,7 +49,7 @@ public class TransactionHistoryGUI {
                 Bukkit.createInventory(
                         null,
                         36,
-                        "§6✦ §8Historique §8• §ePage " + page + " §6✦"
+                        GuiTitle.of("Historique §8• §ePage " + page)
                 );
 
         SafeGUI.fill(
@@ -209,8 +209,8 @@ public class TransactionHistoryGUI {
 
         SafeGUI.safeSet(inv, 31,
                 SafeGUI.item(
-                        Material.ARROW,
-                        "§c✦ Retour",
+                        Material.BARRIER,
+                        "§c✦ §fRetour §c✦",
                         "§7Retour à la banque.",
                         "",
                         "§cClique pour revenir"
