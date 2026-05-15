@@ -1,6 +1,6 @@
-name: Build all MoodCraft plugins
+name: 1 Build all MoodCraft plugins
 
-run-name: Build all MoodCraft plugins - fleet check
+run-name: 1 Build all MoodCraft plugins - fleet check
 
 on:
   workflow_dispatch:
@@ -24,87 +24,45 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout MoodAuth
-        uses: actions/checkout@v4
-        with:
-          repository: jeanmarieschintu89-max/MoodAuth
-          path: sources/MoodAuth
-          token: ${{ secrets.GH_PAT || github.token }}
-
-      - name: Checkout MoodVilleDrapeau
-        uses: actions/checkout@v4
-        with:
-          repository: jeanmarieschintu89-max/MoodVilleDrapeau
-          path: sources/MoodVilleDrapeau
-          token: ${{ secrets.GH_PAT || github.token }}
-
-      - name: Checkout MoodCraftBridge
-        uses: actions/checkout@v4
-        with:
-          repository: jeanmarieschintu89-max/MoodCraftBridge
-          path: sources/MoodCraftBridge
-          token: ${{ secrets.GH_PAT || github.token }}
-
-      - name: Checkout MoodTownGrade
-        uses: actions/checkout@v4
-        with:
-          repository: jeanmarieschintu89-max/MoodTownGrade
-          path: sources/MoodTownGrade
-          token: ${{ secrets.GH_PAT || github.token }}
-
-      - name: Checkout MoodCraftMeteo
-        uses: actions/checkout@v4
-        with:
-          repository: jeanmarieschintu89-max/MoodCraftMeteo
-          path: sources/MoodCraftMeteo
-          token: ${{ secrets.GH_PAT || github.token }}
-
-      - name: Checkout MoodcraftChestLock
-        uses: actions/checkout@v4
-        with:
-          repository: jeanmarieschintu89-max/MoodcraftChestLock
-          path: sources/MoodcraftChestLock
-          token: ${{ secrets.GH_PAT || github.token }}
-
-      - name: Checkout Moodtownmenu
-        uses: actions/checkout@v4
-        with:
-          repository: jeanmarieschintu89-max/Moodtownmenu
-          path: sources/Moodtownmenu
-          token: ${{ secrets.GH_PAT || github.token }}
-
-      - name: Checkout MoodBusiness
-        uses: actions/checkout@v4
-        with:
-          repository: jeanmarieschintu89-max/MoodBusiness
-          path: sources/MoodBusiness
-          token: ${{ secrets.GH_PAT || github.token }}
-
-      - name: Checkout MoodEvent
-        uses: actions/checkout@v4
-        with:
-          repository: jeanmarieschintu89-max/MoodEvent
-          path: sources/MoodEvent
-          token: ${{ secrets.GH_PAT || github.token }}
-
-      - name: Checkout MoodJobsGUI
-        uses: actions/checkout@v4
-        with:
-          repository: jeanmarieschintu89-max/MoodJobsGUI
-          path: sources/MoodJobsGUI
-          token: ${{ secrets.GH_PAT || github.token }}
-
       - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
+          cache: maven
+
+      - name: Checkout all plugins
+        shell: bash
+        env:
+          TOKEN: ${{ secrets.GH_PAT || github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p sources
+
+          repos=(
+            MoodAuth
+            MoodVilleDrapeau
+            MoodCraftBridge
+            MoodTownGrade
+            MoodCraftMeteo
+            MoodcraftChestLock
+            Moodtownmenu
+            MoodBusiness
+            MoodEvent
+            MoodJobsGUI
+          )
+
+          for repo in "${repos[@]}"; do
+            echo "========================================"
+            echo "Checkout ${repo}"
+            echo "========================================"
+            git clone --depth 1 "https://x-access-token:${TOKEN}@github.com/jeanmarieschintu89-max/${repo}.git" "sources/${repo}"
+          done
 
       - name: Build plugins and collect fixed jars
         shell: bash
         run: |
           set -u
-
           mkdir -p dist logs
 
           plugins=(
