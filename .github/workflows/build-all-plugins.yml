@@ -1,3 +1,4 @@
+# Manual trigger stamp: 2026-05-15 style-safe fleet check
 name: Build all MoodCraft plugins
 
 on:
