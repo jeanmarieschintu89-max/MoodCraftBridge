@@ -93,10 +93,32 @@ public class BankGUI {
 
         SafeGUI.safeSet(inv, 16,
                 SafeGUI.item(
+                        Material.NAME_TAG,
+                        "§6✦ §fIBAN §6✦",
+                        "§8• §7Votre identité bancaire",
+                        "§8• §7Utile pour les virements",
+                        "",
+                        "§e➜ §fAfficher"
+                )
+        );
+
+        SafeGUI.safeSet(inv, 21,
+                SafeGUI.item(
                         Material.BOOK,
                         "§6✦ §fHistorique §6✦",
                         "§8• §7Voir les mouvements",
                         "§8• §7Dépôts, retraits, virements",
+                        "",
+                        "§e➜ §fConsulter"
+                )
+        );
+
+        SafeGUI.safeSet(inv, 23,
+                SafeGUI.item(
+                        Material.CLOCK,
+                        "§6✦ §fActivité §6✦",
+                        "§8• §7Résumé du compte",
+                        "§8• §7Flux bancaires personnels",
                         "",
                         "§e➜ §fConsulter"
                 )
