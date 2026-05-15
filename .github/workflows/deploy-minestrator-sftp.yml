@@ -1,4 +1,4 @@
-name: 2 Upload to Minestrator
+name: 2 Envoyer vers Minestrator
 
 on:
   workflow_dispatch:
@@ -22,12 +22,12 @@ concurrency:
 
 jobs:
   upload:
-    name: Upload jars to Minestrator
+    name: Envoyer les jars vers Minestrator
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
-      - name: Download latest build artifact
+      - name: Télécharger le dernier build
         uses: dawidd6/action-download-artifact@v6
         with:
           workflow: build-all-plugins.yml
@@ -36,7 +36,7 @@ jobs:
           path: dist
           if_no_artifact_found: fail
 
-      - name: Check jars
+      - name: Vérifier les jars
         shell: bash
         run: |
           set -euo pipefail
@@ -63,13 +63,13 @@ jobs:
             fi
           done
 
-      - name: Install SFTP client
+      - name: Installer le client SFTP
         shell: bash
         run: |
           sudo apt-get update
           sudo apt-get install -y lftp
 
-      - name: Upload to Minestrator safely
+      - name: Envoyer vers Minestrator en sécurité
         shell: bash
         env:
           SFTP_HOST: ${{ secrets.MINESTRATOR_SFTP_HOST }}
