@@ -1,10 +1,10 @@
-name: 3 Restart server
+name: 3 Redémarrer le serveur
 
 on:
   workflow_dispatch:
     inputs:
       delay_seconds:
-        description: 'Delai avant restart'
+        description: 'Délai avant redémarrage'
         required: true
         default: '10'
         type: choice
@@ -13,9 +13,9 @@ on:
           - '20'
           - '30'
       reason:
-        description: 'Message court affiche aux joueurs'
+        description: 'Message court affiché aux joueurs'
         required: true
-        default: 'Mise a jour MoodCraft'
+        default: 'Mise à jour MoodCraft'
         type: string
 
 permissions:
@@ -27,12 +27,12 @@ concurrency:
 
 jobs:
   restart:
-    name: Announce and restart server
+    name: Annoncer puis redémarrer le serveur
     runs-on: ubuntu-latest
     timeout-minutes: 3
 
     steps:
-      - name: Send restart countdown then restart
+      - name: Envoyer le compte à rebours puis redémarrer
         shell: bash
         env:
           RCON_HOST: ${{ secrets.MINECRAFT_RCON_HOST }}
@@ -68,7 +68,7 @@ jobs:
           port = int(os.environ.get("RCON_PORT") or "25575")
           password = os.environ["RCON_PASSWORD"]
           delay = int(os.environ.get("DELAY_SECONDS") or "10")
-          reason = os.environ.get("REASON") or "Mise a jour MoodCraft"
+          reason = os.environ.get("REASON") or "Mise à jour MoodCraft"
 
           class Rcon:
               def __init__(self, host, port, password):
