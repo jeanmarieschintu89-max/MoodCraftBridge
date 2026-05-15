@@ -26,7 +26,7 @@ public class TransferConfirmGUI {
                 Bukkit.createInventory(
                         null,
                         27,
-                        "§6✦ §8Confirmation §6✦"
+                        GuiTitle.of("Confirmation")
                 );
 
         SafeGUI.fill(
@@ -73,7 +73,7 @@ public class TransferConfirmGUI {
                                         ? Material.BARRIER
                                         : Material.PAPER,
                                 blocked
-                                        ? "§c✦ Virement bloqué"
+                                        ? "§c✦ §fVirement bloqué §c✦"
                                         : "§6✦ §fConfirmer §6✦",
                                 "§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----",
                                 "",
@@ -100,7 +100,7 @@ public class TransferConfirmGUI {
         SafeGUI.safeSet(inv, 11,
                 SafeGUI.item(
                         Material.REDSTONE_BLOCK,
-                        "§c✦ Annuler",
+                        "§c✦ §fAnnuler §c✦",
                         "§7Annule le virement.",
                         "",
                         "§cClique pour revenir"
@@ -112,7 +112,7 @@ public class TransferConfirmGUI {
             SafeGUI.safeSet(inv, 15,
                     SafeGUI.item(
                             Material.BARRIER,
-                            "§c✦ Impossible",
+                            "§c✦ §fImpossible §c✦",
                             "§7Ce virement dépasse",
                             "§7la limite personnelle.",
                             "",
@@ -136,7 +136,7 @@ public class TransferConfirmGUI {
                     SafeGUI.glow(
                             SafeGUI.item(
                                     Material.EMERALD_BLOCK,
-                                    "§a✦ Confirmer",
+                                    "§a✦ §fConfirmer §a✦",
                                     "§7Envoie le virement.",
                                     "",
                                     "§8• §7Montant: §6" + amount + "€",
@@ -181,7 +181,6 @@ public class TransferConfirmGUI {
 
         return clean.substring(
                 0,
-                Math.max(1, max - 3)
-        ) + "...";
+                Math.max(1, max - 3)) + "...";
     }
 }
