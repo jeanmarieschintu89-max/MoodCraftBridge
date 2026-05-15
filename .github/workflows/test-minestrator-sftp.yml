@@ -1,4 +1,4 @@
-name: Restart server
+name: 3 Restart server
 
 on:
   workflow_dispatch:
