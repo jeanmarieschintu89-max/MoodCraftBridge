@@ -11,6 +11,7 @@ import java.util.*;
 public class GUIManager {
 
     private static final Map<String, GUIHandler> handlers = new HashMap<>();
+    private static final Map<UUID, GUIHandler> directHandlers = new HashMap<>();
     private static final Map<UUID, String> open = new HashMap<>();
     private static final Set<UUID> opening = new HashSet<>();
 
@@ -36,12 +37,27 @@ public class GUIManager {
 
         opening.add(uuid);
         open.put(uuid, id);
+        directHandlers.remove(uuid);
 
         p.openInventory(inv);
 
         Bukkit.getScheduler().runTask(plugin, () ->
                 opening.remove(uuid)
         );
+    }
+
+    // =========================
+    // Compat ancien système : GUIManager.set(player, handler)
+    // =========================
+    public static void set(Player p, GUIHandler handler) {
+
+        if (p == null || handler == null) {
+            return;
+        }
+
+        UUID uuid = p.getUniqueId();
+        directHandlers.put(uuid, handler);
+        open.put(uuid, handler.getClass().getSimpleName());
     }
 
     // =========================
@@ -54,7 +70,7 @@ public class GUIManager {
     }
 
     public static boolean hasOpen(Player p) {
-        return open.containsKey(p.getUniqueId());
+        return open.containsKey(p.getUniqueId()) || directHandlers.containsKey(p.getUniqueId());
     }
 
     // =========================
@@ -65,6 +81,7 @@ public class GUIManager {
         if (opening.contains(uuid)) return;
 
         open.remove(uuid);
+        directHandlers.remove(uuid);
     }
 
     // =========================
@@ -83,11 +100,18 @@ public class GUIManager {
     // =========================
     public static void handle(Player p, int slot) {
 
-        String id = get(p);
+        UUID uuid = p.getUniqueId();
 
-        if (id == null) return;
+        GUIHandler handler = directHandlers.get(uuid);
 
-        GUIHandler handler = handlers.get(id);
+        if (handler == null) {
+
+            String id = get(p);
+
+            if (id == null) return;
+
+            handler = handlers.get(id);
+        }
 
         if (handler == null) return;
 
@@ -106,5 +130,6 @@ public class GUIManager {
 
         open.remove(p.getUniqueId());
         opening.remove(p.getUniqueId());
+        directHandlers.remove(p.getUniqueId());
     }
 }
