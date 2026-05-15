@@ -1,16 +1,22 @@
-# Manual trigger stamp: 2026-05-15 style-safe fleet check
 name: Build all MoodCraft plugins
+
+run-name: Build all MoodCraft plugins
 
 on:
   workflow_dispatch:
   push:
     branches:
       - main
-    paths:
-      - '.github/workflows/build-all-plugins.yml'
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: read
+
+concurrency:
+  group: moodcraft-build-all
+  cancel-in-progress: false
 
 jobs:
   build-all:
