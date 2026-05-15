@@ -1,4 +1,4 @@
-name: Build and upload all MoodCraft plugins to Minestrator
+name: Upload to Minestrator
 
 on:
   workflow_dispatch:
@@ -14,126 +14,54 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: moodcraft-minestrator-upload
   cancel-in-progress: false
 
 jobs:
-  build-and-upload:
-    name: Compile and upload jars
+  upload:
+    name: Upload jars to Minestrator
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
-      - name: Checkout all plugins
+      - name: Download latest build artifact
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          workflow: build-all-plugins.yml
+          workflow_conclusion: success
+          name: MoodCraft-all-plugin-jars
+          path: dist
+          if_no_artifact_found: fail
+
+      - name: Check jars
         shell: bash
-        env:
-          TOKEN: ${{ secrets.GH_PAT || github.token }}
         run: |
           set -euo pipefail
-          mkdir -p sources
+          echo "Jars prepared for upload:"
+          ls -lah dist
 
-          repos=(
-            MoodAuth
-            MoodVilleDrapeau
-            MoodCraftBridge
-            MoodTownGrade
-            MoodCraftMeteo
-            MoodcraftChestLock
-            Moodtownmenu
-            MoodBusiness
-            MoodEvent
-            MoodJobsGUI
+          required=(
+            MoodAuth.jar
+            MoodVilleDrapeau.jar
+            MoodCraftBridge.jar
+            MoodTownGrade.jar
+            MoodCraftMeteo.jar
+            MoodcraftChestLock.jar
+            Moodtownmenu.jar
+            MoodBusiness.jar
+            MoodEvent.jar
+            MoodJobsGUI.jar
           )
 
-          for repo in "${repos[@]}"; do
-            echo "Checkout ${repo}"
-            git clone --depth 1 "https://x-access-token:${TOKEN}@github.com/jeanmarieschintu89-max/${repo}.git" "sources/${repo}"
-          done
-
-      - name: Set up Java 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: maven
-
-      - name: Build all plugins
-        shell: bash
-        run: |
-          set -u
-          mkdir -p dist logs
-
-          plugins=(
-            MoodAuth
-            MoodVilleDrapeau
-            MoodCraftBridge
-            MoodTownGrade
-            MoodCraftMeteo
-            MoodcraftChestLock
-            Moodtownmenu
-            MoodBusiness
-            MoodEvent
-            MoodJobsGUI
-          )
-
-          failed=0
-          failed_plugins=()
-
-          for plugin in "${plugins[@]}"; do
-            echo "========================================"
-            echo "Building ${plugin}"
-            echo "========================================"
-
-            if [ ! -f "sources/${plugin}/pom.xml" ]; then
-              echo "MISSING_POM ${plugin}" | tee "logs/${plugin}.log"
-              failed=1
-              failed_plugins+=("${plugin}")
-              continue
-            fi
-
-            if (cd "sources/${plugin}" && mvn -B -DskipTests clean package > "../../logs/${plugin}.log" 2>&1); then
-              jar="$(find "sources/${plugin}/target" -maxdepth 1 -type f -name '*.jar' ! -name '*original*' ! -name '*sources*' ! -name '*javadoc*' | sort | head -n 1)"
-              if [ -z "${jar}" ]; then
-                echo "NO_JAR ${plugin}" | tee -a "logs/${plugin}.log"
-                failed=1
-                failed_plugins+=("${plugin}")
-                continue
-              fi
-              cp "${jar}" "dist/${plugin}.jar"
-              echo "OK ${plugin} -> dist/${plugin}.jar"
-            else
-              echo "FAILED ${plugin}"
-              failed=1
-              failed_plugins+=("${plugin}")
-              tail -n 120 "logs/${plugin}.log" || true
+          for jar in "${required[@]}"; do
+            if [ ! -f "dist/${jar}" ]; then
+              echo "Missing jar: ${jar}"
+              exit 1
             fi
           done
-
-          echo "Prepared jars:"
-          ls -lah dist || true
-
-          if [ "${failed}" -ne 0 ]; then
-            echo "Failed plugins:"
-            printf '%s\n' "${failed_plugins[@]}"
-            echo "Upload cancelled. Fix compilation first."
-            exit 1
-          fi
-
-      - name: Save jars artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: MoodCraft-all-plugin-jars
-          path: dist/*.jar
-          if-no-files-found: error
-
-      - name: Save build logs artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: MoodCraft-build-logs
-          path: logs/*.log
-          if-no-files-found: warn
 
       - name: Install SFTP client
         shell: bash
