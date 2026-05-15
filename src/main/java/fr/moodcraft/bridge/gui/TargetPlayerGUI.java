@@ -26,7 +26,7 @@ public class TargetPlayerGUI {
 
     public static void open(Player p) {
 
-        Inventory inv = Bukkit.createInventory(null, 54, "§6✦ §8Choisir un joueur §6✦");
+        Inventory inv = Bukkit.createInventory(null, 54, GuiTitle.of("Choisir un joueur"));
 
         slotMap.clear();
 
