@@ -1,80 +1,131 @@
-name: Test Minestrator SFTP connection
+name: Restart server
 
 on:
   workflow_dispatch:
     inputs:
-      sftp_port:
-        description: 'Port SFTP a tester'
+      delay_seconds:
+        description: 'Delai avant restart'
         required: true
-        default: '22'
+        default: '10'
         type: choice
         options:
-          - '22'
-          - '2022'
-          - 'secret'
+          - '10'
+          - '20'
+          - '30'
+      reason:
+        description: 'Message court affiche aux joueurs'
+        required: true
+        default: 'Mise a jour MoodCraft'
+        type: string
 
 permissions:
   contents: read
 
+concurrency:
+  group: moodcraft-server-restart
+  cancel-in-progress: false
+
 jobs:
-  test-sftp:
-    name: Test SFTP access
+  restart:
+    name: Announce and restart server
     runs-on: ubuntu-latest
     timeout-minutes: 3
 
     steps:
-      - name: Install SFTP client
-        shell: bash
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y lftp
-
-      - name: Test connection and plugins folder
+      - name: Send restart warning then restart
         shell: bash
         env:
-          SFTP_HOST: ${{ secrets.MINESTRATOR_SFTP_HOST }}
-          SECRET_SFTP_PORT: ${{ secrets.MINESTRATOR_SFTP_PORT }}
-          SFTP_USER: ${{ secrets.MINESTRATOR_SFTP_USER }}
-          SFTP_PASSWORD: ${{ secrets.MINESTRATOR_SFTP_PASSWORD }}
-          SFTP_PLUGINS_PATH: ${{ secrets.MINESTRATOR_PLUGINS_PATH }}
-          INPUT_PORT: ${{ inputs.sftp_port }}
+          RCON_HOST: ${{ secrets.MINECRAFT_RCON_HOST }}
+          RCON_PORT: ${{ secrets.MINECRAFT_RCON_PORT }}
+          RCON_PASSWORD: ${{ secrets.MINECRAFT_RCON_PASSWORD }}
+          DELAY_SECONDS: ${{ inputs.delay_seconds }}
+          REASON: ${{ inputs.reason }}
         run: |
           set -euo pipefail
 
+          RCON_PORT="${RCON_PORT:-25575}"
+
           missing=0
-          for var in SFTP_HOST SFTP_USER SFTP_PASSWORD SFTP_PLUGINS_PATH; do
+          for var in RCON_HOST RCON_PASSWORD; do
             if [ -z "${!var}" ]; then
               echo "Missing secret: ${var}"
               missing=1
             fi
           done
-
           if [ "${missing}" -ne 0 ]; then
-            echo "SFTP test cancelled: missing secret."
+            echo "Restart cancelled: missing RCON secret."
             exit 1
           fi
 
-          if [ "${INPUT_PORT}" = "secret" ]; then
-            SFTP_PORT="${SECRET_SFTP_PORT:-22}"
-          else
-            SFTP_PORT="${INPUT_PORT}"
-          fi
+          python3 - <<'PY'
+          import os
+          import socket
+          import struct
+          import time
 
-          echo "Testing Minestrator SFTP connection..."
-          echo "Selected port: ${SFTP_PORT}"
-          echo "Plugins path is configured."
+          host = os.environ["RCON_HOST"]
+          port = int(os.environ.get("RCON_PORT") or "25575")
+          password = os.environ["RCON_PASSWORD"]
+          delay = int(os.environ.get("DELAY_SECONDS") or "10")
+          reason = os.environ.get("REASON") or "Mise a jour MoodCraft"
 
-          cat > test.lftp <<EOF
-          set cmd:fail-exit yes
-          set sftp:auto-confirm yes
-          set net:timeout 8
-          set net:max-retries 1
-          cd "${SFTP_PLUGINS_PATH}"
-          pwd
-          cls -l
-          bye
-          EOF
+          class Rcon:
+              def __init__(self, host, port, password):
+                  self.host = host
+                  self.port = port
+                  self.password = password
+                  self.sock = socket.create_connection((host, port), timeout=10)
+                  self.request_id = 100
 
-          timeout 25s lftp -u "${SFTP_USER}","${SFTP_PASSWORD}" -p "${SFTP_PORT}" "sftp://${SFTP_HOST}" < test.lftp
+              def close(self):
+                  try:
+                      self.sock.close()
+                  except Exception:
+                      pass
 
-          echo "SFTP connection OK. Plugins folder opened successfully."
+              def send_packet(self, packet_type, body):
+                  self.request_id += 1
+                  request_id = self.request_id
+                  payload = body.encode("utf-8") + b"\x00\x00"
+                  packet = struct.pack("<ii", request_id, packet_type) + payload
+                  self.sock.sendall(struct.pack("<i", len(packet)) + packet)
+                  return request_id
+
+              def read_packet(self):
+                  raw_len = self._read_exact(4)
+                  length = struct.unpack("<i", raw_len)[0]
+                  data = self._read_exact(length)
+                  request_id, packet_type = struct.unpack("<ii", data[:8])
+                  body = data[8:-2].decode("utf-8", errors="replace")
+                  return request_id, packet_type, body
+
+              def _read_exact(self, n):
+                  data = b""
+                  while len(data) < n:
+                      chunk = self.sock.recv(n - len(data))
+                      if not chunk:
+                          raise ConnectionError("RCON connection closed")
+                      data += chunk
+                  return data
+
+              def login(self):
+                  self.send_packet(3, self.password)
+                  request_id, _, body = self.read_packet()
+                  if request_id == -1:
+                      raise PermissionError("RCON authentication failed")
+                  return body
+
+              def command(self, command):
+                  self.send_packet(2, command)
+                  return self.read_packet()[2]
+
+          rcon = Rcon(host, port, password)
+          try:
+              rcon.login()
+              message = f"§8----- §6✦ Redemarrage serveur ✦ §8----- §e➜ §fRedemarrage dans §e{delay}s §8• §7{reason} §8-----------------------------"
+              rcon.command(f"say {message}")
+              time.sleep(delay)
+              rcon.command("restart")
+          finally:
+              rcon.close()
+          PY
