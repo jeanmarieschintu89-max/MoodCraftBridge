@@ -1,0 +1,2 @@
+MoodCraft build trigger
+Last purpose: rebuild after MoodJobsGUI job command normalization.
