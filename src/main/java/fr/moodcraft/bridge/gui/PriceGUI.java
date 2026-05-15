@@ -15,14 +15,27 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class PriceGUI {
 
-    private static final int[] SLOTS = {
-            10, 11, 12, 13, 14, 15, 16,
-            19, 20, 21, 22, 23, 24, 25
+    public static final int RETURN_SLOT = 44;
+
+    private static final int INVENTORY_SIZE = 45;
+
+    private static final MarketItem[] MARKET_ITEMS = {
+            new MarketItem(10, "netherite", Material.NETHERITE_INGOT, "Netherite"),
+            new MarketItem(11, "emerald", Material.EMERALD, "Émeraude"),
+            new MarketItem(12, "diamond", Material.DIAMOND, "Diamant"),
+            new MarketItem(13, "gold", Material.GOLD_INGOT, "Or"),
+            new MarketItem(14, "copper", Material.COPPER_INGOT, "Cuivre"),
+            new MarketItem(15, "iron", Material.IRON_INGOT, "Fer"),
+            new MarketItem(16, "glowstone", Material.GLOWSTONE_DUST, "Glowstone"),
+            new MarketItem(28, "quartz", Material.QUARTZ, "Quartz"),
+            new MarketItem(29, "amethyst", Material.AMETHYST_SHARD, "Améthyste"),
+            new MarketItem(30, "redstone", Material.REDSTONE, "Redstone"),
+            new MarketItem(31, "lapis", Material.LAPIS_LAZULI, "Lapis"),
+            new MarketItem(32, "coal", Material.COAL, "Charbon")
     };
 
     public static void open(Player p) {
@@ -30,7 +43,7 @@ public class PriceGUI {
         Inventory inv =
                 Bukkit.createInventory(
                         null,
-                        36,
+                        INVENTORY_SIZE,
                         GuiTitle.of("Bourses MoodCraft")
                 );
 
@@ -49,36 +62,37 @@ public class PriceGUI {
                                 "§8• §7Tendance par ressource",
                                 "§8• §7Économie §aMood§6Craft",
                                 "",
-                                "§e➜ §fConsulte les prix"
+                                "§e➜ §fClique un minerai pour tout vendre"
                         )
                 )
         );
 
         try {
-            List<String> items = new ArrayList<>(MarketState.base.keySet());
-            items.sort(Comparator.naturalOrder());
 
-            int index = 0;
+            int displayed = 0;
 
-            for (String item : items) {
+            if (isMarketLoaded()) {
 
-                if (index >= SLOTS.length) {
-                    break;
+                for (MarketItem item : MARKET_ITEMS) {
+
+                    if (!isKnown(item)) {
+                        continue;
+                    }
+
+                    SafeGUI.safeSet(
+                            inv,
+                            item.slot(),
+                            marketItem(item)
+                    );
+
+                    displayed++;
                 }
-
-                SafeGUI.safeSet(
-                        inv,
-                        SLOTS[index],
-                        marketItem(item)
-                );
-
-                index++;
             }
 
-            if (items.isEmpty()) {
+            if (displayed <= 0) {
                 SafeGUI.safeSet(
                         inv,
-                        13,
+                        22,
                         SafeGUI.item(
                                 Material.BARRIER,
                                 "§c✦ §fAucun prix §c✦",
@@ -92,7 +106,7 @@ public class PriceGUI {
 
             SafeGUI.safeSet(
                     inv,
-                    13,
+                    22,
                     SafeGUI.item(
                             Material.BARRIER,
                             "§c✦ §fMarché indisponible §c✦",
@@ -104,7 +118,7 @@ public class PriceGUI {
 
         SafeGUI.safeSet(
                 inv,
-                31,
+                RETURN_SLOT,
                 SafeGUI.item(
                         Material.BARRIER,
                         "§c✦ §fRetour §c✦",
@@ -118,54 +132,75 @@ public class PriceGUI {
         GUIManager.set(p, new fr.moodcraft.bridge.handler.PriceHandler());
     }
 
-    private static org.bukkit.inventory.ItemStack marketItem(String item) {
+    public static MarketItem getMarketItemBySlot(int slot) {
 
-        double price = MarketEngine.getPrice(item);
-        double base = MarketState.base.getOrDefault(item, price);
-        double stock = MarketState.stock.getOrDefault(item, 0.0);
-        String trend = MarketState.trend.getOrDefault(item, "§7▬ Stable");
+        for (MarketItem item : MARKET_ITEMS) {
+
+            if (item.slot() == slot) {
+                return item;
+            }
+        }
+
+        return null;
+    }
+
+    public static List<MarketItem> getMarketItems() {
+
+        List<MarketItem> items = new ArrayList<>();
+
+        for (MarketItem item : MARKET_ITEMS) {
+            items.add(item);
+        }
+
+        return items;
+    }
+
+    public static boolean isKnown(MarketItem item) {
+
+        if (item == null) {
+            return false;
+        }
+
+        String id = item.id();
+
+        return MarketState.base.containsKey(id)
+                || MarketState.price.containsKey(id)
+                || MarketState.stock.containsKey(id)
+                || MarketState.trend.containsKey(id);
+    }
+
+    private static org.bukkit.inventory.ItemStack marketItem(MarketItem item) {
+
+        String id = item.id();
+        double price = MarketEngine.getPrice(id);
+        double base = MarketState.base.getOrDefault(id, price);
+        double stock = MarketState.stock.getOrDefault(id, 0.0);
+        String trend = MarketState.trend.getOrDefault(id, "§7▬ Stable");
 
         return SafeGUI.item(
-                materialFor(item),
-                "§6✦ §f" + displayName(item) + " §6✦",
+                item.material(),
+                "§6✦ §f" + item.displayName() + " §6✦",
                 "§8• §7Prix : §e" + SafeGUI.money(price) + "€",
                 "§8• §7Base : §6" + SafeGUI.money(base) + "€",
                 "§8• §7Stock : §b" + SafeGUI.money(stock),
                 "§8• §7Tendance : " + trend,
                 "",
-                "§e➜ §fPrix dynamique"
+                "§e➜ §fVendre cette ressource"
         );
     }
 
-    private static Material materialFor(String item) {
+    private static boolean isMarketLoaded() {
 
-        return switch (item.toLowerCase()) {
-            case "diamond", "diamant" -> Material.DIAMOND;
-            case "emerald", "emeraude", "émeraude" -> Material.EMERALD;
-            case "gold", "gold_ingot", "or" -> Material.GOLD_INGOT;
-            case "iron", "iron_ingot", "fer" -> Material.IRON_INGOT;
-            case "copper", "copper_ingot", "cuivre" -> Material.COPPER_INGOT;
-            case "coal", "charbon" -> Material.COAL;
-            case "redstone" -> Material.REDSTONE;
-            case "lapis", "lapis_lazuli" -> Material.LAPIS_LAZULI;
-            case "quartz" -> Material.QUARTZ;
-            case "netherite", "netherite_ingot" -> Material.NETHERITE_INGOT;
-            case "amethyst", "amethyst_shard", "amethyste", "améthyste" -> Material.AMETHYST_SHARD;
-            case "glowstone" -> Material.GLOWSTONE_DUST;
-            default -> Material.PAPER;
-        };
+        return !MarketState.base.isEmpty()
+                || !MarketState.price.isEmpty()
+                || !MarketState.stock.isEmpty();
     }
 
-    private static String displayName(String item) {
-
-        if (item == null || item.isBlank()) {
-            return "Inconnu";
-        }
-
-        String clean = item
-                .replace('_', ' ')
-                .trim();
-
-        return clean.substring(0, 1).toUpperCase() + clean.substring(1);
+    public record MarketItem(
+            int slot,
+            String id,
+            Material material,
+            String displayName
+    ) {
     }
 }
