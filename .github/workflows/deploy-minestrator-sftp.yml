@@ -1,4 +1,4 @@
-name: Upload to Minestrator
+name: 2 Upload to Minestrator
 
 on:
   workflow_dispatch:
