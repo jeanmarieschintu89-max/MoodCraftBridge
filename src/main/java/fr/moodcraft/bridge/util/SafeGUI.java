@@ -234,6 +234,10 @@ public class SafeGUI {
         }
     }
 
+    public static void fill(Inventory inv) {
+        fill(inv, Material.BLACK_STAINED_GLASS_PANE, " ");
+    }
+
     public static void fill(Inventory inv,
                             Material mat,
                             String name) {
