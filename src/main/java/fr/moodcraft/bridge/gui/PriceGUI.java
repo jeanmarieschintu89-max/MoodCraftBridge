@@ -19,9 +19,9 @@ import java.util.List;
 
 public class PriceGUI {
 
-    public static final int RETURN_SLOT = 44;
+    public static final int RETURN_SLOT = 35;
 
-    private static final int INVENTORY_SIZE = 45;
+    private static final int INVENTORY_SIZE = 36;
 
     private static final MarketItem[] MARKET_ITEMS = {
             new MarketItem(10, "netherite", Material.NETHERITE_INGOT, "Netherite"),
@@ -31,11 +31,11 @@ public class PriceGUI {
             new MarketItem(14, "copper", Material.COPPER_INGOT, "Cuivre"),
             new MarketItem(15, "iron", Material.IRON_INGOT, "Fer"),
             new MarketItem(16, "glowstone", Material.GLOWSTONE_DUST, "Glowstone"),
-            new MarketItem(28, "quartz", Material.QUARTZ, "Quartz"),
-            new MarketItem(29, "amethyst", Material.AMETHYST_SHARD, "Améthyste"),
-            new MarketItem(30, "redstone", Material.REDSTONE, "Redstone"),
-            new MarketItem(31, "lapis", Material.LAPIS_LAZULI, "Lapis"),
-            new MarketItem(32, "coal", Material.COAL, "Charbon")
+            new MarketItem(20, "quartz", Material.QUARTZ, "Quartz"),
+            new MarketItem(21, "amethyst", Material.AMETHYST_SHARD, "Améthyste"),
+            new MarketItem(22, "redstone", Material.REDSTONE, "Redstone"),
+            new MarketItem(23, "lapis", Material.LAPIS_LAZULI, "Lapis"),
+            new MarketItem(24, "coal", Material.COAL, "Charbon")
     };
 
     public static void open(Player p) {
@@ -92,7 +92,7 @@ public class PriceGUI {
             if (displayed <= 0) {
                 SafeGUI.safeSet(
                         inv,
-                        22,
+                        13,
                         SafeGUI.item(
                                 Material.BARRIER,
                                 "§c✦ §fAucun prix §c✦",
@@ -106,7 +106,7 @@ public class PriceGUI {
 
             SafeGUI.safeSet(
                     inv,
-                    22,
+                    13,
                     SafeGUI.item(
                             Material.BARRIER,
                             "§c✦ §fMarché indisponible §c✦",
