@@ -19,7 +19,7 @@ public class TransferTypeGUI {
                 Bukkit.createInventory(
                         null,
                         27,
-                        "§6✦ §8Virement §6✦"
+                        GuiTitle.of("Virement")
                 );
 
         SafeGUI.fill(
@@ -77,8 +77,8 @@ public class TransferTypeGUI {
 
         SafeGUI.safeSet(inv, 22,
                 SafeGUI.item(
-                        Material.ARROW,
-                        "§c✦ Retour",
+                        Material.BARRIER,
+                        "§c✦ §fRetour §c✦",
                         "§7Retour à la banque.",
                         "",
                         "§cClique pour revenir"
