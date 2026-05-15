@@ -72,15 +72,15 @@ public class TransactionHistoryGUI {
                                 "§6✦ §fHistorique bancaire §6✦",
                                 "§8----- §6✦ §aMood§6Craft §fBanque §6✦ §8-----",
                                 "",
-                                "§7Mouvements: §e" + history.size(),
-                                "§7Page: §e" + page + "§8/§e" + maxPage,
+                                "§8• §7Mouvements : §e" + history.size(),
+                                "§8• §7Page : §e" + page + "§8/§e" + maxPage,
                                 "",
                                 "§8• §7Dépôts",
                                 "§8• §7Retraits",
                                 "§8• §7Virements",
                                 "§8• §7Marché",
                                 "",
-                                "§eClique une archive"
+                                "§e➜ §fClique une archive"
                         )
                 )
         );
@@ -97,10 +97,9 @@ public class TransactionHistoryGUI {
                     SafeGUI.item(
                             Material.PAPER,
                             "§6✦ §fAucun mouvement §6✦",
-                            "§7Votre historique est vide.",
-                            "",
-                            "§8• §7Les dépôts, retraits",
-                            "§8• §7et virements apparaîtront ici."
+                            "§8• §7Historique vide",
+                            "§8• §7Dépôts, retraits",
+                            "§8• §7et virements ici"
                     )
             );
 
@@ -152,8 +151,7 @@ public class TransactionHistoryGUI {
                         SafeGUI.item(
                                 mat,
                                 name,
-                                "§7" + crop(line),
-                                "",
+                                "§8• §7" + crop(line),
                                 "§8• §7Mouvement enregistré",
                                 "§8• §7Archive bancaire"
                         )
@@ -167,9 +165,9 @@ public class TransactionHistoryGUI {
                     SafeGUI.item(
                             Material.SPECTRAL_ARROW,
                             "§6✦ §fPage précédente §6✦",
-                            "§7Retour à la page §e" + (page - 1),
+                            "§8• §7Page §e" + (page - 1),
                             "",
-                            "§eClique pour ouvrir"
+                            "§e➜ §fOuvrir"
                     )
             );
 
@@ -178,8 +176,8 @@ public class TransactionHistoryGUI {
             SafeGUI.safeSet(inv, 27,
                     SafeGUI.item(
                             Material.GRAY_DYE,
-                            "§8✦ Première page",
-                            "§7Aucune page avant celle-ci."
+                            "§6✦ §fPremière page §6✦",
+                            "§8• §7Aucune page avant"
                     )
             );
         }
@@ -190,9 +188,9 @@ public class TransactionHistoryGUI {
                     SafeGUI.item(
                             Material.SPECTRAL_ARROW,
                             "§6✦ §fPage suivante §6✦",
-                            "§7Aller à la page §e" + (page + 1),
+                            "§8• §7Page §e" + (page + 1),
                             "",
-                            "§eClique pour ouvrir"
+                            "§e➜ §fOuvrir"
                     )
             );
 
@@ -201,8 +199,8 @@ public class TransactionHistoryGUI {
             SafeGUI.safeSet(inv, 35,
                     SafeGUI.item(
                             Material.GRAY_DYE,
-                            "§8✦ Dernière page",
-                            "§7Aucune page après celle-ci."
+                            "§6✦ §fDernière page §6✦",
+                            "§8• §7Aucune page après"
                     )
             );
         }
@@ -210,10 +208,10 @@ public class TransactionHistoryGUI {
         SafeGUI.safeSet(inv, 31,
                 SafeGUI.item(
                         Material.BARRIER,
-                        "§c✦ §fRetour §c✦",
-                        "§7Retour à la banque.",
+                        "§6✦ §fRetour §6✦",
+                        "§8• §7Retour à la banque",
                         "",
-                        "§cClique pour revenir"
+                        "§c✖ §fRevenir"
                 )
         );
 
