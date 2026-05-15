@@ -15,4 +15,16 @@ public final class GuiTitle {
     public static String moodCraft() {
         return "§6✦ §8§lMenu §aMood§6Craft §6✦";
     }
+
+    public static String clean(String title) {
+        if (title == null) {
+            return "";
+        }
+
+        return title
+                .replaceAll("§.", "")
+                .replace("✦", "")
+                .trim()
+                .toLowerCase();
+    }
 }
