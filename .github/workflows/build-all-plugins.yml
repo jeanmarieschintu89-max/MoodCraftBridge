@@ -1,6 +1,6 @@
 name: Build all MoodCraft plugins
 
-run-name: Build all MoodCraft plugins
+run-name: Build all MoodCraft plugins - fleet check
 
 on:
   workflow_dispatch:
