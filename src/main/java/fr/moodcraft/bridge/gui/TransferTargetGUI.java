@@ -17,7 +17,7 @@ public class TransferTargetGUI {
 
     public static void open(Player p) {
 
-        Inventory inv = Bukkit.createInventory(null, 36, "§6✦ §8Choisir un joueur §6✦");
+        Inventory inv = Bukkit.createInventory(null, 36, GuiTitle.of("Choisir un joueur"));
 
         SafeGUI.fill(inv, Material.BLACK_STAINED_GLASS_PANE, " ");
 
