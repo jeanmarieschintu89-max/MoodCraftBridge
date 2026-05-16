@@ -2,6 +2,7 @@ package fr.moodcraft.bridge.market;
 
 import fr.moodcraft.bridge.Main;
 import fr.moodcraft.bridge.manager.PriceUpdater;
+import org.bukkit.configuration.ConfigurationSection;
 
 public final class MarketEngine {
 
@@ -45,6 +46,53 @@ public final class MarketEngine {
 
     public static void reload() {
         Main.getInstance().reloadConfig();
+        reloadMarketConfig(false);
+    }
+
+    public static void reloadAndResetPrices() {
+        Main.getInstance().reloadConfig();
+        reloadMarketConfig(true);
+    }
+
+    private static void reloadMarketConfig(boolean resetPrices) {
+        reloadSection("base", resetPrices);
+        reloadSection("activity");
+        reloadSection("impact");
+        reloadSection("rarity");
+        reloadSection("weight");
+    }
+
+    private static void reloadSection(String path) {
+        ConfigurationSection section = Main.getInstance().getConfig().getConfigurationSection(path);
+        if (section == null) return;
+        var target = switch (path) {
+            case "activity" -> MarketState.activity;
+            case "impact" -> MarketState.impact;
+            case "rarity" -> MarketState.rarity;
+            case "weight" -> MarketState.weight;
+            default -> null;
+        };
+        if (target == null) return;
+        target.clear();
+        for (String key : section.getKeys(false)) target.put(key, section.getDouble(key));
+    }
+
+    private static void reloadSection(String path, boolean resetPrices) {
+        ConfigurationSection section = Main.getInstance().getConfig().getConfigurationSection(path);
+        if (section == null) return;
+        MarketState.base.clear();
+        for (String key : section.getKeys(false)) {
+            double value = section.getDouble(key);
+            MarketState.base.put(key, value);
+            if (resetPrices || !MarketState.price.containsKey(key)) MarketState.setPrice(key, value);
+            MarketState.stock.putIfAbsent(key, 0.0);
+            MarketState.buy.putIfAbsent(key, 0.0);
+            MarketState.sell.putIfAbsent(key, 0.0);
+        }
+        MarketState.price.keySet().removeIf(item -> !MarketState.base.containsKey(item));
+        MarketState.stock.keySet().removeIf(item -> !MarketState.base.containsKey(item));
+        MarketState.buy.keySet().removeIf(item -> !MarketState.base.containsKey(item));
+        MarketState.sell.keySet().removeIf(item -> !MarketState.base.containsKey(item));
     }
 
     //
@@ -52,6 +100,8 @@ public final class MarketEngine {
     //
 
     public static void reset() {
+
+        reloadAndResetPrices();
 
         for (String item : MarketState.base.keySet()) {
 
@@ -219,7 +269,6 @@ public final class MarketEngine {
 
             //
             // 📦 ÉCONOMIE RÉELLE
-            //
             // achat = stock ↓
             // vente = stock ↑
             //
@@ -288,26 +337,26 @@ public final class MarketEngine {
                     double exponent = rarityExp;
                     double maxBoost = rarityMax;
 
-                    String path =
+                    String rarityPath =
                             "rarity_settings." + item;
 
-                    if (cfg.contains(path)) {
+                    if (cfg.contains(rarityPath)) {
 
                         boost =
                                 cfg.getDouble(
-                                        path + ".boost",
+                                        rarityPath + ".boost",
                                         boost
                                 );
 
                         exponent =
                                 cfg.getDouble(
-                                        path + ".exponent",
+                                        rarityPath + ".exponent",
                                         exponent
                                 );
 
                         maxBoost =
                                 cfg.getDouble(
-                                        path + ".max_boost",
+                                        rarityPath + ".max_boost",
                                         maxBoost
                                 );
                     }
