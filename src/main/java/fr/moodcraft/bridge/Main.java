@@ -66,6 +66,7 @@ public class Main extends JavaPlugin {
                 new TransferConfirmChatListener(),
                 new MineListener(),
                 new PayListener(),
+                new VaultBalanceTrackTask(),
                 new InventoryGuardListener(),
                 new InventoryCloseListener(),
                 new GlobalGUIListener(),
