@@ -83,6 +83,7 @@ public class Main extends JavaPlugin {
         GUIManager.register("teleport", new TeleportHandler());
         GUIManager.register("profile_gui", new ProfileHandler());
         GUIManager.register("transaction_history", new TransactionHistoryHandler());
+        GUIManager.register("eco_track", new EcoTrackHandler());
 
         registerCommand("menu", new MenuCommand());
         registerCommand("freeze", new FreezeCommand());
@@ -93,6 +94,7 @@ public class Main extends JavaPlugin {
         registerCommand("virement", new BanqueCommand());
         registerCommand("rib", new BanqueCommand());
         registerCommand("bankadmin", new BankAdminCommand());
+        registerCommand("trackeco", new TrackEcoCommand());
 
         registerCommand("prix", new PrixCommand());
         registerCommand("sync", new SyncCommand());
@@ -127,6 +129,7 @@ public class Main extends JavaPlugin {
         getLogger().info("💬 Banque Chat Input: OK");
         getLogger().info("✅ Confirmation virement chat: OK");
         getLogger().info("📊 Marché: OK");
+        getLogger().info("🕵 TrackEco: OK");
         getLogger().info("🎮 GUI: OK");
         getLogger().info("🧠 Réputation: OK");
         getLogger().info("🏰 Loot Balance: OK");
@@ -139,6 +142,7 @@ public class Main extends JavaPlugin {
     public void onDisable() {
         BankStorage.save();
         MarketStorage.save();
+        TransactionManager.save();
     }
 
     private void registerEvents(Listener... listeners) {
