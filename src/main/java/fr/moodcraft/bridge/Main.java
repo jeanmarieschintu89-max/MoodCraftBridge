@@ -89,6 +89,7 @@ public class Main extends JavaPlugin {
         registerCommand("menu", new MenuCommand());
         registerCommand("moodplmaj", new MoodPluginUpdateCommand());
         registerCommand("freeze", new FreezeCommand());
+        registerCommand("furnace", new FurnaceCommand());
 
         registerCommand("banque", new BanqueCommand());
         registerCommand("depot", new BanqueCommand());
@@ -137,6 +138,7 @@ public class Main extends JavaPlugin {
         getLogger().info("🏰 Loot Balance: OK");
         getLogger().info("📜 Contrats: MoodBusiness");
         getLogger().info("🏛️ Subventions: OK");
+        getLogger().info("🔥 Furnace VIP: OK");
         getLogger().info("=================================");
     }
 
