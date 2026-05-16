@@ -1,4 +1,4 @@
-name: MoodCraft - Minestrator
+name: 1 MoodCraft - Minestrator
 
 run-name: ${{ github.event.inputs.action }}
 
@@ -12,10 +12,20 @@ on:
         options:
           - "1 - Build et déploie Minestrator"
           - "2 - Redémarrage + message"
-      message:
-        description: "Message envoyé aux joueurs"
-        required: false
-        default: "§8----- §6✦ Maintenance MoodCraft ✦ §8----- §e➜ §fMise à jour du serveur. §8• §7Redémarrage dans quelques secondes. §8-----------------------------"
+      delay_seconds:
+        description: "Délai avant redémarrage"
+        required: true
+        default: "10"
+        type: choice
+        options:
+          - "10"
+          - "20"
+          - "30"
+      reason:
+        description: "Message court affiché aux joueurs"
+        required: true
+        default: "Mise à jour MoodCraft"
+        type: string
 
 permissions:
   contents: read
@@ -29,6 +39,7 @@ jobs:
     name: "1 - Build et déploie Minestrator"
     if: ${{ github.event.inputs.action == '1 - Build et déploie Minestrator' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 35
 
     steps:
       - name: Récupérer tous les plugins
@@ -51,7 +62,7 @@ jobs:
           cache: maven
           cache-dependency-path: 'sources/**/pom.xml'
 
-      - name: Build tous les plugins
+      - name: Construire les plugins et collecter les jars
         shell: bash
         run: |
           set -u
@@ -68,6 +79,7 @@ jobs:
               jar="$(find "sources/${plugin}/target" -maxdepth 1 -type f -name '*.jar' ! -name '*original*' ! -name '*sources*' ! -name '*javadoc*' | sort | head -n 1)"
               if [ -n "${jar}" ]; then
                 cp "${jar}" "dist/${plugin}.jar"
+                echo "OK ${plugin}"
               else
                 echo "Jar introuvable : ${plugin}" | tee -a "logs/${plugin}.log"
                 failed=1
@@ -97,52 +109,65 @@ jobs:
           path: logs/*.log
           if-no-files-found: warn
 
-      - name: Upload Minestrator
+      - name: Envoyer vers Minestrator
         shell: bash
         env:
-          MINESTRATOR_HOST: ${{ secrets.MINESTRATOR_HOST }}
-          MINESTRATOR_PORT: ${{ secrets.MINESTRATOR_PORT }}
-          MINESTRATOR_USERNAME: ${{ secrets.MINESTRATOR_USERNAME }}
-          MINESTRATOR_PASSWORD: ${{ secrets.MINESTRATOR_PASSWORD }}
-          MINESTRATOR_PLUGINS_PATH: ${{ secrets.MINESTRATOR_PLUGINS_PATH }}
+          SFTP_HOST: ${{ secrets.MINESTRATOR_SFTP_HOST }}
+          SFTP_PORT: ${{ secrets.MINESTRATOR_SFTP_PORT }}
+          SFTP_USER: ${{ secrets.MINESTRATOR_SFTP_USER }}
+          SFTP_PASSWORD: ${{ secrets.MINESTRATOR_SFTP_PASSWORD }}
+          SFTP_PLUGINS_PATH: ${{ secrets.MINESTRATOR_PLUGINS_PATH }}
         run: |
           set -euo pipefail
           sudo apt-get update
           sudo apt-get install -y lftp
-          lftp -u "${MINESTRATOR_USERNAME}","${MINESTRATOR_PASSWORD}" -p "${MINESTRATOR_PORT:-22}" "sftp://${MINESTRATOR_HOST}" <<EOF
+          SFTP_PORT="${SFTP_PORT:-2022}"
+          lftp -u "${SFTP_USER}","${SFTP_PASSWORD}" -p "${SFTP_PORT}" "sftp://${SFTP_HOST}" <<EOF
+          set cmd:fail-exit yes
           set sftp:auto-confirm yes
-          mirror -R --verbose dist "${MINESTRATOR_PLUGINS_PATH}"
+          set net:timeout 30
+          set net:max-retries 3
+          cd "${SFTP_PLUGINS_PATH}"
+          mput dist/*.jar
+          cls -l *.jar
           bye
           EOF
 
-      - name: Message + redémarrage
-        shell: bash
-        env:
-          RCON_HOST: ${{ secrets.MINECRAFT_RCON_HOST }}
-          RCON_PORT: ${{ secrets.MINECRAFT_RCON_PORT }}
-          RCON_PASSWORD: ${{ secrets.MINECRAFT_RCON_PASSWORD }}
-          SERVER_MESSAGE: ${{ github.event.inputs.message }}
-        run: |
-          set -euo pipefail
-          docker run --rm itzg/rcon-cli --host "${RCON_HOST}" --port "${RCON_PORT}" --password "${RCON_PASSWORD}" "say ${SERVER_MESSAGE}"
-          sleep 10
-          docker run --rm itzg/rcon-cli --host "${RCON_HOST}" --port "${RCON_PORT}" --password "${RCON_PASSWORD}" "restart"
-
-  restart-only:
+  restart-message:
     name: "2 - Redémarrage + message"
     if: ${{ github.event.inputs.action == '2 - Redémarrage + message' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 5
 
     steps:
-      - name: Message + redémarrage
+      - name: Alerte puis redémarrage
         shell: bash
         env:
           RCON_HOST: ${{ secrets.MINECRAFT_RCON_HOST }}
           RCON_PORT: ${{ secrets.MINECRAFT_RCON_PORT }}
           RCON_PASSWORD: ${{ secrets.MINECRAFT_RCON_PASSWORD }}
-          SERVER_MESSAGE: ${{ github.event.inputs.message }}
+          DELAY_SECONDS: ${{ github.event.inputs.delay_seconds }}
+          REASON: ${{ github.event.inputs.reason }}
         run: |
           set -euo pipefail
-          docker run --rm itzg/rcon-cli --host "${RCON_HOST}" --port "${RCON_PORT}" --password "${RCON_PASSWORD}" "say ${SERVER_MESSAGE}"
-          sleep 10
-          docker run --rm itzg/rcon-cli --host "${RCON_HOST}" --port "${RCON_PORT}" --password "${RCON_PASSWORD}" "restart"
+          RCON_PORT="${RCON_PORT:-25575}"
+          rcon() {
+            docker run --rm itzg/rcon-cli --host "${RCON_HOST}" --port "${RCON_PORT}" --password "${RCON_PASSWORD}" "$1"
+          }
+          rcon "title @a times 10 40 10"
+          rcon "tellraw @a [{\"text\":\"\\n⚠ REDÉMARRAGE SERVEUR ⚠\\n\",\"color\":\"dark_red\",\"bold\":true},{\"text\":\"Le serveur va redémarrer dans ${DELAY_SECONDS} secondes.\\n\",\"color\":\"red\",\"bold\":true},{\"text\":\"Raison : \",\"color\":\"gray\"},{\"text\":\"${REASON}\\n\",\"color\":\"yellow\"},{\"text\":\"Veuillez ne pas lancer d'action importante.\\n\",\"color\":\"gray\"}]"
+          rcon "title @a title {\"text\":\"⚠ REDÉMARRAGE\",\"color\":\"dark_red\",\"bold\":true}"
+          rcon "title @a subtitle {\"text\":\"Dans ${DELAY_SECONDS} secondes\",\"color\":\"gold\",\"bold\":true}"
+          rcon "playsound minecraft:block.note_block.pling master @a ~ ~ ~ 1 0.6"
+          for remaining in $(seq "${DELAY_SECONDS}" -1 1); do
+            rcon "title @a actionbar [{\"text\":\"⚠ \",\"color\":\"dark_red\",\"bold\":true},{\"text\":\"REDÉMARRAGE SERVEUR \",\"color\":\"red\",\"bold\":true},{\"text\":\"dans ${remaining}s\",\"color\":\"gold\",\"bold\":true}]"
+            if [ "${remaining}" = "10" ] || [ "${remaining}" = "5" ] || [ "${remaining}" = "3" ] || [ "${remaining}" = "2" ] || [ "${remaining}" = "1" ]; then
+              rcon "tellraw @a [{\"text\":\"⚠ \",\"color\":\"dark_red\",\"bold\":true},{\"text\":\"Redémarrage dans \",\"color\":\"red\",\"bold\":true},{\"text\":\"${remaining}s\",\"color\":\"gold\",\"bold\":true}]"
+              rcon "playsound minecraft:block.note_block.pling master @a ~ ~ ~ 1 1.2"
+            fi
+            sleep 1
+          done
+          rcon "title @a title {\"text\":\"REDÉMARRAGE...\",\"color\":\"dark_red\",\"bold\":true}"
+          rcon "title @a subtitle {\"text\":\"À tout de suite\",\"color\":\"gold\"}"
+          rcon "tellraw @a {\"text\":\"⚠ Redémarrage maintenant.\",\"color\":\"dark_red\",\"bold\":true}"
+          rcon "restart"
