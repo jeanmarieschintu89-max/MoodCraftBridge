@@ -51,10 +51,10 @@ public class TeleportHandler implements GUIHandler {
 
             case 14 -> teleport(
                     p,
-                    "warp minijeux",
+                    "warp jeux",
                     false,
-                    "§d✦ Mini jeux",
-                    "§7Chargement de la zone d'activités.",
+                    "§d✦ Mini-jeux",
+                    "§7Chargement de la zone jeux.",
                     Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM,
                     1.15f,
                     Sound.BLOCK_AMETHYST_BLOCK_CHIME,
