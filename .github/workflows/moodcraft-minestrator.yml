@@ -39,7 +39,7 @@ jobs:
     name: "1 - Build et déploie Minestrator"
     if: ${{ github.event.inputs.action == '1 - Build et déploie Minestrator' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 40
 
     steps:
       - name: Récupérer tous les plugins
@@ -132,6 +132,38 @@ jobs:
           cls -l *.jar
           bye
           EOF
+
+      - name: Alerte puis redémarrage après déploiement
+        shell: bash
+        env:
+          RCON_HOST: ${{ secrets.MINECRAFT_RCON_HOST }}
+          RCON_PORT: ${{ secrets.MINECRAFT_RCON_PORT }}
+          RCON_PASSWORD: ${{ secrets.MINECRAFT_RCON_PASSWORD }}
+          DELAY_SECONDS: ${{ github.event.inputs.delay_seconds }}
+          REASON: ${{ github.event.inputs.reason }}
+        run: |
+          set -euo pipefail
+          RCON_PORT="${RCON_PORT:-25575}"
+          rcon() {
+            docker run --rm itzg/rcon-cli --host "${RCON_HOST}" --port "${RCON_PORT}" --password "${RCON_PASSWORD}" "$1"
+          }
+          rcon "title @a times 10 40 10"
+          rcon "tellraw @a [{\"text\":\"\\n⚠ REDÉMARRAGE SERVEUR ⚠\\n\",\"color\":\"dark_red\",\"bold\":true},{\"text\":\"Le serveur va redémarrer dans ${DELAY_SECONDS} secondes.\\n\",\"color\":\"red\",\"bold\":true},{\"text\":\"Raison : \",\"color\":\"gray\"},{\"text\":\"${REASON}\\n\",\"color\":\"yellow\"},{\"text\":\"Veuillez ne pas lancer d'action importante.\\n\",\"color\":\"gray\"}]"
+          rcon "title @a title {\"text\":\"⚠ REDÉMARRAGE\",\"color\":\"dark_red\",\"bold\":true}"
+          rcon "title @a subtitle {\"text\":\"Dans ${DELAY_SECONDS} secondes\",\"color\":\"gold\",\"bold\":true}"
+          rcon "playsound minecraft:block.note_block.pling master @a ~ ~ ~ 1 0.6"
+          for remaining in $(seq "${DELAY_SECONDS}" -1 1); do
+            rcon "title @a actionbar [{\"text\":\"⚠ \",\"color\":\"dark_red\",\"bold\":true},{\"text\":\"REDÉMARRAGE SERVEUR \",\"color\":\"red\",\"bold\":true},{\"text\":\"dans ${remaining}s\",\"color\":\"gold\",\"bold\":true}]"
+            if [ "${remaining}" = "10" ] || [ "${remaining}" = "5" ] || [ "${remaining}" = "3" ] || [ "${remaining}" = "2" ] || [ "${remaining}" = "1" ]; then
+              rcon "tellraw @a [{\"text\":\"⚠ \",\"color\":\"dark_red\",\"bold\":true},{\"text\":\"Redémarrage dans \",\"color\":\"red\",\"bold\":true},{\"text\":\"${remaining}s\",\"color\":\"gold\",\"bold\":true}]"
+              rcon "playsound minecraft:block.note_block.pling master @a ~ ~ ~ 1 1.2"
+            fi
+            sleep 1
+          done
+          rcon "title @a title {\"text\":\"REDÉMARRAGE...\",\"color\":\"dark_red\",\"bold\":true}"
+          rcon "title @a subtitle {\"text\":\"À tout de suite\",\"color\":\"gold\"}"
+          rcon "tellraw @a {\"text\":\"⚠ Redémarrage maintenant.\",\"color\":\"dark_red\",\"bold\":true}"
+          rcon "restart"
 
   restart-message:
     name: "2 - Redémarrage + message"
