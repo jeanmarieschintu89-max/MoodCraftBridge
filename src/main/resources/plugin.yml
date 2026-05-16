@@ -63,6 +63,17 @@ commands:
       - badmin
       - banqueadmin
 
+  trackeco:
+    description: Ouvrir le suivi économique complet d'un joueur
+    usage: /trackeco <joueur>
+    permission: econ.admin
+    permission-message: "§c✖ §fAccès réservé à l'administration économique."
+    aliases:
+      - ecohistory
+      - ecohist
+      - trackmoney
+      - suivieco
+
   prix:
     description: Voir les prix du marché
     usage: /prix
