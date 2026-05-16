@@ -1,0 +1,148 @@
+name: MoodCraft - Minestrator
+
+run-name: ${{ github.event.inputs.action }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Action"
+        required: true
+        type: choice
+        options:
+          - "1 - Build et déploie Minestrator"
+          - "2 - Redémarrage + message"
+      message:
+        description: "Message envoyé aux joueurs"
+        required: false
+        default: "§8----- §6✦ Maintenance MoodCraft ✦ §8----- §e➜ §fMise à jour du serveur. §8• §7Redémarrage dans quelques secondes. §8-----------------------------"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: moodcraft-minestrator
+  cancel-in-progress: false
+
+jobs:
+  build-deploy:
+    name: "1 - Build et déploie Minestrator"
+    if: ${{ github.event.inputs.action == '1 - Build et déploie Minestrator' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer tous les plugins
+        shell: bash
+        env:
+          TOKEN: ${{ secrets.GH_PAT || github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p sources dist logs
+          repos=(MoodAuth MoodVilleDrapeau MoodCraftBridge MoodTownGrade MoodCraftMeteo MoodcraftChestLock Moodtownmenu MoodBusiness MoodEvent MoodJobsGUI)
+          for repo in "${repos[@]}"; do
+            git clone --depth 1 "https://x-access-token:${TOKEN}@github.com/jeanmarieschintu89-max/${repo}.git" "sources/${repo}"
+          done
+
+      - name: Installer Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: 'sources/**/pom.xml'
+
+      - name: Build tous les plugins
+        shell: bash
+        run: |
+          set -u
+          plugins=(MoodAuth MoodVilleDrapeau MoodCraftBridge MoodTownGrade MoodCraftMeteo MoodcraftChestLock Moodtownmenu MoodBusiness MoodEvent MoodJobsGUI)
+          failed=0
+          for plugin in "${plugins[@]}"; do
+            echo "========== Build ${plugin} =========="
+            if [ ! -f "sources/${plugin}/pom.xml" ]; then
+              echo "POM manquant : ${plugin}" | tee "logs/${plugin}.log"
+              failed=1
+              continue
+            fi
+            if (cd "sources/${plugin}" && mvn -B -DskipTests clean package > "../../logs/${plugin}.log" 2>&1); then
+              jar="$(find "sources/${plugin}/target" -maxdepth 1 -type f -name '*.jar' ! -name '*original*' ! -name '*sources*' ! -name '*javadoc*' | sort | head -n 1)"
+              if [ -n "${jar}" ]; then
+                cp "${jar}" "dist/${plugin}.jar"
+              else
+                echo "Jar introuvable : ${plugin}" | tee -a "logs/${plugin}.log"
+                failed=1
+              fi
+            else
+              echo "Build échoué : ${plugin}"
+              tail -n 120 "logs/${plugin}.log" || true
+              failed=1
+            fi
+          done
+          ls -lah dist || true
+          if [ "${failed}" -ne 0 ]; then exit 1; fi
+
+      - name: Publier les jars
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MoodCraft-all-plugin-jars
+          path: dist/*.jar
+          if-no-files-found: warn
+
+      - name: Publier les logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MoodCraft-build-logs
+          path: logs/*.log
+          if-no-files-found: warn
+
+      - name: Upload Minestrator
+        shell: bash
+        env:
+          MINESTRATOR_HOST: ${{ secrets.MINESTRATOR_HOST }}
+          MINESTRATOR_PORT: ${{ secrets.MINESTRATOR_PORT }}
+          MINESTRATOR_USERNAME: ${{ secrets.MINESTRATOR_USERNAME }}
+          MINESTRATOR_PASSWORD: ${{ secrets.MINESTRATOR_PASSWORD }}
+          MINESTRATOR_PLUGINS_PATH: ${{ secrets.MINESTRATOR_PLUGINS_PATH }}
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y lftp
+          lftp -u "${MINESTRATOR_USERNAME}","${MINESTRATOR_PASSWORD}" -p "${MINESTRATOR_PORT:-22}" "sftp://${MINESTRATOR_HOST}" <<EOF
+          set sftp:auto-confirm yes
+          mirror -R --verbose dist "${MINESTRATOR_PLUGINS_PATH}"
+          bye
+          EOF
+
+      - name: Message + redémarrage
+        shell: bash
+        env:
+          RCON_HOST: ${{ secrets.MINECRAFT_RCON_HOST }}
+          RCON_PORT: ${{ secrets.MINECRAFT_RCON_PORT }}
+          RCON_PASSWORD: ${{ secrets.MINECRAFT_RCON_PASSWORD }}
+          SERVER_MESSAGE: ${{ github.event.inputs.message }}
+        run: |
+          set -euo pipefail
+          docker run --rm itzg/rcon-cli --host "${RCON_HOST}" --port "${RCON_PORT}" --password "${RCON_PASSWORD}" "say ${SERVER_MESSAGE}"
+          sleep 10
+          docker run --rm itzg/rcon-cli --host "${RCON_HOST}" --port "${RCON_PORT}" --password "${RCON_PASSWORD}" "restart"
+
+  restart-only:
+    name: "2 - Redémarrage + message"
+    if: ${{ github.event.inputs.action == '2 - Redémarrage + message' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Message + redémarrage
+        shell: bash
+        env:
+          RCON_HOST: ${{ secrets.MINECRAFT_RCON_HOST }}
+          RCON_PORT: ${{ secrets.MINECRAFT_RCON_PORT }}
+          RCON_PASSWORD: ${{ secrets.MINECRAFT_RCON_PASSWORD }}
+          SERVER_MESSAGE: ${{ github.event.inputs.message }}
+        run: |
+          set -euo pipefail
+          docker run --rm itzg/rcon-cli --host "${RCON_HOST}" --port "${RCON_PORT}" --password "${RCON_PASSWORD}" "say ${SERVER_MESSAGE}"
+          sleep 10
+          docker run --rm itzg/rcon-cli --host "${RCON_HOST}" --port "${RCON_PORT}" --password "${RCON_PASSWORD}" "restart"
