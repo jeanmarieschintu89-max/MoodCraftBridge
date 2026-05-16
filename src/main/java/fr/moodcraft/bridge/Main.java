@@ -87,6 +87,7 @@ public class Main extends JavaPlugin {
         GUIManager.register("eco_track", new EcoTrackHandler());
 
         registerCommand("menu", new MenuCommand());
+        registerCommand("moodplmaj", new MoodPluginUpdateCommand());
         registerCommand("freeze", new FreezeCommand());
 
         registerCommand("banque", new BanqueCommand());
