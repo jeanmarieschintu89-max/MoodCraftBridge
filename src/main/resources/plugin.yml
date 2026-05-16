@@ -25,6 +25,15 @@ commands:
     description: Ouvrir le menu principal
     usage: /menu
 
+  furnace:
+    description: Cuire ou fondre l'item en main
+    usage: /furnace
+    permission: moodcraftbridge.furnace
+    permission-message: "§c✖ §fCommande réservée au grade VIP."
+    aliases:
+      - cuire
+      - fondre
+
   moodplmaj:
     description: Lancer la mise à jour automatique des plugins MoodCraft
     usage: /moodplmaj [message]
@@ -161,3 +170,7 @@ permissions:
   econ.admin:
     description: Admin banque (iban autres joueurs)
     default: op
+
+  moodcraftbridge.furnace:
+    description: Autorise /furnace, /cuire et /fondre
+    default: false
