@@ -4,17 +4,17 @@ base:
   emerald: 7000
   diamond: 2000
 
-  gold: 70
+  gold: 80
   iron: 45
-  copper: 8
+  copper: 7
 
-  redstone: 10
-  lapis: 10
+  redstone: 9
+  lapis: 12
   coal: 4
 
-  quartz: 14
-  glowstone: 8
-  amethyst: 4
+  quartz: 20
+  glowstone: 16
+  amethyst: 14
 
 #
 # ⚖ Influence générale du minerai
