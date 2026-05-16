@@ -25,6 +25,17 @@ commands:
     description: Ouvrir le menu principal
     usage: /menu
 
+  moodplmaj:
+    description: Lancer la mise à jour automatique des plugins MoodCraft
+    usage: /moodplmaj [message]
+    permission: moodcraft.admin
+    permission-message: "§c✖ §fAccès réservé à l'administration MoodCraft."
+    aliases:
+      - pluginsmaj
+      - majplugins
+      - updateplugins
+      - majplugin
+
   freeze:
     description: Freeze un joueur
     usage: /freeze <joueur>
