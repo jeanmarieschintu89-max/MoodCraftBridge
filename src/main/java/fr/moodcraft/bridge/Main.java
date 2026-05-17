@@ -89,7 +89,10 @@ public class Main extends JavaPlugin {
         registerCommand("menu", new MenuCommand());
         registerCommand("moodplmaj", new MoodPluginUpdateCommand());
         registerCommand("freeze", new FreezeCommand());
-        registerCommand("furnace", new FurnaceCommand());
+        FurnaceCommand furnaceCommand = new FurnaceCommand();
+        registerCommand("furnace", furnaceCommand);
+        registerCommand("cuire", furnaceCommand);
+        registerCommand("fondre", furnaceCommand);
 
         registerCommand("banque", new BanqueCommand());
         registerCommand("depot", new BanqueCommand());
