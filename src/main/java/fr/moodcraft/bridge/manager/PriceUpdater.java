@@ -4,8 +4,6 @@ import com.ghostchu.quickshop.api.shop.Shop;
 
 import fr.moodcraft.bridge.market.MarketEngine;
 
-import org.bukkit.Bukkit;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -57,8 +55,6 @@ public final class PriceUpdater {
             return;
         }
 
-        int updated = 0;
-
         for (Shop shop : shops) {
 
             try {
@@ -78,29 +74,7 @@ public final class PriceUpdater {
 
                 shop.setPrice(price);
 
-                updated++;
-
             } catch (Exception ignored) {}
-        }
-
-        //
-        // 📊 DEBUG LIGHT
-        //
-
-        if (updated > 0) {
-
-            Bukkit.getLogger().info(
-
-                    "[PriceUpdater] "
-
-                            + item
-
-                            + " → "
-
-                            + updated
-
-                            + " shops sync"
-            );
         }
     }
 
