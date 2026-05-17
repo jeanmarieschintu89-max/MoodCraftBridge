@@ -30,9 +30,18 @@ commands:
     usage: /furnace
     permission: moodcraftbridge.furnace
     permission-message: "§c✖ §fCommande réservée au grade VIP."
-    aliases:
-      - cuire
-      - fondre
+
+  cuire:
+    description: Cuire l'item en main
+    usage: /cuire
+    permission: moodcraftbridge.furnace
+    permission-message: "§c✖ §fCommande réservée au grade VIP."
+
+  fondre:
+    description: Fondre l'item en main
+    usage: /fondre
+    permission: moodcraftbridge.furnace
+    permission-message: "§c✖ §fCommande réservée au grade VIP."
 
   moodplmaj:
     description: Lancer la mise à jour automatique des plugins MoodCraft
