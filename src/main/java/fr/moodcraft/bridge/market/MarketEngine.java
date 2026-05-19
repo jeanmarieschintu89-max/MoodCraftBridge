@@ -10,17 +10,17 @@ public final class MarketEngine {
         return Math.max(1, MarketState.getPrice(item));
     }
 
-    // 📉 Vente joueur → activité commerciale ↑ → prix ↑ léger
+    // 📉 Vente joueur via /prix -> offre ↑ -> prix ↓
     public static void recordSell(String item, int amount) {
         applySell(item, amount);
     }
 
-    // 📈 Achat joueur → demande ↑ → prix ↑ fort
+    // 📈 Achat joueur en coffre/shop -> demande ↑ -> prix ↑
     public static void recordBuy(String item, int amount) {
         applyBuy(item, amount);
     }
 
-    // ⛏ Minage joueur → offre créée ↑ → prix ↓
+    // ⛏ Minage joueur -> offre créée ↑ -> prix ↓
     public static void recordMine(String item, int amount) {
         applyMine(item, amount);
     }
@@ -113,7 +113,7 @@ public final class MarketEngine {
         double minFactor = cfg.getDouble("engine.min_price_factor", 0.45);
         double maxFactor = cfg.getDouble("engine.max_price_factor", 1.35);
         double buyMultiplier = cfg.getDouble("engine.buy_multiplier", 1.35);
-        double sellHypeMultiplier = cfg.getDouble("engine.sell_hype_multiplier", 0.25);
+        double sellMultiplier = cfg.getDouble("engine.sell_multiplier", 1.0);
         double miningMultiplier = cfg.getDouble("engine.mining_multiplier", 0.75);
 
         boolean rarityEnabled = cfg.getBoolean("engine.rarity.enabled", true);
@@ -130,9 +130,9 @@ public final class MarketEngine {
             double sell = MarketState.sell.getOrDefault(item, 0.0);
             double mined = MarketState.mined.getOrDefault(item, 0.0);
 
-            // Stock réel : achat retire de l'offre, vente + minage ajoutent de l'offre.
+            // Stock réel : achat retire l'offre, vente /prix et minage ajoutent l'offre.
             stock -= buy * buyMultiplier;
-            stock += sell;
+            stock += sell * sellMultiplier;
             stock += mined * miningMultiplier;
 
             double safeStock = Math.max(1, stock + 100);
@@ -141,8 +141,8 @@ public final class MarketEngine {
             double maxActivity = price * activityCapFactor;
             if (activity > maxActivity) activity = maxActivity;
 
-            // Pression prix : achat monte, vente commerciale monte légèrement, minage baisse.
-            double pressure = (buy * buyMultiplier) + (sell * sellHypeMultiplier) - (mined * miningMultiplier);
+            // Pression prix : achat monte, vente /prix baisse, minage baisse.
+            double pressure = (buy * buyMultiplier) - (sell * sellMultiplier) - (mined * miningMultiplier);
             price += pressure * activity;
 
             if (rarityEnabled) {
