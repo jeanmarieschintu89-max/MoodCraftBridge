@@ -10,6 +10,7 @@ public final class MarketState {
     public static final Map<String, Double> stock = new HashMap<>();
     public static final Map<String, Double> buy = new HashMap<>();
     public static final Map<String, Double> sell = new HashMap<>();
+    public static final Map<String, Double> mined = new HashMap<>();
 
     // 📊 tendance affichée
     public static final Map<String, String> trend = new HashMap<>();
@@ -25,51 +26,24 @@ public final class MarketState {
 
     private MarketState() {}
 
-    // =========================
-    // 💰 GET PRICE
-    // =========================
     public static double getPrice(String item) {
         return price.getOrDefault(item, base.getOrDefault(item, 0.0));
     }
 
-    // =========================
-    // 📊 SET PRICE + TREND
-    // =========================
     public static void setPrice(String item, double newPrice) {
-
         double oldPrice = price.getOrDefault(item, base.getOrDefault(item, newPrice));
-
         double change = 0;
-        if (oldPrice > 0) {
-            change = (newPrice - oldPrice) / oldPrice;
-        }
+        if (oldPrice > 0) change = (newPrice - oldPrice) / oldPrice;
 
         String arrow;
+        if (change > 0.01) arrow = "§2⬆ Forte hausse";
+        else if (change > 0.002) arrow = "§a▲ Hausse";
+        else if (change < -0.01) arrow = "§4⬇ Forte baisse";
+        else if (change < -0.002) arrow = "§c▼ Baisse";
+        else arrow = "§7▬ Stable";
 
-        // 🔥 variation forte
-        if (change > 0.01) {
-            arrow = "§2⬆ Forte hausse";
-        } 
-        else if (change > 0.002) {
-            arrow = "§a▲ Hausse";
-        } 
-        else if (change < -0.01) {
-            arrow = "§4⬇ Forte baisse";
-        } 
-        else if (change < -0.002) {
-            arrow = "§c▼ Baisse";
-        } 
-        else {
-            arrow = "§7▬ Stable";
-        }
-
-        // 📊 update tendance
         trend.put(item, arrow);
-
-        // 🧠 sauvegarde ancien prix
         lastPrice.put(item, oldPrice);
-
-        // 💰 nouveau prix
         price.put(item, newPrice);
     }
 }
