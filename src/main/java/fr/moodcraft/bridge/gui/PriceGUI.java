@@ -40,18 +40,9 @@ public class PriceGUI {
 
     public static void open(Player p) {
 
-        Inventory inv =
-                Bukkit.createInventory(
-                        null,
-                        INVENTORY_SIZE,
-                        GuiTitle.of("Bourses MoodCraft")
-                );
+        Inventory inv = Bukkit.createInventory(null, INVENTORY_SIZE, GuiTitle.of("Bourses MoodCraft"));
 
-        SafeGUI.fill(
-                inv,
-                Material.BLACK_STAINED_GLASS_PANE,
-                " "
-        );
+        SafeGUI.fill(inv, Material.BLACK_STAINED_GLASS_PANE, " ");
 
         SafeGUI.safeSet(inv, 4,
                 SafeGUI.glow(
@@ -68,31 +59,17 @@ public class PriceGUI {
         );
 
         try {
-
             int displayed = 0;
-
             if (isMarketLoaded()) {
-
                 for (MarketItem item : MARKET_ITEMS) {
-
-                    if (!isKnown(item)) {
-                        continue;
-                    }
-
-                    SafeGUI.safeSet(
-                            inv,
-                            item.slot(),
-                            marketItem(item)
-                    );
-
+                    if (!isKnown(item)) continue;
+                    SafeGUI.safeSet(inv, item.slot(), marketItem(item));
                     displayed++;
                 }
             }
 
             if (displayed <= 0) {
-                SafeGUI.safeSet(
-                        inv,
-                        13,
+                SafeGUI.safeSet(inv, 13,
                         SafeGUI.item(
                                 Material.BARRIER,
                                 "§c✦ §fAucun prix §c✦",
@@ -101,12 +78,8 @@ public class PriceGUI {
                         )
                 );
             }
-
         } catch (Exception e) {
-
-            SafeGUI.safeSet(
-                    inv,
-                    13,
+            SafeGUI.safeSet(inv, 13,
                     SafeGUI.item(
                             Material.BARRIER,
                             "§c✦ §fMarché indisponible §c✦",
@@ -116,9 +89,7 @@ public class PriceGUI {
             );
         }
 
-        SafeGUI.safeSet(
-                inv,
-                RETURN_SLOT,
+        SafeGUI.safeSet(inv, RETURN_SLOT,
                 SafeGUI.item(
                         Material.BARRIER,
                         "§c✦ §fRetour §c✦",
@@ -133,36 +104,19 @@ public class PriceGUI {
     }
 
     public static MarketItem getMarketItemBySlot(int slot) {
-
-        for (MarketItem item : MARKET_ITEMS) {
-
-            if (item.slot() == slot) {
-                return item;
-            }
-        }
-
+        for (MarketItem item : MARKET_ITEMS) if (item.slot() == slot) return item;
         return null;
     }
 
     public static List<MarketItem> getMarketItems() {
-
         List<MarketItem> items = new ArrayList<>();
-
-        for (MarketItem item : MARKET_ITEMS) {
-            items.add(item);
-        }
-
+        for (MarketItem item : MARKET_ITEMS) items.add(item);
         return items;
     }
 
     public static boolean isKnown(MarketItem item) {
-
-        if (item == null) {
-            return false;
-        }
-
+        if (item == null) return false;
         String id = item.id();
-
         return MarketState.base.containsKey(id)
                 || MarketState.price.containsKey(id)
                 || MarketState.stock.containsKey(id)
@@ -170,11 +124,14 @@ public class PriceGUI {
     }
 
     private static org.bukkit.inventory.ItemStack marketItem(MarketItem item) {
-
         String id = item.id();
         double price = MarketEngine.getPrice(id);
         double base = MarketState.base.getOrDefault(id, price);
         double stock = MarketState.stock.getOrDefault(id, 0.0);
+        double bought = MarketState.buy.getOrDefault(id, 0.0);
+        double sold = MarketState.sell.getOrDefault(id, 0.0);
+        double mined = MarketState.mined.getOrDefault(id, 0.0);
+        double pressure = bought - sold - mined;
         String trend = MarketState.trend.getOrDefault(id, "§7▬ Stable");
 
         return SafeGUI.item(
@@ -185,22 +142,31 @@ public class PriceGUI {
                 "§8• §7Stock : §b" + SafeGUI.money(stock),
                 "§8• §7Tendance : " + trend,
                 "",
+                "§8• §7Acheté coffre : §a" + formatAmount(bought),
+                "§8• §7Vendu /prix : §c" + formatAmount(sold),
+                "§8• §7Miné : §c" + formatAmount(mined),
+                "§8• §7Pression : " + pressureText(pressure),
+                "",
                 "§e➜ §fVendre cette ressource"
         );
     }
 
-    private static boolean isMarketLoaded() {
+    private static String pressureText(double pressure) {
+        if (pressure > 0.01) return "§aHausse";
+        if (pressure < -0.01) return "§cBaisse";
+        return "§7Stable";
+    }
 
+    private static String formatAmount(double amount) {
+        if (amount == Math.rint(amount)) return String.format("%.0f", amount);
+        return String.format("%.2f", amount);
+    }
+
+    private static boolean isMarketLoaded() {
         return !MarketState.base.isEmpty()
                 || !MarketState.price.isEmpty()
                 || !MarketState.stock.isEmpty();
     }
 
-    public record MarketItem(
-            int slot,
-            String id,
-            Material material,
-            String displayName
-    ) {
-    }
+    public record MarketItem(int slot, String id, Material material, String displayName) {}
 }
