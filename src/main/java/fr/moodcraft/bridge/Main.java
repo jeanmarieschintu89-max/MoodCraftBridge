@@ -65,6 +65,7 @@ public class Main extends JavaPlugin {
                 new BankChatInputListener(),
                 new TransferConfirmChatListener(),
                 new MineListener(),
+                new ShopListener(),
                 new PayListener(),
                 new VaultBalanceTrackTask(),
                 new InventoryGuardListener(),
@@ -187,6 +188,7 @@ public class Main extends JavaPlugin {
             MarketState.stock.putIfAbsent(key, 0.0);
             MarketState.buy.putIfAbsent(key, 0.0);
             MarketState.sell.putIfAbsent(key, 0.0);
+            MarketState.mined.putIfAbsent(key, 0.0);
         }
     }
 
