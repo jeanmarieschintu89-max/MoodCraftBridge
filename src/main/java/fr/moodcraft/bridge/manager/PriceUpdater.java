@@ -1,7 +1,6 @@
 package fr.moodcraft.bridge.manager;
 
 import com.ghostchu.quickshop.api.shop.Shop;
-
 import fr.moodcraft.bridge.market.MarketEngine;
 
 import java.util.HashSet;
@@ -11,17 +10,10 @@ public final class PriceUpdater {
 
     private PriceUpdater() {}
 
-    //
-    // 🔥 ITEMS AUTORISÉS
-    //
-
-    public static final Set<String> ALLOWED =
-            new HashSet<>();
+    public static final Set<String> ALLOWED = new HashSet<>();
 
     static {
-
         ALLOWED.add("diamond");
-        ALLOWED.add("emerald");
         ALLOWED.add("gold");
         ALLOWED.add("iron");
         ALLOWED.add("copper");
@@ -34,80 +26,28 @@ public final class PriceUpdater {
         ALLOWED.add("glowstone");
     }
 
-    // =========================
-    // 📊 UPDATE ITEM
-    // =========================
+    public static void updateItem(String item, double price) {
+        if (item == null) return;
 
-    public static void updateItem(
-            String item,
-            double price
-    ) {
-
-        if (item == null)
-            return;
-
-        Set<Shop> shops =
-                ShopIndex.get(item);
-
-        if (shops == null
-                || shops.isEmpty()) {
-
-            return;
-        }
+        Set<Shop> shops = ShopIndex.get(item);
+        if (shops == null || shops.isEmpty()) return;
 
         for (Shop shop : shops) {
-
             try {
-
-                if (shop == null)
-                    continue;
-
-                double current =
-                        shop.getPrice();
-
-                //
-                // 🔒 ÉVITE UPDATE INUTILE
-                //
-
-                if (Math.abs(current - price) < 0.01)
-                    continue;
-
+                if (shop == null) continue;
+                double current = shop.getPrice();
+                if (Math.abs(current - price) < 0.01) continue;
                 shop.setPrice(price);
-
             } catch (Exception ignored) {}
         }
     }
 
-    // =========================
-    // 🧠 UPDATE AUTO
-    // =========================
-
-    public static void updateItem(
-            String item
-    ) {
-
-        if (item == null)
-            return;
-
-        updateItem(
-                item,
-                MarketEngine.getPrice(item)
-        );
+    public static void updateItem(String item) {
+        if (item == null) return;
+        updateItem(item, MarketEngine.getPrice(item));
     }
 
-    // =========================
-    // ❌ SINGLE UPDATE
-    // =========================
-    //
-    // plus utilisé
-    // économie tick-based maintenant
-    //
-
-    public static void updateSingle(
-            Shop shop,
-            String item
-    ) {
-
+    public static void updateSingle(Shop shop, String item) {
         // volontairement vide
     }
 }
