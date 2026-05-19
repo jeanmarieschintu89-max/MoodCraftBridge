@@ -14,6 +14,7 @@ public final class PriceUpdater {
 
     static {
         ALLOWED.add("diamond");
+        ALLOWED.add("emerald");
         ALLOWED.add("gold");
         ALLOWED.add("iron");
         ALLOWED.add("copper");
