@@ -6,14 +6,14 @@ base:
 
   gold: 80
   iron: 45
-  copper: 7
+  copper: 10
 
   redstone: 9
   lapis: 12
-  coal: 4
+  coal: 6
 
-  quartz: 20
-  glowstone: 16
+  quartz: 25
+  glowstone: 22
   amethyst: 14
 
 #
