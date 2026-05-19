@@ -1,7 +1,6 @@
 base:
 
   netherite: 16000
-  emerald: 7000
   diamond: 2000
 
   gold: 80
@@ -22,7 +21,6 @@ base:
 
 weight:
   netherite: 0.9
-  emerald: 1.0
   diamond: 1.0
   gold: 0.9
   iron: 0.7
@@ -41,7 +39,6 @@ weight:
 
 impact:
   netherite: 45
-  emerald: 55
   diamond: 65
   gold: 80
   iron: 95
@@ -59,7 +56,6 @@ impact:
 
 activity:
   netherite: 0.0008
-  emerald: 0.0010
   diamond: 0.0012
   gold: 0.0018
   iron: 0.0022
@@ -77,7 +73,6 @@ activity:
 
 rarity:
   netherite: 500
-  emerald: 500
   diamond: 500
   gold: 500
   iron: 500
