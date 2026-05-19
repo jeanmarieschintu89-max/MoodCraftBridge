@@ -28,22 +28,17 @@ public class MineListener implements Listener {
         ItemStack tool = player.getInventory().getItemInMainHand();
 
         // 🔒 Silk Touch → ignore
-        if (tool != null && tool.containsEnchantment(Enchantment.SILK_TOUCH)) {
-            return;
-        }
+        if (tool != null && tool.containsEnchantment(Enchantment.SILK_TOUCH)) return;
 
         int amount = 1;
 
         // 💎 Fortune
         if (tool != null && tool.containsEnchantment(Enchantment.FORTUNE)) {
-
             int level = tool.getEnchantmentLevel(Enchantment.FORTUNE);
-
-            // 🔥 petite amélioration RNG
             amount = 1 + (int) (Math.random() * (level + 1));
         }
 
-        // 📊 IMPACT MARCHÉ (VENTE)
-        MarketEngine.recordSell(item, amount);
+        // ⛏ Minage = offre créée -> prix baisse
+        MarketEngine.recordMine(item, amount);
     }
 }
