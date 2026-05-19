@@ -25,11 +25,12 @@ public class PriceGUI {
 
     private static final MarketItem[] MARKET_ITEMS = {
             new MarketItem(10, "netherite", Material.NETHERITE_INGOT, "Netherite"),
-            new MarketItem(11, "diamond", Material.DIAMOND, "Diamant"),
-            new MarketItem(12, "gold", Material.GOLD_INGOT, "Or"),
-            new MarketItem(13, "copper", Material.COPPER_INGOT, "Cuivre"),
-            new MarketItem(14, "iron", Material.IRON_INGOT, "Fer"),
-            new MarketItem(15, "glowstone", Material.GLOWSTONE_DUST, "Glowstone"),
+            new MarketItem(11, "emerald", Material.EMERALD, "Émeraude"),
+            new MarketItem(12, "diamond", Material.DIAMOND, "Diamant"),
+            new MarketItem(13, "gold", Material.GOLD_INGOT, "Or"),
+            new MarketItem(14, "copper", Material.COPPER_INGOT, "Cuivre"),
+            new MarketItem(15, "iron", Material.IRON_INGOT, "Fer"),
+            new MarketItem(16, "glowstone", Material.GLOWSTONE_DUST, "Glowstone"),
             new MarketItem(20, "quartz", Material.QUARTZ, "Quartz"),
             new MarketItem(21, "amethyst", Material.AMETHYST_SHARD, "Améthyste"),
             new MarketItem(22, "redstone", Material.REDSTONE, "Redstone"),
