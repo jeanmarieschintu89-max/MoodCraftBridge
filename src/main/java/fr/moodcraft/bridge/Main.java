@@ -117,18 +117,10 @@ public class Main extends JavaPlugin {
         registerCommand("rep", new ReputationCommand());
         registerCommand("toprep", new ReputationCommand());
 
-        Bukkit.getScheduler().runTaskLater(
-                this,
-                ShopIndex::rebuild,
-                40L
-        );
+        Bukkit.getScheduler().runTaskLater(this, ShopIndex::rebuild, 40L);
 
-        Bukkit.getScheduler().runTaskTimer(
-                this,
-                MarketEngine::tick,
-                20L,
-                20L * 45
-        );
+        Bukkit.getScheduler().runTaskTimer(this, MarketEngine::tick, 20L, 20L * 45);
+        MarketEventManager.start();
 
         getLogger().info("=================================");
         getLogger().info("✅ MoodCraftBridge chargé");
@@ -136,6 +128,7 @@ public class Main extends JavaPlugin {
         getLogger().info("💬 Banque Chat Input: OK");
         getLogger().info("✅ Confirmation virement chat: OK");
         getLogger().info("📊 Marché: OK");
+        getLogger().info("🎲 Événements économiques: OK");
         getLogger().info("🕵 TrackEco: OK");
         getLogger().info("🎮 GUI: OK");
         getLogger().info("🧠 Réputation: OK");
@@ -148,43 +141,26 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        MarketEventManager.stop();
         BankStorage.save();
         MarketStorage.save();
         TransactionManager.save();
     }
 
     private void registerEvents(Listener... listeners) {
-        for (Listener listener : listeners) {
-            Bukkit.getPluginManager().registerEvents(listener, this);
-        }
+        for (Listener listener : listeners) Bukkit.getPluginManager().registerEvents(listener, this);
     }
 
-    private void registerCommand(
-            String name,
-            org.bukkit.command.CommandExecutor executor
-    ) {
-
-        if (getCommand(name) != null) {
-            getCommand(name).setExecutor(executor);
-        }
+    private void registerCommand(String name, org.bukkit.command.CommandExecutor executor) {
+        if (getCommand(name) != null) getCommand(name).setExecutor(executor);
     }
 
     private void loadBase() {
-
-        if (getConfig().getConfigurationSection("base") == null) {
-            return;
-        }
-
+        if (getConfig().getConfigurationSection("base") == null) return;
         for (String key : getConfig().getConfigurationSection("base").getKeys(false)) {
-
             double value = getConfig().getDouble("base." + key);
-
             MarketState.base.put(key, value);
-
-            if (!MarketState.price.containsKey(key)) {
-                MarketState.price.put(key, value);
-            }
-
+            if (!MarketState.price.containsKey(key)) MarketState.price.put(key, value);
             MarketState.stock.putIfAbsent(key, 0.0);
             MarketState.buy.putIfAbsent(key, 0.0);
             MarketState.sell.putIfAbsent(key, 0.0);
@@ -193,13 +169,7 @@ public class Main extends JavaPlugin {
     }
 
     private void loadSection(String path, Map<String, Double> map) {
-
-        if (getConfig().getConfigurationSection(path) == null) {
-            return;
-        }
-
-        for (String key : getConfig().getConfigurationSection(path).getKeys(false)) {
-            map.put(key, getConfig().getDouble(path + "." + key));
-        }
+        if (getConfig().getConfigurationSection(path) == null) return;
+        for (String key : getConfig().getConfigurationSection(path).getKeys(false)) map.put(key, getConfig().getDouble(path + "." + key));
     }
 }
