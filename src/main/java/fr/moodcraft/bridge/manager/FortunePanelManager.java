@@ -120,7 +120,7 @@ public final class FortunePanelManager {
             setLine(sign, 0, "§6#" + rank + " §fFortune");
             setLine(sign, 1, "§7Aucun joueur");
             setLine(sign, 2, "§80€");
-            setLine(sign, 3, "§8MoodCraft");
+            setLine(sign, 3, "");
             sign.update(true, false);
             return;
         }
@@ -128,7 +128,7 @@ public final class FortunePanelManager {
         setLine(sign, 0, "§6#" + rank + " §fFortune");
         setLine(sign, 1, "§a" + shorten(result.name(), 15));
         setLine(sign, 2, "§e" + FortuneService.money(result.total()));
-        setLine(sign, 3, "§8MoodCraft");
+        setLine(sign, 3, "");
 
         sign.update(true, false);
     }
