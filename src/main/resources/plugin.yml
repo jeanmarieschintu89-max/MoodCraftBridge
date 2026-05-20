@@ -154,6 +154,16 @@ commands:
       - votetop
       - panelvote
 
+  moispanel:
+    description: Lier un panneau à la date du mois en cours
+    usage: /moispanel <set|refresh|clear>
+    permission: econ.admin
+    permission-message: "§c✖ §fAccès réservé à l'administration."
+    aliases:
+      - monthpanel
+      - datepanel
+      - panelmois
+
   votereward:
     description: Prévisualiser ou forcer les récompenses mensuelles de vote
     usage: /votereward <preview|run CONFIRM>
