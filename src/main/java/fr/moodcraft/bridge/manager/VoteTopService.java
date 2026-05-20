@@ -58,20 +58,37 @@ public final class VoteTopService {
                         return;
                     }
 
-                    if (result == null || result.isEmpty()) {
-                        Main.getInstance().getLogger().warning("[VoteTop] Aucun vote trouvé sur la page.");
-                        return;
-                    }
-
-                    cachedTop = Collections.unmodifiableList(result);
-                    cachedAt = System.currentTimeMillis();
+                    applyResult(result);
                     VotePanelManager.refreshFromCache();
                 }));
+    }
+
+    public static CompletableFuture<List<VoteEntry>> refreshNowAsync() {
+        return CompletableFuture
+                .supplyAsync(VoteTopService::fetchTop)
+                .thenApply(result -> {
+                    Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
+                        applyResult(result);
+                        VotePanelManager.refreshFromCache();
+                    });
+
+                    return result == null ? Collections.emptyList() : result;
+                });
     }
 
     public static void forceRefresh() {
         cachedAt = 0L;
         refreshAsync();
+    }
+
+    private static void applyResult(List<VoteEntry> result) {
+        if (result == null || result.isEmpty()) {
+            Main.getInstance().getLogger().warning("[VoteTop] Aucun vote trouvé sur la page.");
+            return;
+        }
+
+        cachedTop = Collections.unmodifiableList(result);
+        cachedAt = System.currentTimeMillis();
     }
 
     private static List<VoteEntry> fetchTop() {
