@@ -12,6 +12,11 @@ public final class MarketEventManager {
 
     private static final Random RANDOM = new Random();
 
+    private static final String HEADER = "§8----- §6✦ §aMood§6Craft §fÉconomie ✦ §8-----";
+    private static final String FOOTER = "§8-----------------------------";
+    private static final String DETAIL = "§8• §7";
+    private static final String NO_EVENT = "§8• §7Aucun événement économique actif";
+
     private static ActiveEvent active;
     private static long nextRollAt;
     private static int taskId = -1;
@@ -48,22 +53,20 @@ public final class MarketEventManager {
     }
 
     public static String globalLine() {
-        if (!hasActiveEvent()) return "§7Aucun événement actif";
-        return active.displayName() + " §8• §7" + active.remainingMinutes() + " min";
+        if (!hasActiveEvent()) return NO_EVENT;
+        return "§6✦ " + active.displayName() + " §8• §7" + active.remainingMinutes() + " min";
     }
 
     public static String itemLine(String item) {
-        if (!appliesTo(item)) return "§7Aucun événement";
-        return active.displayName() + " §8• §7" + active.remainingMinutes() + " min";
+        if (!appliesTo(item)) return NO_EVENT;
+        return "§6✦ " + active.displayName() + " §8• §7" + active.remainingMinutes() + " min";
     }
 
     private static void tick() {
         if (!enabled()) return;
 
         if (active != null && active.isExpired()) {
-            Bukkit.broadcastMessage("§8----- §6✦ Marché MoodCraft ✦ §8-----");
-            Bukkit.broadcastMessage("§7L'événement économique §e" + active.displayName() + " §7est terminé.");
-            Bukkit.broadcastMessage("§8-----------------------------");
+            broadcastEnd(active);
             active = null;
             scheduleNextRoll();
             return;
@@ -94,12 +97,27 @@ public final class MarketEventManager {
         int minutes = Math.max(5, Main.getInstance().getConfig().getInt("market-events.duration-minutes", 30));
 
         active = new ActiveEvent(type, item, System.currentTimeMillis() + minutes * 60_000L);
+        broadcastStart(active, minutes);
+    }
 
-        Bukkit.broadcastMessage("§8----- §6✦ Marché MoodCraft ✦ §8-----");
-        Bukkit.broadcastMessage("§e★ §fÉvénement économique : " + active.displayName());
-        Bukkit.broadcastMessage("§8• §7Effet : §f" + active.type().description(active.targetLabel()));
-        Bukkit.broadcastMessage("§8• §7Durée : §e" + minutes + " minutes");
-        Bukkit.broadcastMessage("§8-----------------------------");
+    private static void broadcastStart(ActiveEvent event, int minutes) {
+        Bukkit.broadcastMessage("");
+        Bukkit.broadcastMessage(HEADER);
+        Bukkit.broadcastMessage("§6✦ §fÉvénement économique : " + event.displayName());
+        Bukkit.broadcastMessage(DETAIL + "Effet : " + event.type().description(event.targetLabel()));
+        Bukkit.broadcastMessage(DETAIL + "Durée : §e" + minutes + " minutes");
+        Bukkit.broadcastMessage(DETAIL + "Surveillez les prix, le marché bouge.");
+        Bukkit.broadcastMessage(FOOTER);
+        Bukkit.broadcastMessage("");
+    }
+
+    private static void broadcastEnd(ActiveEvent event) {
+        Bukkit.broadcastMessage("");
+        Bukkit.broadcastMessage(HEADER);
+        Bukkit.broadcastMessage("§a✔ §fÉvénement terminé : " + event.displayName());
+        Bukkit.broadcastMessage(DETAIL + "Le marché retrouve son rythme naturel.");
+        Bukkit.broadcastMessage(FOOTER);
+        Bukkit.broadcastMessage("");
     }
 
     private static boolean appliesTo(String item) {
@@ -118,20 +136,22 @@ public final class MarketEventManager {
     }
 
     private enum EventType {
-        SHORTAGE("Pénurie", false, 0.18, 1.15),
-        DEMAND("Demande spéciale", false, 0.12, 1.25),
-        SURPLUS("Surproduction", false, -0.15, 1.10),
-        CRASH("Crash local", false, -0.22, 1.20),
-        UNSTABLE("Marché instable", true, 0.0, 1.45),
-        GOLDEN_AGE("Âge d'or", true, 0.08, 1.15);
+        SHORTAGE("Pénurie", "§c", false, 0.18, 1.15),
+        DEMAND("Demande spéciale", "§b", false, 0.12, 1.25),
+        SURPLUS("Surproduction", "§a", false, -0.15, 1.10),
+        CRASH("Crash local", "§4", false, -0.22, 1.20),
+        UNSTABLE("Marché instable", "§d", true, 0.0, 1.45),
+        GOLDEN_AGE("Âge d'or", "§6", true, 0.08, 1.15);
 
         private final String label;
+        private final String color;
         private final boolean global;
         private final double priceBias;
         private final double pressureMultiplier;
 
-        EventType(String label, boolean global, double priceBias, double pressureMultiplier) {
+        EventType(String label, String color, boolean global, double priceBias, double pressureMultiplier) {
             this.label = label;
+            this.color = color;
             this.global = global;
             this.priceBias = priceBias;
             this.pressureMultiplier = pressureMultiplier;
@@ -141,14 +161,18 @@ public final class MarketEventManager {
             return global;
         }
 
+        private String styledLabel() {
+            return color + label;
+        }
+
         private String description(String target) {
             return switch (this) {
-                case SHORTAGE -> target + " prend temporairement de la valeur.";
-                case DEMAND -> "La demande de " + target + " augmente.";
-                case SURPLUS -> target + " baisse temporairement.";
-                case CRASH -> target + " subit une forte baisse temporaire.";
-                case UNSTABLE -> "Tous les prix réagissent plus fortement.";
-                case GOLDEN_AGE -> "Le marché reçoit une légère hausse générale.";
+                case SHORTAGE -> "§f" + target + " §7devient plus rare et prend temporairement de la valeur.";
+                case DEMAND -> "§7La demande de §f" + target + " §7augmente.";
+                case SURPLUS -> "§f" + target + " §7baisse temporairement à cause d'une grosse production.";
+                case CRASH -> "§f" + target + " §7subit une forte baisse temporaire.";
+                case UNSTABLE -> "§7Tous les prix réagissent plus fortement.";
+                case GOLDEN_AGE -> "§7Le marché reçoit une légère hausse générale.";
             };
         }
     }
@@ -163,7 +187,7 @@ public final class MarketEventManager {
         }
 
         private String displayName() {
-            return type.label + (type.global() ? "" : " de " + targetLabel());
+            return type.styledLabel() + (type.global() ? "" : " §7de §f" + targetLabel());
         }
 
         private String targetLabel() {
