@@ -17,6 +17,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -24,6 +25,10 @@ import java.util.Set;
 import java.util.UUID;
 
 public final class FortuneService {
+
+    private static List<FortuneResult> cachedTop = Collections.emptyList();
+    private static long cachedTopAt = 0L;
+    private static final long TOP_CACHE_MS = 60_000L;
 
     private FortuneService() {}
 
@@ -64,6 +69,16 @@ public final class FortuneService {
     }
 
     public static List<FortuneResult> top(int limit) {
+        return top(limit, false);
+    }
+
+    public static List<FortuneResult> top(int limit, boolean force) {
+
+        long now = System.currentTimeMillis();
+
+        if (!force && now - cachedTopAt < TOP_CACHE_MS) {
+            return trim(cachedTop, limit);
+        }
 
         List<FortuneResult> results = new ArrayList<>();
 
@@ -82,24 +97,42 @@ public final class FortuneService {
 
         results.sort((a, b) -> Double.compare(b.total(), a.total()));
 
-        if (results.size() <= limit) {
-            return results;
+        cachedTop = Collections.unmodifiableList(results);
+        cachedTopAt = now;
+
+        return trim(cachedTop, limit);
+    }
+
+    public static void invalidateTopCache() {
+        cachedTopAt = 0L;
+        cachedTop = Collections.emptyList();
+    }
+
+    private static List<FortuneResult> trim(List<FortuneResult> source, int limit) {
+        if (source.size() <= limit) {
+            return source;
         }
 
-        return new ArrayList<>(results.subList(0, limit));
+        return new ArrayList<>(source.subList(0, limit));
     }
 
     private static Set<UUID> collectCandidateUuids() {
 
         Set<UUID> uuids = new HashSet<>();
 
-        for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
+        for (String uuidText : BankStorage.getAccountUuids()) {
+            try {
+                uuids.add(UUID.fromString(uuidText));
+            } catch (Exception ignored) {}
+        }
+
+        uuids.addAll(getBusinessOwnerUuids());
+
+        for (OfflinePlayer player : Bukkit.getOnlinePlayers()) {
             if (player != null && player.getUniqueId() != null) {
                 uuids.add(player.getUniqueId());
             }
         }
-
-        uuids.addAll(getBusinessOwnerUuids());
 
         return uuids;
     }
