@@ -115,6 +115,7 @@ public final class MarketEngine {
         double buyMultiplier = cfg.getDouble("engine.buy_multiplier", 1.35);
         double sellMultiplier = cfg.getDouble("engine.sell_multiplier", 1.0);
         double miningMultiplier = cfg.getDouble("engine.mining_multiplier", 0.75);
+        double eventBiasSpeed = clamp(cfg.getDouble("market-events.bias-speed", 0.12), 0.0, 1.0);
 
         boolean rarityEnabled = cfg.getBoolean("engine.rarity.enabled", true);
         double rarityBoost = cfg.getDouble("engine.rarity.boost", 0.0010);
@@ -143,6 +144,7 @@ public final class MarketEngine {
 
             // Pression prix : achat monte, vente /prix baisse, minage baisse.
             double pressure = (buy * buyMultiplier) - (sell * sellMultiplier) - (mined * miningMultiplier);
+            pressure *= MarketEventManager.pressureMultiplier(item);
             price += pressure * activity;
 
             if (rarityEnabled) {
@@ -172,6 +174,12 @@ public final class MarketEngine {
             if (delta < -maxChange) delta = -maxChange;
             price += delta;
 
+            double eventBias = MarketEventManager.priceBias(item);
+            if (eventBias != 0.0) {
+                double eventTarget = base * (1.0 + eventBias);
+                price += (eventTarget - price) * eventBiasSpeed;
+            }
+
             price += (base - price) * baseReturn;
             stock *= stockDecay;
 
@@ -193,6 +201,12 @@ public final class MarketEngine {
             MarketState.sell.put(item, 0.0);
             MarketState.mined.put(item, 0.0);
         }
+    }
+
+    private static double clamp(double value, double min, double max) {
+        if (value < min) return min;
+        if (value > max) return max;
+        return value;
     }
 
     private static double round(double v) {
