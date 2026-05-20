@@ -52,6 +52,7 @@ public class Main extends JavaPlugin {
         TransactionManager.init();
         ReputationHistoryManager.init();
         GUIManager.init(this);
+        FortunePanelManager.init(this);
 
         loadBase();
 
@@ -103,6 +104,7 @@ public class Main extends JavaPlugin {
         registerCommand("bankadmin", new BankAdminCommand());
         registerCommand("trackeco", new TrackEcoCommand());
         registerCommand("fortune", new FortuneCommand());
+        registerCommand("fortunepanel", new FortunePanelCommand());
 
         registerCommand("prix", new PrixCommand());
         registerCommand("sync", new SyncCommand());
@@ -132,6 +134,7 @@ public class Main extends JavaPlugin {
         getLogger().info("🎲 Événements économiques: OK");
         getLogger().info("🕵 TrackEco: OK");
         getLogger().info("💰 Fortune: OK");
+        getLogger().info("🏆 Panneaux fortune: OK");
         getLogger().info("🎮 GUI: OK");
         getLogger().info("🧠 Réputation: OK");
         getLogger().info("🏰 Loot Balance: OK");
@@ -144,6 +147,7 @@ public class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         MarketEventManager.stop();
+        FortunePanelManager.stop();
         BankStorage.save();
         MarketStorage.save();
         TransactionManager.save();
