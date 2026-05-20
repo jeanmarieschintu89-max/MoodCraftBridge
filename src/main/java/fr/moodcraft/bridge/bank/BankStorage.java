@@ -37,6 +37,21 @@ public class BankStorage {
         return config.getDouble(uuid + ".balance", 0.0);
     }
 
+    public static Set<String> getAccountUuids() {
+        if (config == null) return Collections.emptySet();
+
+        Set<String> uuids = new HashSet<>();
+
+        for (String key : config.getKeys(false)) {
+            if (key.equalsIgnoreCase("logs")) continue;
+            if (config.getConfigurationSection(key) == null) continue;
+            if (!config.contains(key + ".balance")) continue;
+            uuids.add(key);
+        }
+
+        return uuids;
+    }
+
     // =========================
     // 💰 SET
     // =========================
