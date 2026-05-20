@@ -118,17 +118,17 @@ public final class FortunePanelManager {
 
         if (result == null) {
             setLine(sign, 0, "§6#" + rank + " §fFortune");
-            setLine(sign, 1, "§7Aucun joueur");
-            setLine(sign, 2, "§80€");
-            setLine(sign, 3, "");
+            setLine(sign, 1, "");
+            setLine(sign, 2, "§7Aucun joueur");
+            setLine(sign, 3, "§80€");
             sign.update(true, false);
             return;
         }
 
         setLine(sign, 0, "§6#" + rank + " §fFortune");
-        setLine(sign, 1, "§a" + shorten(result.name(), 15));
-        setLine(sign, 2, "§e" + FortuneService.money(result.total()));
-        setLine(sign, 3, "");
+        setLine(sign, 1, "");
+        setLine(sign, 2, "§a" + shorten(result.name(), 15));
+        setLine(sign, 3, "§e" + FortuneService.money(result.total()));
 
         sign.update(true, false);
     }
