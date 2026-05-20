@@ -22,7 +22,8 @@ public final class MoisPanelManager {
 
     public enum Mode {
         MOIS,
-        JOUR
+        JOUR,
+        RECOMPENSES
     }
 
     private static File file;
@@ -143,16 +144,27 @@ public final class MoisPanelManager {
         LocalDate now = LocalDate.now();
         String month = now.getMonth().getDisplayName(TextStyle.FULL, Locale.FRANCE);
         month = month.substring(0, 1).toUpperCase(Locale.FRANCE) + month.substring(1);
+        String monthYear = month + " " + now.getYear();
 
-        setLine(sign, 0, "§6Classement vote");
-        setLine(sign, 1, "");
-
-        if (mode == Mode.MOIS) {
-            setLine(sign, 2, "§a" + month + " " + now.getYear());
-            setLine(sign, 3, "");
-        } else {
-            setLine(sign, 2, "§a" + now.getDayOfMonth() + " " + month);
-            setLine(sign, 3, "");
+        switch (mode) {
+            case MOIS -> {
+                setLine(sign, 0, "§6Classement vote");
+                setLine(sign, 1, "");
+                setLine(sign, 2, "§a" + monthYear);
+                setLine(sign, 3, "");
+            }
+            case JOUR -> {
+                setLine(sign, 0, "§6Classement vote");
+                setLine(sign, 1, "");
+                setLine(sign, 2, "§a" + now.getDayOfMonth() + " " + month);
+                setLine(sign, 3, "");
+            }
+            case RECOMPENSES -> {
+                setLine(sign, 0, "§6Récompenses");
+                setLine(sign, 1, "§fTop Vote");
+                setLine(sign, 2, "");
+                setLine(sign, 3, "§a" + monthYear);
+            }
         }
 
         applyGlowOnly(sign);
