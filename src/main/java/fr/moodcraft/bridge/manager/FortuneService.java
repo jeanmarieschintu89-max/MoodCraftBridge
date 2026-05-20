@@ -244,7 +244,16 @@ public final class FortuneService {
     }
 
     public static String money(double value) {
-        return NumberFormat.getInstance(Locale.FRANCE).format(value) + "€";
+        return NumberFormat.getInstance(Locale.FRANCE)
+                .format(value)
+                .replace('\u00A0', ' ')
+                .replace('\u202F', ' ')
+                .replace(" ", " ")
+                + "€";
+    }
+
+    public static String panelMoney(double value) {
+        return money(value).replace(" ", "");
     }
 
     private record TownReport(String townName, boolean isMayor, double balance) {
