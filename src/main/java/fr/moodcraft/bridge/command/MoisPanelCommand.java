@@ -59,8 +59,10 @@ public class MoisPanelCommand implements CommandExecutor {
                 mode = Mode.MOIS;
             } else if (type.equals("jour") || type.equals("date") || type.equals("day")) {
                 mode = Mode.JOUR;
+            } else if (type.equals("recompenses") || type.equals("récompenses") || type.equals("reward") || type.equals("rewards") || type.equals("topvote")) {
+                mode = Mode.RECOMPENSES;
             } else {
-                error(player, "Type invalide. Utilise §emois §7ou §ejour§7.");
+                error(player, "Type invalide. Utilise §emois§7, §ejour §7ou §erecompenses§7.");
                 return;
             }
         }
@@ -69,9 +71,11 @@ public class MoisPanelCommand implements CommandExecutor {
 
         header(player, "Panneau Mois");
         player.sendMessage("§a✔ §fPanneau lié au mode §e" + mode.name().toLowerCase() + "§f.");
-        player.sendMessage(mode == Mode.MOIS
-                ? "§8• §7Format : §eClassement vote §8/ §aMai 2026"
-                : "§8• §7Format : §eClassement vote §8/ §a21 Mai");
+        player.sendMessage(switch (mode) {
+            case MOIS -> "§8• §7Format : §eClassement vote §8/ §aMai 2026";
+            case JOUR -> "§8• §7Format : §eClassement vote §8/ §a21 Mai";
+            case RECOMPENSES -> "§8• §7Format : §eRécompenses §8/ §fTop Vote §8/ §aMai 2026";
+        });
         footer(player);
     }
 
@@ -104,6 +108,7 @@ public class MoisPanelCommand implements CommandExecutor {
         header(player, "Panneau Mois");
         player.sendMessage("§e➜ §7/moispanel set mois");
         player.sendMessage("§e➜ §7/moispanel set jour");
+        player.sendMessage("§e➜ §7/moispanel set recompenses");
         player.sendMessage("§e➜ §7/moispanel refresh");
         player.sendMessage("§e➜ §7/moispanel clear");
         player.sendMessage("§8• §7Regarde le panneau avant d'utiliser §e/set§7.");
