@@ -4,6 +4,7 @@ import fr.moodcraft.bridge.Main;
 import fr.moodcraft.bridge.manager.VoteTopService.VoteEntry;
 
 import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -118,6 +119,8 @@ public final class VotePanelManager {
         Block block = location.getBlock();
         if (!(block.getState() instanceof Sign sign)) return;
 
+        resetForcedSignColor(sign);
+
         if (entry == null) {
             setLine(sign, 0, "§6#" + rank + " §fVotes");
             setLine(sign, 1, "");
@@ -132,6 +135,13 @@ public final class VotePanelManager {
         setLine(sign, 2, "§a" + VoteTopService.shorten(entry.name(), 15));
         setLine(sign, 3, "§e" + VoteTopService.panelVotes(entry.votes()));
         sign.update(true, false);
+    }
+
+    private static void resetForcedSignColor(Sign sign) {
+        try {
+            sign.getSide(Side.FRONT).setGlowingText(false);
+            sign.getSide(Side.FRONT).setColor(DyeColor.BLACK);
+        } catch (Throwable ignored) {}
     }
 
     private static void setLine(Sign sign, int index, String text) {
