@@ -23,7 +23,8 @@ public final class MoisPanelManager {
     public enum Mode {
         MOIS,
         JOUR,
-        RECOMPENSES
+        RECOMPENSES,
+        DIRECT
     }
 
     private static File file;
@@ -145,6 +146,7 @@ public final class MoisPanelManager {
         String month = now.getMonth().getDisplayName(TextStyle.FULL, Locale.FRANCE);
         month = month.substring(0, 1).toUpperCase(Locale.FRANCE) + month.substring(1);
         String monthYear = month + " " + now.getYear();
+        String dayMonth = now.getDayOfMonth() + " " + month;
 
         switch (mode) {
             case MOIS -> {
@@ -156,7 +158,7 @@ public final class MoisPanelManager {
             case JOUR -> {
                 setLine(sign, 0, "§6Classement vote");
                 setLine(sign, 1, "");
-                setLine(sign, 2, "§a" + now.getDayOfMonth() + " " + month);
+                setLine(sign, 2, "§a" + dayMonth);
                 setLine(sign, 3, "");
             }
             case RECOMPENSES -> {
@@ -164,6 +166,12 @@ public final class MoisPanelManager {
                 setLine(sign, 1, "§fTop Vote");
                 setLine(sign, 2, "");
                 setLine(sign, 3, "§a" + monthYear);
+            }
+            case DIRECT -> {
+                setLine(sign, 0, "§6Classement en");
+                setLine(sign, 1, "§fdirect");
+                setLine(sign, 2, "");
+                setLine(sign, 3, "§a" + dayMonth);
             }
         }
 
