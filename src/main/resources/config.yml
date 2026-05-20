@@ -170,3 +170,30 @@ engine:
     #
 
     max_boost: 0.008
+
+#
+# 🗳️ TOP VOTES MOODCRAFT.FR
+#
+
+vote-top:
+  url: "https://moodcraft.fr/vote"
+
+  monthly-rewards:
+    enabled: true
+
+    # Dernier jour du mois à 23:55.
+    # Le plugin empêche une double distribution avec last-rewarded-month.
+    hour: 23
+    minute: 55
+    last-rewarded-month: ""
+
+    # Commandes console lancées pour les gagnants.
+    # Remplace ces commandes par la syntaxe exacte de MoodCraftCaisses si besoin.
+    # Variables: {player}, {uuid}, {rank}, {votes}
+    commands:
+      1:
+        - "caisses key give {player} 1"
+      2:
+        - "caisses key give {player} 1"
+      3:
+        - "caisses key give {player} 1"
