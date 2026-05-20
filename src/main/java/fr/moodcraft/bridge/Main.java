@@ -103,6 +103,7 @@ public class Main extends JavaPlugin {
         registerCommand("rib", new BanqueCommand());
         registerCommand("bankadmin", new BankAdminCommand());
         registerCommand("trackeco", new TrackEcoCommand());
+        registerCommand("uuidtrack", new UuidTrackCommand());
         registerCommand("fortune", new FortuneCommand());
         registerCommand("fortunepanel", new FortunePanelCommand());
 
@@ -133,6 +134,7 @@ public class Main extends JavaPlugin {
         getLogger().info("📊 Marché: OK");
         getLogger().info("🎲 Événements économiques: OK");
         getLogger().info("🕵 TrackEco: OK");
+        getLogger().info("🧩 UUID Track: OK");
         getLogger().info("💰 Fortune: OK");
         getLogger().info("🏆 Panneaux fortune: OK");
         getLogger().info("🎮 GUI: OK");
