@@ -114,6 +114,17 @@ commands:
       - fortunetotal
       - ecofortune
 
+  fortunepanel:
+    description: Lier des panneaux au classement fortune
+    usage: /fortunepanel <set|refresh|clear> [1/2/3]
+    permission: econ.admin
+    permission-message: "§c✖ §fAccès réservé à l'administration économique."
+    aliases:
+      - fortune panneaux
+      - fpanel
+      - richpanel
+      - panelrich
+
   prix:
     description: Voir les prix du marché
     usage: /prix
