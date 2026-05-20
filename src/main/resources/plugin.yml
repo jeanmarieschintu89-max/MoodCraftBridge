@@ -144,6 +144,16 @@ commands:
       - richpanel
       - panelrich
 
+  votepanel:
+    description: Lier des panneaux au classement votes MoodCraft.fr
+    usage: /votepanel <set|refresh|clear> [1-10]
+    permission: econ.admin
+    permission-message: "§c✖ §fAccès réservé à l'administration."
+    aliases:
+      - vpanel
+      - votetop
+      - panelvote
+
   prix:
     description: Voir les prix du marché
     usage: /prix
