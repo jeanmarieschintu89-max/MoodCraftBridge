@@ -20,6 +20,11 @@ import java.util.Locale;
 
 public final class MoisPanelManager {
 
+    public enum Mode {
+        MOIS,
+        JOUR
+    }
+
     private static File file;
     private static FileConfiguration config;
     private static int taskId = -1;
@@ -55,8 +60,9 @@ public final class MoisPanelManager {
         }
     }
 
-    public static void setPanel(Location location) {
+    public static void setPanel(Location location, Mode mode) {
         if (location == null || location.getWorld() == null) return;
+        if (mode == null) mode = Mode.JOUR;
 
         String id = location.getWorld().getName()
                 + ":" + location.getBlockX()
@@ -68,6 +74,7 @@ public final class MoisPanelManager {
         config.set(path + "x", location.getBlockX());
         config.set(path + "y", location.getBlockY());
         config.set(path + "z", location.getBlockZ());
+        config.set(path + "mode", mode.name());
 
         save();
         refresh();
@@ -98,7 +105,8 @@ public final class MoisPanelManager {
             Location location = getPanelLocation(id);
             if (location == null) continue;
 
-            updateSign(location);
+            Mode mode = getPanelMode(id);
+            updateSign(location, mode);
         }
     }
 
@@ -118,7 +126,17 @@ public final class MoisPanelManager {
         );
     }
 
-    private static void updateSign(Location location) {
+    private static Mode getPanelMode(String id) {
+        String text = config.getString("panels." + id + ".mode", "JOUR");
+
+        try {
+            return Mode.valueOf(text.toUpperCase(Locale.ROOT));
+        } catch (Exception e) {
+            return Mode.JOUR;
+        }
+    }
+
+    private static void updateSign(Location location, Mode mode) {
         Block block = location.getBlock();
         if (!(block.getState() instanceof Sign sign)) return;
 
@@ -128,8 +146,14 @@ public final class MoisPanelManager {
 
         setLine(sign, 0, "§6Classement vote");
         setLine(sign, 1, "");
-        setLine(sign, 2, "§a" + now.getDayOfMonth() + " " + month);
-        setLine(sign, 3, "§e" + now.getYear());
+
+        if (mode == Mode.MOIS) {
+            setLine(sign, 2, "§a" + month + " " + now.getYear());
+            setLine(sign, 3, "");
+        } else {
+            setLine(sign, 2, "§a" + now.getDayOfMonth() + " " + month);
+            setLine(sign, 3, "");
+        }
 
         applyGlowOnly(sign);
         sign.update(true, false);
