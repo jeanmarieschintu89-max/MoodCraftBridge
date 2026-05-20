@@ -103,6 +103,17 @@ commands:
       - trackmoney
       - suivieco
 
+  fortune:
+    description: Voir la fortune totale d'un joueur
+    usage: /fortune <joueur>
+    permission: econ.admin
+    permission-message: "§c✖ §fAccès réservé à l'administration économique."
+    aliases:
+      - totalargent
+      - argenttotal
+      - fortunetotal
+      - ecofortune
+
   prix:
     description: Voir les prix du marché
     usage: /prix
