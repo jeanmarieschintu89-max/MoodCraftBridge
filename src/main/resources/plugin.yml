@@ -154,6 +154,16 @@ commands:
       - votetop
       - panelvote
 
+  votereward:
+    description: Prévisualiser ou forcer les récompenses mensuelles de vote
+    usage: /votereward <preview|run CONFIRM>
+    permission: econ.admin
+    permission-message: "§c✖ §fAccès réservé à l'administration."
+    aliases:
+      - rewardsvote
+      - votemonthly
+      - monthlyvote
+
   prix:
     description: Voir les prix du marché
     usage: /prix
