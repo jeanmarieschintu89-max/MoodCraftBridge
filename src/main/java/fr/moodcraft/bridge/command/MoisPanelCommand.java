@@ -1,6 +1,7 @@
 package fr.moodcraft.bridge.command;
 
 import fr.moodcraft.bridge.manager.MoisPanelManager;
+import fr.moodcraft.bridge.manager.MoisPanelManager.Mode;
 
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -32,7 +33,7 @@ public class MoisPanelCommand implements CommandExecutor {
         String sub = args[0].toLowerCase();
 
         switch (sub) {
-            case "set" -> set(player);
+            case "set" -> set(player, args);
             case "clear", "remove", "delete" -> clear(player);
             case "refresh", "update" -> refresh(player);
             default -> help(player);
@@ -41,7 +42,7 @@ public class MoisPanelCommand implements CommandExecutor {
         return true;
     }
 
-    private void set(Player player) {
+    private void set(Player player, String[] args) {
         Block target = player.getTargetBlockExact(6);
 
         if (target == null || !(target.getState() instanceof Sign)) {
@@ -49,11 +50,28 @@ public class MoisPanelCommand implements CommandExecutor {
             return;
         }
 
-        MoisPanelManager.setPanel(target.getLocation());
+        Mode mode = Mode.JOUR;
+
+        if (args.length >= 2) {
+            String type = args[1].toLowerCase();
+
+            if (type.equals("mois") || type.equals("month")) {
+                mode = Mode.MOIS;
+            } else if (type.equals("jour") || type.equals("date") || type.equals("day")) {
+                mode = Mode.JOUR;
+            } else {
+                error(player, "Type invalide. Utilise §emois §7ou §ejour§7.");
+                return;
+            }
+        }
+
+        MoisPanelManager.setPanel(target.getLocation(), mode);
 
         header(player, "Panneau Mois");
-        player.sendMessage("§a✔ §fPanneau lié au jour et mois actuels.");
-        player.sendMessage("§8• §7Format : §eClassement vote §8/ §a21 mai §8/ §e2026");
+        player.sendMessage("§a✔ §fPanneau lié au mode §e" + mode.name().toLowerCase() + "§f.");
+        player.sendMessage(mode == Mode.MOIS
+                ? "§8• §7Format : §eClassement vote §8/ §aMai 2026"
+                : "§8• §7Format : §eClassement vote §8/ §a21 Mai");
         footer(player);
     }
 
@@ -84,7 +102,8 @@ public class MoisPanelCommand implements CommandExecutor {
 
     private void help(Player player) {
         header(player, "Panneau Mois");
-        player.sendMessage("§e➜ §7/moispanel set");
+        player.sendMessage("§e➜ §7/moispanel set mois");
+        player.sendMessage("§e➜ §7/moispanel set jour");
         player.sendMessage("§e➜ §7/moispanel refresh");
         player.sendMessage("§e➜ §7/moispanel clear");
         player.sendMessage("§8• §7Regarde le panneau avant d'utiliser §e/set§7.");
