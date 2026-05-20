@@ -4,6 +4,7 @@ import fr.moodcraft.bridge.Main;
 import fr.moodcraft.bridge.manager.FortuneService.FortuneResult;
 
 import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -116,6 +117,8 @@ public final class FortunePanelManager {
             return;
         }
 
+        applyGlow(sign);
+
         if (result == null) {
             setLine(sign, 0, "§6#" + rank + " §fFortune");
             setLine(sign, 1, "");
@@ -138,6 +141,17 @@ public final class FortunePanelManager {
             sign.getSide(Side.FRONT).setLine(index, text);
         } catch (Throwable ignored) {
             sign.setLine(index, text);
+        }
+    }
+
+    private static void applyGlow(Sign sign) {
+        try {
+            sign.getSide(Side.FRONT).setGlowingText(true);
+            sign.getSide(Side.FRONT).setColor(DyeColor.YELLOW);
+        } catch (Throwable ignored) {
+            try {
+                sign.setGlowingText(true);
+            } catch (Throwable ignoredAgain) {}
         }
     }
 
