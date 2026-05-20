@@ -3,6 +3,7 @@ package fr.moodcraft.bridge.gui;
 import fr.moodcraft.bridge.manager.GUIManager;
 
 import fr.moodcraft.bridge.market.MarketEngine;
+import fr.moodcraft.bridge.market.MarketEventManager;
 import fr.moodcraft.bridge.market.MarketState;
 
 import fr.moodcraft.bridge.util.SafeGUI;
@@ -52,6 +53,8 @@ public class PriceGUI {
                                 "§8• §7Prix synchronisés",
                                 "§8• §7Tendance par ressource",
                                 "§8• §7Économie §aMood§6Craft",
+                                "",
+                                "§8• §7Événement : §e" + MarketEventManager.globalLine(),
                                 "",
                                 "§e➜ §fClique un minerai pour tout vendre"
                         )
@@ -141,6 +144,7 @@ public class PriceGUI {
                 "§8• §7Base : §6" + SafeGUI.money(base) + "€",
                 "§8• §7Stock : §b" + SafeGUI.money(stock),
                 "§8• §7Tendance : " + trend,
+                "§8• §7Événement : §e" + MarketEventManager.itemLine(id),
                 "",
                 "§8• §7Acheté coffre : §a" + formatAmount(bought),
                 "§8• §7Vendu /prix : §c" + formatAmount(sold),
