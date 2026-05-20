@@ -103,6 +103,16 @@ commands:
       - trackmoney
       - suivieco
 
+  uuidtrack:
+    description: Trouver tous les UUID et fortunes d'un joueur
+    usage: /uuidtrack <joueur>
+    permission: econ.admin
+    permission-message: "§c✖ §fAccès réservé à l'administration économique."
+    aliases:
+      - trackuuid
+      - doublecompte
+      - uuidmoney
+
   fortune:
     description: Voir la fortune totale d'un joueur
     usage: /fortune <joueur>
@@ -120,7 +130,6 @@ commands:
     permission: econ.admin
     permission-message: "§c✖ §fAccès réservé à l'administration économique."
     aliases:
-      - fortune panneaux
       - fpanel
       - richpanel
       - panelrich
