@@ -102,6 +102,7 @@ public class Main extends JavaPlugin {
         registerCommand("rib", new BanqueCommand());
         registerCommand("bankadmin", new BankAdminCommand());
         registerCommand("trackeco", new TrackEcoCommand());
+        registerCommand("fortune", new FortuneCommand());
 
         registerCommand("prix", new PrixCommand());
         registerCommand("sync", new SyncCommand());
@@ -130,6 +131,7 @@ public class Main extends JavaPlugin {
         getLogger().info("📊 Marché: OK");
         getLogger().info("🎲 Événements économiques: OK");
         getLogger().info("🕵 TrackEco: OK");
+        getLogger().info("💰 Fortune: OK");
         getLogger().info("🎮 GUI: OK");
         getLogger().info("🧠 Réputation: OK");
         getLogger().info("🏰 Loot Balance: OK");
