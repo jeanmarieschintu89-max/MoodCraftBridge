@@ -65,6 +65,20 @@ public class BankStorage {
         save();
     }
 
+    public static void resetAccount(String uuid) {
+        if (uuid == null || uuid.isBlank()) return;
+
+        config.set(uuid + ".balance", 0.0);
+        save();
+    }
+
+    public static void deleteAccount(String uuid) {
+        if (uuid == null || uuid.isBlank()) return;
+
+        config.set(uuid, null);
+        save();
+    }
+
     // =========================
     // ➕ DEPOT
     // =========================
