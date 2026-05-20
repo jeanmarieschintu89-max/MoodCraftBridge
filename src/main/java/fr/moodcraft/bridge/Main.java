@@ -54,6 +54,7 @@ public class Main extends JavaPlugin {
         GUIManager.init(this);
         FortunePanelManager.init(this);
         VotePanelManager.init(this);
+        VoteMonthlyRewardManager.init(this);
 
         loadBase();
 
@@ -109,6 +110,7 @@ public class Main extends JavaPlugin {
         registerCommand("fortune", new FortuneCommand());
         registerCommand("fortunepanel", new FortunePanelCommand());
         registerCommand("votepanel", new VotePanelCommand());
+        registerCommand("votereward", new VoteRewardCommand());
 
         registerCommand("prix", new PrixCommand());
         registerCommand("sync", new SyncCommand());
@@ -142,6 +144,7 @@ public class Main extends JavaPlugin {
         getLogger().info("💰 Fortune: OK");
         getLogger().info("🏆 Panneaux fortune: OK");
         getLogger().info("🗳️ Panneaux votes: OK");
+        getLogger().info("🎁 Récompenses votes: OK");
         getLogger().info("🎮 GUI: OK");
         getLogger().info("🧠 Réputation: OK");
         getLogger().info("🏰 Loot Balance: OK");
@@ -156,6 +159,7 @@ public class Main extends JavaPlugin {
         MarketEventManager.stop();
         FortunePanelManager.stop();
         VotePanelManager.stop();
+        VoteMonthlyRewardManager.stop();
         BankStorage.save();
         MarketStorage.save();
         TransactionManager.save();
