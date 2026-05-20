@@ -3,6 +3,7 @@ package fr.moodcraft.bridge.util;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
@@ -40,9 +41,14 @@ public class VaultHook {
     // =========================
     public static double getBalance(Player p) {
 
+        return getBalance((OfflinePlayer) p);
+    }
+
+    public static double getBalance(OfflinePlayer p) {
+
         Economy e = getEconomy();
 
-        if (e == null) return 0;
+        if (e == null || p == null) return 0;
 
         return e.getBalance(p);
     }
