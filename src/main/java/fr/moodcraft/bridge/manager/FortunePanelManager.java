@@ -116,6 +116,8 @@ public final class FortunePanelManager {
             return;
         }
 
+        applyGlowOnly(sign);
+
         if (result == null) {
             setLine(sign, 0, "§6#" + rank + " §fFortune");
             setLine(sign, 1, "");
@@ -131,6 +133,16 @@ public final class FortunePanelManager {
         setLine(sign, 3, "§e" + FortuneService.panelMoney(result.total()));
 
         sign.update(true, false);
+    }
+
+    private static void applyGlowOnly(Sign sign) {
+        try {
+            sign.getSide(Side.FRONT).setGlowingText(true);
+        } catch (Throwable ignored) {
+            try {
+                sign.setGlowingText(true);
+            } catch (Throwable ignoredAgain) {}
+        }
     }
 
     private static void setLine(Sign sign, int index, String text) {
