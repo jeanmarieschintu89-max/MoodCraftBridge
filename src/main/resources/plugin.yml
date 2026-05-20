@@ -113,6 +113,16 @@ commands:
       - doublecompte
       - uuidmoney
 
+  uuidclean:
+    description: Remettre à zéro les données économie d'un ancien UUID
+    usage: /uuidclean <uuid> CONFIRM
+    permission: econ.admin
+    permission-message: "§c✖ §fAccès réservé à l'administration économique."
+    aliases:
+      - cleanuuid
+      - resetuuidmoney
+      - uuidreset
+
   fortune:
     description: Voir la fortune totale d'un joueur
     usage: /fortune <joueur>
