@@ -74,7 +74,7 @@ public final class IpTrackManager implements Listener {
         boolean found = false;
 
         for (Map<?, ?> old : oldList) {
-            String storedIp = String.valueOf(old.getOrDefault("ip", ""));
+            String storedIp = String.valueOf(old.containsKey("ip") ? old.get("ip") : "");
             long firstSeen = parseLong(old.get("first-seen"), now);
             long lastSeen = parseLong(old.get("last-seen"), now);
             int count = (int) parseLong(old.get("count"), 1);
@@ -135,7 +135,7 @@ public final class IpTrackManager implements Listener {
 
             List<Map<?, ?>> list = config.getMapList(path + "ips");
             for (Map<?, ?> raw : list) {
-                String ip = String.valueOf(raw.getOrDefault("ip", ""));
+                String ip = String.valueOf(raw.containsKey("ip") ? raw.get("ip") : "");
                 if (ip == null || ip.isBlank()) continue;
 
                 long entryFirst = parseLong(raw.get("first-seen"), 0L);
@@ -186,7 +186,7 @@ public final class IpTrackManager implements Listener {
             if (lastIp != null && ips.contains(lastIp)) shared.add(lastIp);
 
             for (Map<?, ?> raw : config.getMapList(path + "ips")) {
-                String ip = String.valueOf(raw.getOrDefault("ip", ""));
+                String ip = String.valueOf(raw.containsKey("ip") ? raw.get("ip") : "");
                 if (ips.contains(ip)) shared.add(ip);
             }
 
