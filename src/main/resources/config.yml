@@ -188,7 +188,7 @@ vote-top:
     last-rewarded-month: ""
 
     # Commandes console lancées pour les gagnants.
-    # Syntaxe MoodCraftCaisses: crates key give <joueur> <cle> <nombre>
+    # Syntaxe ExcellentCrates: crates key give <joueur> <cle> <nombre>
     # Variables: {player}, {uuid}, {rank}, {votes}
     commands:
       1:
