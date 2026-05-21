@@ -7,6 +7,8 @@ import fr.moodcraft.bridge.manager.IpTrackManager;
 import fr.moodcraft.bridge.manager.IpTrackManager.IpEntry;
 import fr.moodcraft.bridge.manager.IpTrackManager.IpReport;
 import fr.moodcraft.bridge.manager.IpTrackManager.LinkedAccount;
+import fr.moodcraft.bridge.manager.VoteTopService;
+import fr.moodcraft.bridge.manager.VoteTopService.VoteEntry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -64,8 +66,10 @@ public class UuidTrackCommand implements CommandExecutor {
 
         OfflinePlayer current = Bukkit.getOfflinePlayer(name);
         UUID currentUuid = current != null ? current.getUniqueId() : null;
+        VoteEntry voteEntry = findVoteEntry(name, reports);
 
         sender.sendMessage("§8• §7UUID actuel Bukkit : §a" + (currentUuid != null ? currentUuid : "inconnu"));
+        sender.sendMessage("§8• §7Votes mensuels : " + formatVoteLine(voteEntry));
         sender.sendMessage("§8• §7Résultats trouvés : §e" + reports.size());
         sender.sendMessage("§8-----------------------------");
 
@@ -77,9 +81,10 @@ public class UuidTrackCommand implements CommandExecutor {
             IpReport ipReport = IpTrackManager.getReport(report.uuid());
 
             sender.sendMessage("§6#" + index + " §f" + report.uuid() + (currentOne ? " §a(UUID actuel)" : " §c(possible ancien UUID)"));
-            sender.sendMessage("§8• §7Nom(s) trouvé(s) : §e" + report.names());
+            sender.sendMessage("§8• §7Nom(s) : §e" + report.names());
             sender.sendMessage("§8• §7Sources : §f" + report.sources());
             sender.sendMessage("§8• §7Statut : " + (player.isOnline() ? "§aEn ligne" : "§cHors ligne"));
+            sender.sendMessage("§8• §7Plateforme : §b" + valueOrNone(ipReport.lastPlatform()));
             sender.sendMessage("§8• §7Première connexion : §e" + formatDate(player.getFirstPlayed()));
             sender.sendMessage("§8• §7Dernière connexion : §e" + formatDate(player.getLastPlayed()));
 
@@ -93,12 +98,13 @@ public class UuidTrackCommand implements CommandExecutor {
 
                 int shown = 0;
                 for (IpEntry entry : ipReport.history()) {
-                    if (shown >= 5) {
+                    if (shown >= 4) {
                         sender.sendMessage("§8  • §7... et §e" + (ipReport.history().size() - shown) + " §7autre(s) IP");
                         break;
                     }
 
                     sender.sendMessage("§8  • §e" + entry.ip()
+                            + " §8[§b" + valueOrNone(entry.platform()) + "§8]"
                             + " §7- vues §e" + entry.count()
                             + "x §8(dernier: §7" + formatDate(entry.lastSeen()) + "§8)");
                     shown++;
@@ -113,33 +119,33 @@ public class UuidTrackCommand implements CommandExecutor {
 
                 int shown = 0;
                 for (LinkedAccount account : linked) {
-                    if (shown >= 6) {
+                    if (shown >= 5) {
                         sender.sendMessage("§8  • §7... et §e" + (linked.size() - shown) + " §7autre(s) compte(s)");
                         break;
                     }
 
-                    sender.sendMessage("§8  • §b" + account.name() + " §8(" + account.uuid() + ") §7IP partagée: §e" + String.join(", ", account.sharedIps()));
+                    sender.sendMessage("§8  • §b" + account.name() + " §8(" + account.uuid() + ") §7IP: §e" + String.join(", ", account.sharedIps()));
                     shown++;
                 }
             } else {
                 sender.sendMessage("§8• §7Comptes liés par IP connue : §8aucun depuis l'historique bridge");
             }
 
-            sender.sendMessage("§8• §7Argent de poche : §e" + FortuneService.money(fortune.pocket()));
-            sender.sendMessage("§8• §7Banque personnelle : §e" + FortuneService.money(fortune.personalBank()));
+            sender.sendMessage("§8• §7Argent poche : §e" + FortuneService.money(fortune.pocket())
+                    + " §8| §7Banque : §e" + FortuneService.money(fortune.personalBank()));
 
             if (fortune.mayor()) {
-                sender.sendMessage("§8• §7Banque ville : §e" + FortuneService.money(fortune.townBank()) + " §8(§b" + fortune.townName() + "§8)");
+                sender.sendMessage("§8• §7Ville : §e" + FortuneService.money(fortune.townBank()) + " §8(§b" + fortune.townName() + "§8)");
             } else if (fortune.townName() != null) {
-                sender.sendMessage("§8• §7Banque ville : §8non comptée §7(§f" + fortune.townName() + "§7, pas maire§8)");
+                sender.sendMessage("§8• §7Ville : §8non comptée §7(§f" + fortune.townName() + "§7, pas maire§8)");
             } else {
-                sender.sendMessage("§8• §7Banque ville : §80€ §7(aucune ville)");
+                sender.sendMessage("§8• §7Ville : §80€ §7(aucune ville)");
             }
 
             if (fortune.hasBusiness()) {
-                sender.sendMessage("§8• §7Banque entreprise : §e" + FortuneService.money(fortune.businessBank()) + " §8(§d" + fortune.businessName() + "§8)");
+                sender.sendMessage("§8• §7Entreprise : §e" + FortuneService.money(fortune.businessBank()) + " §8(§d" + fortune.businessName() + "§8)");
             } else {
-                sender.sendMessage("§8• §7Banque entreprise : §80€ §7(aucune entreprise dirigée)");
+                sender.sendMessage("§8• §7Entreprise : §80€ §7(aucune entreprise dirigée)");
             }
 
             sender.sendMessage("§6✦ §fTotal /fortune : §a" + FortuneService.money(fortune.total()));
@@ -148,6 +154,7 @@ public class UuidTrackCommand implements CommandExecutor {
         }
 
         sender.sendMessage("§7Les IP sont des données staff. Le bridge stocke l'historique à partir de maintenant.");
+        sender.sendMessage("§7Plateforme exacte Bedrock dépend de Geyser/Floodgate. Sans info, le plugin indique Java PC ou Bedrock.");
         sender.sendMessage("§7Pour nettoyer un mauvais UUID : §e/uuidclean <uuid> CONFIRM");
         footer(sender);
 
@@ -242,6 +249,34 @@ public class UuidTrackCommand implements CommandExecutor {
         }
     }
 
+    private VoteEntry findVoteEntry(String searchedName, Map<UUID, UuidReport> reports) {
+        List<VoteEntry> entries = VoteTopService.top(100);
+
+        if (entries.isEmpty()) return null;
+
+        for (VoteEntry entry : entries) {
+            if (equalsName(entry.name(), searchedName)) return entry;
+        }
+
+        for (UuidReport report : reports.values()) {
+            for (String candidate : report.names().split(",")) {
+                for (VoteEntry entry : entries) {
+                    if (equalsName(entry.name(), candidate.trim())) return entry;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private String formatVoteLine(VoteEntry entry) {
+        if (entry == null) {
+            return "§8absent du top actuel ou cache non chargé";
+        }
+
+        return "§6#" + entry.rank() + " §b" + entry.name() + " §7- §e" + entry.votes() + " votes";
+    }
+
     private String getEssentialsIp(UUID uuid) {
         if (uuid == null) return null;
 
@@ -295,7 +330,7 @@ public class UuidTrackCommand implements CommandExecutor {
     }
 
     private String valueOrNone(String value) {
-        return value == null || value.isBlank() ? "§8aucune" : value;
+        return value == null || value.isBlank() ? "aucune" : value;
     }
 
     private String formatDate(long time) {
