@@ -56,6 +56,7 @@ public class Main extends JavaPlugin {
         VotePanelManager.init(this);
         VoteMonthlyRewardManager.init(this);
         MoisPanelManager.init(this);
+        IpTrackManager.init(this);
 
         loadBase();
 
@@ -77,7 +78,8 @@ public class Main extends JavaPlugin {
                 new GlobalGUIListener(),
                 new FreezeListener(),
                 new LootGenerateProtectionListener(),
-                new PluginListBlockerListener()
+                new PluginListBlockerListener(),
+                new IpTrackManager()
         );
 
         GUIManager.register("main_menu", new MainMenuHandler());
@@ -144,6 +146,7 @@ public class Main extends JavaPlugin {
         getLogger().info("🎲 Événements économiques: OK");
         getLogger().info("🕵 TrackEco: OK");
         getLogger().info("🧩 UUID Track: OK");
+        getLogger().info("🌐 IP Track: OK");
         getLogger().info("🧹 UUID Clean: OK");
         getLogger().info("💰 Fortune: OK");
         getLogger().info("🏆 Panneaux fortune: OK");
