@@ -3,6 +3,10 @@ package fr.moodcraft.bridge.command;
 import fr.moodcraft.bridge.bank.BankStorage;
 import fr.moodcraft.bridge.manager.FortuneService;
 import fr.moodcraft.bridge.manager.FortuneService.FortuneResult;
+import fr.moodcraft.bridge.manager.IpTrackManager;
+import fr.moodcraft.bridge.manager.IpTrackManager.IpEntry;
+import fr.moodcraft.bridge.manager.IpTrackManager.IpReport;
+import fr.moodcraft.bridge.manager.IpTrackManager.LinkedAccount;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -14,12 +18,17 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
 public class UuidTrackCommand implements CommandExecutor {
+
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -30,7 +39,7 @@ public class UuidTrackCommand implements CommandExecutor {
         }
 
         if (args.length < 1) {
-            header(sender, "UUID Track");
+            header(sender, "Panel Track Admin");
             sender.sendMessage("§e➜ §7Utilisation : §e/uuidtrack <pseudo>");
             sender.sendMessage("§8• §7Exemple : §e/uuidtrack Steven2621");
             footer(sender);
@@ -45,7 +54,7 @@ public class UuidTrackCommand implements CommandExecutor {
         scanMoodBank(name, reports);
         scanMoodBusiness(name, reports);
 
-        header(sender, "UUID Track " + name);
+        header(sender, "Panel Track Admin " + name);
 
         if (reports.isEmpty()) {
             sender.sendMessage("§c✖ §fAucun UUID trouvé pour §e" + name + "§f.");
@@ -57,6 +66,7 @@ public class UuidTrackCommand implements CommandExecutor {
         UUID currentUuid = current != null ? current.getUniqueId() : null;
 
         sender.sendMessage("§8• §7UUID actuel Bukkit : §a" + (currentUuid != null ? currentUuid : "inconnu"));
+        sender.sendMessage("§8• §7Résultats trouvés : §e" + reports.size());
         sender.sendMessage("§8-----------------------------");
 
         int index = 1;
@@ -64,10 +74,57 @@ public class UuidTrackCommand implements CommandExecutor {
             boolean currentOne = currentUuid != null && currentUuid.equals(report.uuid());
             OfflinePlayer player = Bukkit.getOfflinePlayer(report.uuid());
             FortuneResult fortune = FortuneService.calculate(player);
+            IpReport ipReport = IpTrackManager.getReport(report.uuid());
 
             sender.sendMessage("§6#" + index + " §f" + report.uuid() + (currentOne ? " §a(UUID actuel)" : " §c(possible ancien UUID)"));
             sender.sendMessage("§8• §7Nom(s) trouvé(s) : §e" + report.names());
             sender.sendMessage("§8• §7Sources : §f" + report.sources());
+            sender.sendMessage("§8• §7Statut : " + (player.isOnline() ? "§aEn ligne" : "§cHors ligne"));
+            sender.sendMessage("§8• §7Première connexion : §e" + formatDate(player.getFirstPlayed()));
+            sender.sendMessage("§8• §7Dernière connexion : §e" + formatDate(player.getLastPlayed()));
+
+            String essentialsIp = getEssentialsIp(report.uuid());
+            sender.sendMessage("§8• §7IP actuelle : §e" + valueOrNone(ipReport.currentIp()));
+            sender.sendMessage("§8• §7Dernière IP bridge : §e" + valueOrNone(ipReport.lastIp()));
+            sender.sendMessage("§8• §7IP Essentials : §e" + valueOrNone(essentialsIp));
+
+            if (!ipReport.history().isEmpty()) {
+                sender.sendMessage("§8• §7Historique IP bridge :");
+
+                int shown = 0;
+                for (IpEntry entry : ipReport.history()) {
+                    if (shown >= 5) {
+                        sender.sendMessage("§8  • §7... et §e" + (ipReport.history().size() - shown) + " §7autre(s) IP");
+                        break;
+                    }
+
+                    sender.sendMessage("§8  • §e" + entry.ip()
+                            + " §7- vues §e" + entry.count()
+                            + "x §8(dernier: §7" + formatDate(entry.lastSeen()) + "§8)");
+                    shown++;
+                }
+            } else {
+                sender.sendMessage("§8• §7Historique IP bridge : §8aucun historique");
+            }
+
+            List<LinkedAccount> linked = IpTrackManager.findLinkedAccounts(ipReport.allIps(), report.uuid());
+            if (!linked.isEmpty()) {
+                sender.sendMessage("§8• §7Comptes liés par IP connue :");
+
+                int shown = 0;
+                for (LinkedAccount account : linked) {
+                    if (shown >= 6) {
+                        sender.sendMessage("§8  • §7... et §e" + (linked.size() - shown) + " §7autre(s) compte(s)");
+                        break;
+                    }
+
+                    sender.sendMessage("§8  • §b" + account.name() + " §8(" + account.uuid() + ") §7IP partagée: §e" + String.join(", ", account.sharedIps()));
+                    shown++;
+                }
+            } else {
+                sender.sendMessage("§8• §7Comptes liés par IP connue : §8aucun depuis l'historique bridge");
+            }
+
             sender.sendMessage("§8• §7Argent de poche : §e" + FortuneService.money(fortune.pocket()));
             sender.sendMessage("§8• §7Banque personnelle : §e" + FortuneService.money(fortune.personalBank()));
 
@@ -90,7 +147,8 @@ public class UuidTrackCommand implements CommandExecutor {
             index++;
         }
 
-        sender.sendMessage("§7Le mauvais UUID est celui marqué §cpossible ancien UUID§7 avec encore de l'argent.");
+        sender.sendMessage("§7Les IP sont des données staff. Le bridge stocke l'historique à partir de maintenant.");
+        sender.sendMessage("§7Pour nettoyer un mauvais UUID : §e/uuidclean <uuid> CONFIRM");
         footer(sender);
 
         return true;
@@ -184,6 +242,16 @@ public class UuidTrackCommand implements CommandExecutor {
         }
     }
 
+    private String getEssentialsIp(UUID uuid) {
+        if (uuid == null) return null;
+
+        File file = new File("plugins/Essentials/userdata", uuid + ".yml");
+        if (!file.exists()) return null;
+
+        FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+        return config.getString("ip-address");
+    }
+
     private void add(Map<UUID, UuidReport> reports, UUID uuid, String source, String name) {
         UuidReport existing = reports.get(uuid);
 
@@ -226,8 +294,17 @@ public class UuidTrackCommand implements CommandExecutor {
         return null;
     }
 
+    private String valueOrNone(String value) {
+        return value == null || value.isBlank() ? "§8aucune" : value;
+    }
+
+    private String formatDate(long time) {
+        if (time <= 0) return "inconnue";
+        return DATE_FORMAT.format(new Date(time));
+    }
+
     private void error(CommandSender sender, String message) {
-        header(sender, "UUID Track");
+        header(sender, "Track Admin");
         sender.sendMessage("§c✖ §f" + message);
         footer(sender);
     }
