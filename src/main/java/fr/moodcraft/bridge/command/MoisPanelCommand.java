@@ -63,8 +63,10 @@ public class MoisPanelCommand implements CommandExecutor {
                 mode = Mode.RECOMPENSES;
             } else if (type.equals("direct") || type.equals("live") || type.equals("classement")) {
                 mode = Mode.DIRECT;
+            } else if (type.equals("fortune") || type.equals("richesse") || type.equals("money")) {
+                mode = Mode.FORTUNE;
             } else {
-                error(player, "Type invalide. Utilise §emois§7, §ejour§7, §erecompenses §7ou §edirect§7.");
+                error(player, "Type invalide. Utilise §emois§7, §ejour§7, §erecompenses§7, §edirect §7ou §efortune§7.");
                 return;
             }
         }
@@ -76,8 +78,9 @@ public class MoisPanelCommand implements CommandExecutor {
         player.sendMessage(switch (mode) {
             case MOIS -> "§8• §7Format : §eClassement vote §8/ §aMai 2026";
             case JOUR -> "§8• §7Format : §eClassement vote §8/ §a21 Mai";
-            case RECOMPENSES -> "§8• §7Format : §eRécompenses §8/ §fTop Vote §8/ §aMai 2026";
-            case DIRECT -> "§8• §7Format : §eClassement en §8/ §fdirect §8/ §a21 Mai";
+            case RECOMPENSES -> "§8• §7Format : §eRécompenses §8/ §eTop Vote §8/ §aMai 2026";
+            case DIRECT -> "§8• §7Format : §6Classement en §8/ §6direct §8/ §a21 Mai";
+            case FORTUNE -> "§8• §7Format : §6Classement fortune §8/ §aMood§6Craft §8/ §a21 Mai";
         });
         footer(player);
     }
@@ -113,6 +116,7 @@ public class MoisPanelCommand implements CommandExecutor {
         player.sendMessage("§e➜ §7/moispanel set jour");
         player.sendMessage("§e➜ §7/moispanel set recompenses");
         player.sendMessage("§e➜ §7/moispanel set direct");
+        player.sendMessage("§e➜ §7/moispanel set fortune");
         player.sendMessage("§e➜ §7/moispanel refresh");
         player.sendMessage("§e➜ §7/moispanel clear");
         player.sendMessage("§8• §7Regarde le panneau avant d'utiliser §e/set§7.");
