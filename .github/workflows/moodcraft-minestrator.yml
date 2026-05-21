@@ -50,18 +50,18 @@ jobs:
           set -euo pipefail
           mkdir -p sources dist logs
 
-          # MoodTownSuite remplace les anciens plugins :
-          # MoodTownGrade, Moodtownmenu, MoodVilleDrapeau.
+          # Plugins fusionnés :
+          # MoodTownSuite remplace MoodTownGrade, Moodtownmenu, MoodVilleDrapeau.
+          # MoodProtection remplace MoodcraftChestLock, MoodVillagerTradeBlocker.
           repos=(
             MoodAuth
             MoodCraftBridge
             MoodTownSuite
             MoodCraftMeteo
-            MoodcraftChestLock
+            MoodProtection
             MoodBusiness
             MoodEvent
             MoodJobsGUI
-            MoodVillagerTradeBlocker
           )
 
           for repo in "${repos[@]}"; do
@@ -86,11 +86,10 @@ jobs:
             MoodCraftBridge
             MoodTownSuite
             MoodCraftMeteo
-            MoodcraftChestLock
+            MoodProtection
             MoodBusiness
             MoodEvent
             MoodJobsGUI
-            MoodVillagerTradeBlocker
           )
 
           failed=0
