@@ -43,6 +43,16 @@ commands:
     permission: moodcraftbridge.furnace
     permission-message: "§c✖ §fCommande réservée au grade VIP."
 
+  nv:
+    description: Activer ou désactiver la vision nocturne
+    usage: /nv
+    permission: moodcraftbridge.nightvision
+    permission-message: "§c✖ §fCommande réservée aux joueurs autorisés."
+    aliases:
+      - nightvision
+      - visionnuit
+      - visionnocturne
+
   moodplmaj:
     description: Lancer la mise à jour automatique des plugins MoodCraft
     usage: /moodplmaj [message]
@@ -253,4 +263,8 @@ permissions:
 
   moodcraftbridge.furnace:
     description: Autorise /furnace, /cuire et /fondre
+    default: false
+
+  moodcraftbridge.nightvision:
+    description: Autorise /nv pour la vision nocturne
     default: false
