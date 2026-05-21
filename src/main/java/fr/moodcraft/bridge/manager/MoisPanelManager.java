@@ -24,7 +24,8 @@ public final class MoisPanelManager {
         MOIS,
         JOUR,
         RECOMPENSES,
-        DIRECT
+        DIRECT,
+        FORTUNE
     }
 
     private static File file;
@@ -170,6 +171,12 @@ public final class MoisPanelManager {
             case DIRECT -> {
                 setLine(sign, 0, "§6Classement en");
                 setLine(sign, 1, "§6direct");
+                setLine(sign, 2, "");
+                setLine(sign, 3, "§a" + dayMonth);
+            }
+            case FORTUNE -> {
+                setLine(sign, 0, "§6Classement fortune");
+                setLine(sign, 1, "§aMood§6Craft");
                 setLine(sign, 2, "");
                 setLine(sign, 3, "§a" + dayMonth);
             }
