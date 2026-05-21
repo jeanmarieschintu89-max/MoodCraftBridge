@@ -175,8 +175,8 @@ public final class MoisPanelManager {
                 setLine(sign, 3, "§a" + dayMonth);
             }
             case FORTUNE -> {
-                setLine(sign, 0, "§6Classement fortune");
-                setLine(sign, 1, "§aMood§6Craft");
+                setLine(sign, 0, "§6Classement");
+                setLine(sign, 1, "§6fortune");
                 setLine(sign, 2, "");
                 setLine(sign, 3, "§a" + dayMonth);
             }
