@@ -129,7 +129,7 @@ public final class FortunePanelManager {
 
         setLine(sign, 0, "§6#" + rank + " §fFortune");
         setLine(sign, 1, "");
-        setLine(sign, 2, "§a" + shorten(result.name(), 15));
+        setLine(sign, 2, "§b" + shorten(result.name(), 15));
         setLine(sign, 3, "§e" + FortuneService.panelMoney(result.total()));
 
         sign.update(true, false);
