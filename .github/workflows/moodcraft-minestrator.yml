@@ -49,7 +49,21 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p sources dist logs
-          repos=(MoodAuth MoodVilleDrapeau MoodCraftBridge MoodTownGrade MoodCraftMeteo MoodcraftChestLock Moodtownmenu MoodBusiness MoodEvent MoodJobsGUI MoodVillagerTradeBlocker)
+
+          # MoodTownSuite remplace les anciens plugins :
+          # MoodTownGrade, Moodtownmenu, MoodVilleDrapeau.
+          repos=(
+            MoodAuth
+            MoodCraftBridge
+            MoodTownSuite
+            MoodCraftMeteo
+            MoodcraftChestLock
+            MoodBusiness
+            MoodEvent
+            MoodJobsGUI
+            MoodVillagerTradeBlocker
+          )
+
           for repo in "${repos[@]}"; do
             git clone --depth 1 "https://x-access-token:${TOKEN}@github.com/jeanmarieschintu89-max/${repo}.git" "sources/${repo}"
           done
@@ -66,17 +80,33 @@ jobs:
         shell: bash
         run: |
           set -u
-          plugins=(MoodAuth MoodVilleDrapeau MoodCraftBridge MoodTownGrade MoodCraftMeteo MoodcraftChestLock Moodtownmenu MoodBusiness MoodEvent MoodJobsGUI MoodVillagerTradeBlocker)
+
+          plugins=(
+            MoodAuth
+            MoodCraftBridge
+            MoodTownSuite
+            MoodCraftMeteo
+            MoodcraftChestLock
+            MoodBusiness
+            MoodEvent
+            MoodJobsGUI
+            MoodVillagerTradeBlocker
+          )
+
           failed=0
+
           for plugin in "${plugins[@]}"; do
             echo "========== Build ${plugin} =========="
+
             if [ ! -f "sources/${plugin}/pom.xml" ]; then
               echo "POM manquant : ${plugin}" | tee "logs/${plugin}.log"
               failed=1
               continue
             fi
+
             if (cd "sources/${plugin}" && mvn -B -DskipTests clean package > "../../logs/${plugin}.log" 2>&1); then
               jar="$(find "sources/${plugin}/target" -maxdepth 1 -type f -name '*.jar' ! -name '*original*' ! -name '*sources*' ! -name '*javadoc*' | sort | head -n 1)"
+
               if [ -n "${jar}" ]; then
                 cp "${jar}" "dist/${plugin}.jar"
                 echo "OK ${plugin}"
@@ -90,8 +120,12 @@ jobs:
               failed=1
             fi
           done
+
           ls -lah dist || true
-          if [ "${failed}" -ne 0 ]; then exit 1; fi
+
+          if [ "${failed}" -ne 0 ]; then
+            exit 1
+          fi
 
       - name: Publier les jars
         if: always()
@@ -122,6 +156,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y lftp
           SFTP_PORT="${SFTP_PORT:-2022}"
+
           lftp -u "${SFTP_USER}","${SFTP_PASSWORD}" -p "${SFTP_PORT}" "sftp://${SFTP_HOST}" <<EOF
           set cmd:fail-exit yes
           set sftp:auto-confirm yes
@@ -144,22 +179,28 @@ jobs:
         run: |
           set -euo pipefail
           RCON_PORT="${RCON_PORT:-25575}"
+
           rcon() {
             docker run --rm itzg/rcon-cli --host "${RCON_HOST}" --port "${RCON_PORT}" --password "${RCON_PASSWORD}" "$1"
           }
+
           rcon "title @a times 10 40 10"
           rcon "tellraw @a [{\"text\":\"\\n⚠ REDÉMARRAGE SERVEUR ⚠\\n\",\"color\":\"dark_red\",\"bold\":true},{\"text\":\"Le serveur va redémarrer dans ${DELAY_SECONDS} secondes.\\n\",\"color\":\"red\",\"bold\":true},{\"text\":\"Raison : \",\"color\":\"gray\"},{\"text\":\"${REASON}\\n\",\"color\":\"yellow\"},{\"text\":\"Veuillez ne pas lancer d'action importante.\\n\",\"color\":\"gray\"}]"
           rcon "title @a title {\"text\":\"⚠ REDÉMARRAGE\",\"color\":\"dark_red\",\"bold\":true}"
           rcon "title @a subtitle {\"text\":\"Dans ${DELAY_SECONDS} secondes\",\"color\":\"gold\",\"bold\":true}"
           rcon "playsound minecraft:block.note_block.pling master @a ~ ~ ~ 1 0.6"
+
           for remaining in $(seq "${DELAY_SECONDS}" -1 1); do
             rcon "title @a actionbar [{\"text\":\"⚠ \",\"color\":\"dark_red\",\"bold\":true},{\"text\":\"REDÉMARRAGE SERVEUR \",\"color\":\"red\",\"bold\":true},{\"text\":\"dans ${remaining}s\",\"color\":\"gold\",\"bold\":true}]"
+
             if [ "${remaining}" = "10" ] || [ "${remaining}" = "5" ] || [ "${remaining}" = "3" ] || [ "${remaining}" = "2" ] || [ "${remaining}" = "1" ]; then
               rcon "tellraw @a [{\"text\":\"⚠ \",\"color\":\"dark_red\",\"bold\":true},{\"text\":\"Redémarrage dans \",\"color\":\"red\",\"bold\":true},{\"text\":\"${remaining}s\",\"color\":\"gold\",\"bold\":true}]"
               rcon "playsound minecraft:block.note_block.pling master @a ~ ~ ~ 1 1.2"
             fi
+
             sleep 1
           done
+
           rcon "title @a title {\"text\":\"REDÉMARRAGE...\",\"color\":\"dark_red\",\"bold\":true}"
           rcon "title @a subtitle {\"text\":\"À tout de suite\",\"color\":\"gold\"}"
           rcon "tellraw @a {\"text\":\"⚠ Redémarrage maintenant.\",\"color\":\"dark_red\",\"bold\":true}"
@@ -183,22 +224,28 @@ jobs:
         run: |
           set -euo pipefail
           RCON_PORT="${RCON_PORT:-25575}"
+
           rcon() {
             docker run --rm itzg/rcon-cli --host "${RCON_HOST}" --port "${RCON_PORT}" --password "${RCON_PASSWORD}" "$1"
           }
+
           rcon "title @a times 10 40 10"
           rcon "tellraw @a [{\"text\":\"\\n⚠ REDÉMARRAGE SERVEUR ⚠\\n\",\"color\":\"dark_red\",\"bold\":true},{\"text\":\"Le serveur va redémarrer dans ${DELAY_SECONDS} secondes.\\n\",\"color\":\"red\",\"bold\":true},{\"text\":\"Raison : \",\"color\":\"gray\"},{\"text\":\"${REASON}\\n\",\"color\":\"yellow\"},{\"text\":\"Veuillez ne pas lancer d'action importante.\\n\",\"color\":\"gray\"}]"
           rcon "title @a title {\"text\":\"⚠ REDÉMARRAGE\",\"color\":\"dark_red\",\"bold\":true}"
           rcon "title @a subtitle {\"text\":\"Dans ${DELAY_SECONDS} secondes\",\"color\":\"gold\",\"bold\":true}"
           rcon "playsound minecraft:block.note_block.pling master @a ~ ~ ~ 1 0.6"
+
           for remaining in $(seq "${DELAY_SECONDS}" -1 1); do
             rcon "title @a actionbar [{\"text\":\"⚠ \",\"color\":\"dark_red\",\"bold\":true},{\"text\":\"REDÉMARRAGE SERVEUR \",\"color\":\"red\",\"bold\":true},{\"text\":\"dans ${remaining}s\",\"color\":\"gold\",\"bold\":true}]"
+
             if [ "${remaining}" = "10" ] || [ "${remaining}" = "5" ] || [ "${remaining}" = "3" ] || [ "${remaining}" = "2" ] || [ "${remaining}" = "1" ]; then
               rcon "tellraw @a [{\"text\":\"⚠ \",\"color\":\"dark_red\",\"bold\":true},{\"text\":\"Redémarrage dans \",\"color\":\"red\",\"bold\":true},{\"text\":\"${remaining}s\",\"color\":\"gold\",\"bold\":true}]"
               rcon "playsound minecraft:block.note_block.pling master @a ~ ~ ~ 1 1.2"
             fi
+
             sleep 1
           done
+
           rcon "title @a title {\"text\":\"REDÉMARRAGE...\",\"color\":\"dark_red\",\"bold\":true}"
           rcon "title @a subtitle {\"text\":\"À tout de suite\",\"color\":\"gold\"}"
           rcon "tellraw @a {\"text\":\"⚠ Redémarrage maintenant.\",\"color\":\"dark_red\",\"bold\":true}"
