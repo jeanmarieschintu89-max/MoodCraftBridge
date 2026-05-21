@@ -1,5 +1,7 @@
 package fr.moodcraft.bridge.listener;
 
+import fr.moodcraft.bridge.command.NightVisionCommand;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -28,6 +30,29 @@ public class PluginListBlockerListener implements Listener {
             "bukkit:version",
             "bukkit:about"
     );
+
+    private static final Set<String> NIGHT_VISION_COMMANDS = Set.of(
+            "nv",
+            "moodcraftbridge:nv",
+            "nightvision",
+            "moodcraftbridge:nightvision",
+            "visionnuit",
+            "moodcraftbridge:visionnuit",
+            "visionnocturne",
+            "moodcraftbridge:visionnocturne"
+    );
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
+    public void onNightVisionCommand(PlayerCommandPreprocessEvent event) {
+        String message = event.getMessage();
+        if (message == null || message.isBlank()) return;
+
+        String command = message.substring(1).split(" ")[0].toLowerCase();
+        if (!NIGHT_VISION_COMMANDS.contains(command)) return;
+
+        event.setCancelled(true);
+        NightVisionCommand.toggle(event.getPlayer());
+    }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCommand(PlayerCommandPreprocessEvent event) {
