@@ -10,6 +10,7 @@ import org.bukkit.potion.PotionEffectType;
 public class NightVisionCommand implements CommandExecutor {
 
     private static final PotionEffectType NIGHT_VISION = PotionEffectType.NIGHT_VISION;
+    public static final String PERMISSION = "moodcraftbridge.nightvision";
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -19,19 +20,26 @@ public class NightVisionCommand implements CommandExecutor {
             return true;
         }
 
-        if (!player.hasPermission("moodcraftbridge.nightvision")) {
-            player.sendMessage("§8----- §6✦ §aMood§6Craft §fVision nocturne ✦ §8-----");
+        toggle(player);
+        return true;
+    }
+
+    public static void toggle(Player player) {
+        if (player == null) return;
+
+        if (!player.hasPermission(PERMISSION)) {
+            header(player);
             player.sendMessage("§c✖ §fCommande réservée aux joueurs autorisés.");
-            player.sendMessage("§8-----------------------------");
-            return true;
+            footer(player);
+            return;
         }
 
         if (player.hasPotionEffect(NIGHT_VISION)) {
             player.removePotionEffect(NIGHT_VISION);
-            player.sendMessage("§8----- §6✦ §aMood§6Craft §fVision nocturne ✦ §8-----");
+            header(player);
             player.sendMessage("§c✖ §fVision nocturne désactivée.");
-            player.sendMessage("§8-----------------------------");
-            return true;
+            footer(player);
+            return;
         }
 
         player.addPotionEffect(new PotionEffect(
@@ -43,11 +51,17 @@ public class NightVisionCommand implements CommandExecutor {
                 true
         ));
 
-        player.sendMessage("§8----- §6✦ §aMood§6Craft §fVision nocturne ✦ §8-----");
+        header(player);
         player.sendMessage("§a✔ §fVision nocturne activée.");
         player.sendMessage("§8• §7Refais §e/nv §7pour la désactiver.");
-        player.sendMessage("§8-----------------------------");
+        footer(player);
+    }
 
-        return true;
+    private static void header(Player player) {
+        player.sendMessage("§8----- §6✦ §aMood§6Craft §fVision nocturne ✦ §8-----");
+    }
+
+    private static void footer(Player player) {
+        player.sendMessage("§8-----------------------------");
     }
 }
