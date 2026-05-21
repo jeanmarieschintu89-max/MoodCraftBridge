@@ -163,8 +163,8 @@ public final class MoisPanelManager {
                 setLine(sign, 3, "");
             }
             case RECOMPENSES -> {
-                setLine(sign, 0, "§eRécompenses");
-                setLine(sign, 1, "§eTop Vote");
+                setLine(sign, 0, "§6Récompenses");
+                setLine(sign, 1, "§6Top Vote");
                 setLine(sign, 2, "");
                 setLine(sign, 3, "§a" + monthYear);
             }
