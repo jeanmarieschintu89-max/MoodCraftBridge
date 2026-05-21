@@ -131,7 +131,7 @@ public final class VotePanelManager {
 
         setLine(sign, 0, "§6#" + rank + " §fVotes");
         setLine(sign, 1, "");
-        setLine(sign, 2, "§a" + VoteTopService.shorten(entry.name(), 15));
+        setLine(sign, 2, "§b" + VoteTopService.shorten(entry.name(), 15));
         setLine(sign, 3, "§e" + VoteTopService.panelVotes(entry.votes()));
         sign.update(true, false);
     }
