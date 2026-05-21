@@ -162,14 +162,14 @@ public final class MoisPanelManager {
                 setLine(sign, 3, "");
             }
             case RECOMPENSES -> {
-                setLine(sign, 0, "§6Récompenses");
-                setLine(sign, 1, "§fTop Vote");
+                setLine(sign, 0, "§eRécompenses");
+                setLine(sign, 1, "§eTop Vote");
                 setLine(sign, 2, "");
                 setLine(sign, 3, "§a" + monthYear);
             }
             case DIRECT -> {
                 setLine(sign, 0, "§6Classement en");
-                setLine(sign, 1, "§fdirect");
+                setLine(sign, 1, "§6direct");
                 setLine(sign, 2, "");
                 setLine(sign, 3, "§a" + dayMonth);
             }
