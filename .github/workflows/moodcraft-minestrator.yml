@@ -50,17 +50,17 @@ jobs:
           set -euo pipefail
           mkdir -p sources dist logs
 
-          # Plugins fusionnés :
+          # Plugins actifs MoodCraft :
           # MoodTownSuite remplace MoodTownGrade, Moodtownmenu, MoodVilleDrapeau.
           # MoodProtection remplace MoodcraftChestLock, MoodVillagerTradeBlocker.
+          # MoodWorldEvents remplace MoodCraftMeteo, MoodEvent.
           repos=(
             MoodAuth
             MoodCraftBridge
             MoodTownSuite
-            MoodCraftMeteo
             MoodProtection
+            MoodWorldEvents
             MoodBusiness
-            MoodEvent
             MoodJobsGUI
           )
 
@@ -85,10 +85,9 @@ jobs:
             MoodAuth
             MoodCraftBridge
             MoodTownSuite
-            MoodCraftMeteo
             MoodProtection
+            MoodWorldEvents
             MoodBusiness
-            MoodEvent
             MoodJobsGUI
           )
 
