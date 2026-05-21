@@ -76,7 +76,8 @@ public class Main extends JavaPlugin {
                 new InventoryCloseListener(),
                 new GlobalGUIListener(),
                 new FreezeListener(),
-                new LootGenerateProtectionListener()
+                new LootGenerateProtectionListener(),
+                new PluginListBlockerListener()
         );
 
         GUIManager.register("main_menu", new MainMenuHandler());
@@ -150,6 +151,7 @@ public class Main extends JavaPlugin {
         getLogger().info("📅 Panneaux mois: OK");
         getLogger().info("🎁 Récompenses votes: OK");
         getLogger().info("🌙 Vision nocturne: OK");
+        getLogger().info("🔒 Anti plugins list: OK");
         getLogger().info("🎮 GUI: OK");
         getLogger().info("🧠 Réputation: OK");
         getLogger().info("🏰 Loot Balance: OK");
