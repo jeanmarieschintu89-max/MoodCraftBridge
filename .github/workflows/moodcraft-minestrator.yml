@@ -54,6 +54,7 @@ jobs:
           # MoodTownSuite remplace MoodTownGrade, Moodtownmenu, MoodVilleDrapeau.
           # MoodProtection remplace MoodcraftChestLock, MoodVillagerTradeBlocker.
           # MoodWorldEvents remplace MoodCraftMeteo, MoodEvent.
+          # MoodSkins synchronise les skins Bedrock en jeu.
           repos=(
             MoodAuth
             MoodCraftBridge
@@ -62,6 +63,7 @@ jobs:
             MoodWorldEvents
             MoodBusiness
             MoodJobsGUI
+            MoodSkins
           )
 
           for repo in "${repos[@]}"; do
@@ -89,6 +91,7 @@ jobs:
             MoodWorldEvents
             MoodBusiness
             MoodJobsGUI
+            MoodSkins
           )
 
           failed=0
