@@ -94,14 +94,33 @@ jobs:
             MoodSkins
           )
 
-          failed=0
+          optional_plugins=(
+            MoodSkins
+          )
+
+          is_optional_plugin() {
+            local name="$1"
+            for optional in "${optional_plugins[@]}"; do
+              if [ "${optional}" = "${name}" ]; then
+                return 0
+              fi
+            done
+            return 1
+          }
+
+          critical_failed=0
+          optional_failed=0
 
           for plugin in "${plugins[@]}"; do
             echo "========== Build ${plugin} =========="
 
             if [ ! -f "sources/${plugin}/pom.xml" ]; then
               echo "POM manquant : ${plugin}" | tee "logs/${plugin}.log"
-              failed=1
+              if is_optional_plugin "${plugin}"; then
+                optional_failed=1
+              else
+                critical_failed=1
+              fi
               continue
             fi
 
@@ -113,18 +132,32 @@ jobs:
                 echo "OK ${plugin}"
               else
                 echo "Jar introuvable : ${plugin}" | tee -a "logs/${plugin}.log"
-                failed=1
+                if is_optional_plugin "${plugin}"; then
+                  optional_failed=1
+                else
+                  critical_failed=1
+                fi
               fi
             else
               echo "Build échoué : ${plugin}"
               tail -n 120 "logs/${plugin}.log" || true
-              failed=1
+              if is_optional_plugin "${plugin}"; then
+                optional_failed=1
+                echo "Plugin optionnel échoué, le déploiement continue : ${plugin}"
+              else
+                critical_failed=1
+              fi
             fi
           done
 
           ls -lah dist || true
 
-          if [ "${failed}" -ne 0 ]; then
+          if [ "${optional_failed}" -ne 0 ]; then
+            echo "::warning::Un ou plusieurs plugins optionnels ont échoué. Les autres jars seront quand même déployés."
+          fi
+
+          if [ "${critical_failed}" -ne 0 ]; then
+            echo "::error::Un ou plusieurs plugins critiques ont échoué. Déploiement annulé."
             exit 1
           fi
 
