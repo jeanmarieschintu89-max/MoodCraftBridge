@@ -53,6 +53,10 @@ commands:
       - visionnuit
       - visionnocturne
 
+  vol:
+    description: Activer ou désactiver le vol temporaire MoodCraft
+    usage: /vol [temps|item|give|remove|reset]
+
   moodplmaj:
     description: Lancer la mise à jour automatique des plugins MoodCraft
     usage: /moodplmaj [message]
@@ -268,3 +272,7 @@ permissions:
   moodcraftbridge.nightvision:
     description: Autorise /nv pour la vision nocturne
     default: false
+
+  moodcraftbridge.vol.admin:
+    description: Administration du vol temporaire MoodCraft
+    default: op
