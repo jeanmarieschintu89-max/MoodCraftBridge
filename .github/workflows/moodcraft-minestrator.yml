@@ -52,9 +52,6 @@ jobs:
 
           mkdir -p sources dist logs
 
-          git config --global http.lowSpeedLimit 1000
-          git config --global http.lowSpeedTime 30
-
           # Plugins actifs MoodCraft :
           # MoodTownSuite remplace MoodTownGrade, Moodtownmenu, MoodVilleDrapeau.
           # MoodProtection remplace MoodcraftChestLock, MoodVillagerTradeBlocker.
@@ -71,19 +68,31 @@ jobs:
             MoodSkins
           )
 
+          clone_repo() {
+            local repo="$1"
+            local attempt
+
+            for attempt in 1 2 3; do
+              echo "========== Clonage ${repo} | tentative ${attempt}/3 =========="
+              rm -rf "sources/${repo}"
+
+              if timeout 300s git clone --depth 1 --single-branch --branch main \
+                "https://x-access-token:${TOKEN}@github.com/jeanmarieschintu89-max/${repo}.git" \
+                "sources/${repo}"; then
+                echo "OK clone ${repo}"
+                return 0
+              fi
+
+              echo "Clone échoué ou trop long pour ${repo}, nouvelle tentative dans 10s..."
+              sleep 10
+            done
+
+            echo "::error::Échec définitif pendant le clonage de ${repo}"
+            return 1
+          }
+
           for repo in "${repos[@]}"; do
-            echo "========== Clonage ${repo} =========="
-
-            rm -rf "sources/${repo}"
-
-            if timeout 120s git clone --depth 1 --single-branch --branch main \
-              "https://x-access-token:${TOKEN}@github.com/jeanmarieschintu89-max/${repo}.git" \
-              "sources/${repo}"; then
-              echo "OK clone ${repo}"
-            else
-              echo "::error::Échec ou timeout pendant le clonage de ${repo}"
-              exit 1
-            fi
+            clone_repo "${repo}"
           done
 
           echo "========== Repos récupérés =========="
