@@ -21,7 +21,6 @@ import fr.moodcraft.bridge.manager.*;
 import fr.moodcraft.bridge.market.*;
 
 import fr.moodcraft.bridge.util.*;
-
 import org.bukkit.Bukkit;
 
 import org.bukkit.event.Listener;
@@ -57,6 +56,7 @@ public class Main extends JavaPlugin {
         VoteMonthlyRewardManager.init(this);
         MoisPanelManager.init(this);
         IpTrackManager.init(this);
+        VolManager.init(this);
 
         loadBase();
 
@@ -79,6 +79,8 @@ public class Main extends JavaPlugin {
                 new FreezeListener(),
                 new LootGenerateProtectionListener(),
                 new PluginListBlockerListener(),
+                new VolItemListener(),
+                new VolPlayerListener(),
                 new IpTrackManager()
         );
 
@@ -117,6 +119,7 @@ public class Main extends JavaPlugin {
         registerCommand("votereward", new VoteRewardCommand());
         registerCommand("moispanel", new MoisPanelCommand());
         registerCommand("nv", new NightVisionCommand());
+        registerCommand("vol", new VolCommand());
 
         registerCommand("prix", new PrixCommand());
         registerCommand("sync", new SyncCommand());
@@ -154,6 +157,7 @@ public class Main extends JavaPlugin {
         getLogger().info("📅 Panneaux mois: OK");
         getLogger().info("🎁 Récompenses votes: OK");
         getLogger().info("🌙 Vision nocturne: OK");
+        getLogger().info("🪽 Vol temporaire: " + (VolManager.isEnabled() ? "OK" : "désactivé"));
         getLogger().info("🔒 Anti plugins list: OK");
         getLogger().info("🎮 GUI: OK");
         getLogger().info("🧠 Réputation: OK");
@@ -166,6 +170,7 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        VolManager.shutdown();
         MarketEventManager.stop();
         FortunePanelManager.stop();
         VotePanelManager.stop();
