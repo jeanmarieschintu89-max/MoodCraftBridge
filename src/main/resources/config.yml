@@ -172,6 +172,16 @@ engine:
     max_boost: 0.008
 
 #
+# 🪽 VOL TEMPORAIRE MOODCRAFT
+#
+# Important : laissé à false tant que Jean-Marie ne demande pas l'activation.
+# /fly reste à Essentials. MoodCraft utilise /vol.
+#
+
+vol:
+  enabled: false
+
+#
 # 🗳️ TOP VOTES MOODCRAFT.FR
 #
 
