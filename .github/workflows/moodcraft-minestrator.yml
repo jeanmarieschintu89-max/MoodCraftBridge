@@ -32,7 +32,7 @@ permissions:
 
 concurrency:
   group: moodcraft-minestrator
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build-deploy:
@@ -48,7 +48,12 @@ jobs:
           TOKEN: ${{ secrets.GH_PAT || github.token }}
         run: |
           set -euo pipefail
+          export GIT_TERMINAL_PROMPT=0
+
           mkdir -p sources dist logs
+
+          git config --global http.lowSpeedLimit 1000
+          git config --global http.lowSpeedTime 30
 
           # Plugins actifs MoodCraft :
           # MoodTownSuite remplace MoodTownGrade, Moodtownmenu, MoodVilleDrapeau.
@@ -67,8 +72,22 @@ jobs:
           )
 
           for repo in "${repos[@]}"; do
-            git clone --depth 1 "https://x-access-token:${TOKEN}@github.com/jeanmarieschintu89-max/${repo}.git" "sources/${repo}"
+            echo "========== Clonage ${repo} =========="
+
+            rm -rf "sources/${repo}"
+
+            if timeout 120s git clone --depth 1 --single-branch --branch main \
+              "https://x-access-token:${TOKEN}@github.com/jeanmarieschintu89-max/${repo}.git" \
+              "sources/${repo}"; then
+              echo "OK clone ${repo}"
+            else
+              echo "::error::Échec ou timeout pendant le clonage de ${repo}"
+              exit 1
+            fi
           done
+
+          echo "========== Repos récupérés =========="
+          find sources -maxdepth 2 -name pom.xml -print | sort
 
       - name: Installer Java 21
         uses: actions/setup-java@v4
@@ -271,12 +290,6 @@ jobs:
 
           for remaining in $(seq "${DELAY_SECONDS}" -1 1); do
             rcon "title @a actionbar [{\"text\":\"⚠ \",\"color\":\"dark_red\",\"bold\":true},{\"text\":\"REDÉMARRAGE SERVEUR \",\"color\":\"red\",\"bold\":true},{\"text\":\"dans ${remaining}s\",\"color\":\"gold\",\"bold\":true}]"
-
-            if [ "${remaining}" = "10" ] || [ "${remaining}" = "5" ] || [ "${remaining}" = "3" ] || [ "${remaining}" = "2" ] || [ "${remaining}" = "1" ]; then
-              rcon "tellraw @a [{\"text\":\"⚠ \",\"color\":\"dark_red\",\"bold\":true},{\"text\":\"Redémarrage dans \",\"color\":\"red\",\"bold\":true},{\"text\":\"${remaining}s\",\"color\":\"gold\",\"bold\":true}]"
-              rcon "playsound minecraft:block.note_block.pling master @a ~ ~ ~ 1 1.2"
-            fi
-
             sleep 1
           done
 
